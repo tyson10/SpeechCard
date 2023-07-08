@@ -8,8 +8,17 @@
 import SwiftUI
 
 public struct CardView: View {
+    
+    @State private var bgColor: Color = .green
+    @State private var originLangText: String = ""
+    
     public var body: some View {
-        Text("hello")
+        ZStack {
+            bgColor
+                .opacity(0.3)
+            
+            Text(originLangText)
+        }
     }
 }
 
