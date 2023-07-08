@@ -10,6 +10,9 @@ import ProjectDescription
 let workspace = Workspace(
     name: "SpeechCard",
     projects: [
-        "SpeechCardApp/**"
+        "SpeechCardApp/**",
+        "CommonUI/**",
+        "Core/Extensions/**",
+        "Core/Model/**"
     ]
 )
