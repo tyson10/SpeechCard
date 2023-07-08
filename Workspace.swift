@@ -11,6 +11,7 @@ let workspace = Workspace(
     name: "SpeechCard",
     projects: [
         "SpeechCardApp/**",
+        "CommonUI/**",
         "Core/Extensions/**",
         "Core/Model/**"
     ]
