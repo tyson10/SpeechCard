@@ -7,11 +7,13 @@
 
 import Foundation
 
-public struct WordPair: Equatable {
-    private(set) var origin: String
-    private(set) var target: String
-    private(set) var createdAt: Date = Date()
-    
+public protocol WordPair: Equatable {
+    var origin: String { get set }
+    var target: String { get set }
+    var createdAt: Date { get set }
+}
+
+public extension WordPair {
     mutating func edit(origin: String? = nil, target: String? = nil) {
         if let origin = origin {
             self.origin = origin
@@ -21,12 +23,14 @@ public struct WordPair: Equatable {
             self.target = target
         }
     }
-    
-    public static func == (lhs: Self, rhs: Self) -> Bool {
+}
+
+public extension WordPair {
+    static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.origin == rhs.origin
     }
     
-    public static func != (lhs: Self, rhs: Self) -> Bool {
+    static func != (lhs: Self, rhs: Self) -> Bool {
         return lhs.origin == rhs.origin
     }
 }
