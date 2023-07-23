@@ -15,9 +15,6 @@ public struct DefaultCardView: CardViewType {
     
     public var body: some View {
         ZStack {
-            data.bgColor
-                .opacity(0.3)
-            
             if data.isFlipped {
                 Text(data.wordPair.target)
             } else {

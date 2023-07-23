@@ -7,12 +7,17 @@
 
 import SwiftUI
 
+import Model
+
 public protocol CardViewType: View {
     var data: CardDataType { get set }
 }
 
 public protocol CardDataType {
-    var bgColor: Color { get set }
     var wordPair: any WordPair { get set }
     var isFlipped: Bool { get set }
+}
+
+public protocol FlashCardDataType: CardDataType {
+    var bgColor: Color { get set }
 }
