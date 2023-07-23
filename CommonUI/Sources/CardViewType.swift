@@ -20,4 +20,6 @@ public protocol CardDataType {
 
 public protocol FlashCardDataType: CardDataType {
     var bgColor: Color { get set }
+    
+    func flip() -> Void
 }
