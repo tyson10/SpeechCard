@@ -31,6 +31,6 @@ public extension WordPair {
     }
     
     static func != (lhs: Self, rhs: Self) -> Bool {
-        return lhs.origin == rhs.origin
+        return lhs.origin != rhs.origin
     }
 }
