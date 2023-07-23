@@ -39,4 +39,8 @@ public extension TargetDependency.ThirdParty {
     static var composableArchitecture: TargetDependency {
         .external(name: "ComposableArchitecture")
     }
+    
+    static var lottie: TargetDependency {
+        .external(name: "Lottie")
+    }
 }
