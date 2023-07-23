@@ -11,7 +11,7 @@ import SwiftUI
 struct CommonUIApp: App {
     var body: some Scene {
         WindowGroup {
-            CardView(wordPair: DummyWordPair())
+            CardView(data: .constant(DummyCardData()))
         }
     }
 }

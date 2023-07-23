@@ -9,35 +9,34 @@ import SwiftUI
 
 import Model
 
-public struct CardView: View {
+public struct CardView: CardViewType {
     
-    @State private var bgColor: Color = .green
-    @State private var wordPair: any WordPair
-    @State private var isFlipped: Bool = false
-    
-    public init(wordPair: any WordPair) {
-        self._wordPair = State(initialValue: wordPair)
-    }
+    @Binding public var data: any CardDataType
     
     public var body: some View {
         ZStack {
-            bgColor
+            data.bgColor
                 .opacity(0.3)
             
-            if isFlipped {
-                Text(wordPair.origin)
+            if data.isFlipped {
+                Text(data.wordPair.target)
             } else {
-                Text(wordPair.target)
+                Text(data.wordPair.origin)
             }
-            
         }
     }
 }
 
 struct RepositoriesView_Previews: PreviewProvider {
     static var previews: some View {
-        CardView(wordPair: DummyWordPair())
+        CardView(data: .constant(DummyCardData()))
     }
+}
+
+struct DummyCardData: CardDataType {
+    var bgColor: Color = .green
+    var wordPair: any WordPair = DummyWordPair()
+    var isFlipped: Bool = false
 }
 
 struct DummyWordPair: WordPair {
