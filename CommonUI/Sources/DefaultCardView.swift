@@ -9,7 +9,7 @@ import SwiftUI
 
 import Model
 
-public struct CardView: CardViewType {
+public struct DefaultCardView: CardViewType {
     
     @Binding public var data: any CardDataType
     
@@ -29,7 +29,7 @@ public struct CardView: CardViewType {
 
 struct RepositoriesView_Previews: PreviewProvider {
     static var previews: some View {
-        CardView(data: .constant(DummyCardData()))
+        DefaultCardView(data: .constant(DummyCardData()))
     }
 }
 
