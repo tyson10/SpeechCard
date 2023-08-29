@@ -11,15 +11,25 @@ import Model
 
 public protocol CardViewType: View {
     var data: CardDataType { get set }
+    var state: CardViewState { get set }
 }
 
 public protocol CardDataType {
     var wordPair: any WordPair { get set }
-    var isFlipped: Bool { get set }
 }
 
-public protocol FlashCardDataType: CardDataType {
-    var bgColor: Color { get set }
+public protocol CardViewState {
+    var face: CardFace { get set }
     
-    func flip() -> Void
+    mutating func flip(to face: CardFace) -> Void
+}
+
+public extension CardViewState {
+    mutating func flip(to face: CardFace) {
+        self.face = face
+    }
+}
+
+public enum CardFace {
+    case origin(Color), target(Color)
 }
