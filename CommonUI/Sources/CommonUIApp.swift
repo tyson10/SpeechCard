@@ -12,7 +12,6 @@ struct CommonUIApp: App {
     var body: some Scene {
         WindowGroup {
             DefaultCardView(
-                data: .constant(DummyCardData()),
                 state: .constant(DummyCardViewState())
             )
         }

@@ -10,7 +10,6 @@ import SwiftUI
 import Model
 
 public struct DefaultCardView: CardViewType {
-    @Binding public var data: any CardDataType
     @Binding public var state: CardViewState
     
     public var body: some View {
@@ -18,10 +17,10 @@ public struct DefaultCardView: CardViewType {
             switch state.face {
             case .origin(let color):
                 color
-                Text(data.wordPair.origin)
+                Text(state.data.wordPair.origin)
             case .target(let color):
                 color
-                Text(data.wordPair.target)
+                Text(state.data.wordPair.target)
             }
         }
     }
@@ -30,7 +29,6 @@ public struct DefaultCardView: CardViewType {
 struct RepositoriesView_Previews: PreviewProvider {
     static var previews: some View {
         DefaultCardView(
-            data: .constant(DummyCardData()),
             state: .constant(DummyCardViewState())
         )
     }

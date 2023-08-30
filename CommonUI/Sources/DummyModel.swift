@@ -15,6 +15,7 @@ struct DummyCardData: CardDataType {
 
 struct DummyCardViewState: CardViewState {
     var face: CardFace = .origin(.red)
+    var data: CardDataType = DummyCardData()
 }
 
 struct DummyWordPair: WordPair {
