@@ -10,15 +10,17 @@ import SwiftUI
 import Model
 
 public struct DefaultCardView: CardViewType {
-    
-    @Binding public var data: any CardDataType
+    @Binding public var state: CardViewState
     
     public var body: some View {
         ZStack {
-            if data.isFlipped {
-                Text(data.wordPair.target)
-            } else {
-                Text(data.wordPair.origin)
+            switch state.face {
+            case .origin(let color):
+                color
+                Text(state.data.wordPair.origin)
+            case .target(let color):
+                color
+                Text(state.data.wordPair.target)
             }
         }
     }
@@ -26,20 +28,8 @@ public struct DefaultCardView: CardViewType {
 
 struct RepositoriesView_Previews: PreviewProvider {
     static var previews: some View {
-        DefaultCardView(data: .constant(DummyCardData()))
+        DefaultCardView(
+            state: .constant(DummyCardViewState())
+        )
     }
-}
-
-struct DummyCardData: CardDataType {
-    var bgColor: Color = .green
-    var wordPair: any WordPair = DummyWordPair()
-    var isFlipped: Bool = false
-}
-
-struct DummyWordPair: WordPair {
-    var origin: String = "origin_dummy"
-    
-    var target: String = "target_dummy"
-    
-    var createdAt: Date = .init()
 }

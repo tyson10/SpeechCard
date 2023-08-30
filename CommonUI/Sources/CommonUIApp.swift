@@ -11,7 +11,9 @@ import SwiftUI
 struct CommonUIApp: App {
     var body: some Scene {
         WindowGroup {
-            DefaultCardView(data: .constant(DummyCardData()))
+            DefaultCardView(
+                state: .constant(DummyCardViewState())
+            )
         }
     }
 }
