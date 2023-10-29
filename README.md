@@ -11,6 +11,7 @@
 - Combine
 - TCA
 - Tuist
+- Clean Architecture
 
 ## TODO
 - SwiftData
