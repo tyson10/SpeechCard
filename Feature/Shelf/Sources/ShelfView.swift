@@ -10,8 +10,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct ShelfView: View {
-    let store: StoreOf<RepositoriesReducer>
-    
+    let store: StoreOf<ShelfReducer>
     
     var body: some View {
         List {
@@ -23,5 +22,5 @@ struct ShelfView: View {
 }
 
 #Preview {
-    ShelfView(store: .init(initialState: .init(), reducer: { }))
+    ShelfView(store: .init(initialState: .init(), reducer: {}))
 }
