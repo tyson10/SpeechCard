@@ -13,6 +13,7 @@ let workspace = Workspace(
         "SpeechCardApp/**",
         "CommonUI/**",
         "Core/Extensions/**",
-        "Core/Model/**"
+        "Core/Domain/**",
+        "Core/Data/**"
     ]
 )

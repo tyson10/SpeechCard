@@ -22,8 +22,12 @@ public extension TargetDependency.Project.Core {
         .project(target: "Extensions", path: .relativeToRoot("Core/Extensions"))
     }
     
-    static var model: TargetDependency {
-        .project(target: "Model", path: .relativeToRoot("Core/Model"))
+    static var domain: TargetDependency {
+        .project(target: "Domain", path: .relativeToRoot("Core/Domain"))
+    }
+    
+    static var data: TargetDependency {
+        .project(target: "Data", path: .relativeToRoot("Core/Data"))
     }
 }
 
