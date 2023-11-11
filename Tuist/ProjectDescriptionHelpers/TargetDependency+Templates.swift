@@ -11,6 +11,7 @@ extension TargetDependency {
     public struct Project {
         public struct Core { }
         public struct CommonUI { }
+        public struct Feature { }
     }
     
     public struct ThirdParty { }
@@ -35,6 +36,25 @@ public extension TargetDependency.Project.Core {
 public extension TargetDependency.Project.CommonUI {
     static var ui: TargetDependency {
         .project(target: "CommonUI", path: .relativeToRoot("CommonUI"))
+    }
+}
+
+// MARK: - Feature
+public extension TargetDependency.Project.Feature {
+    static var shelf: TargetDependency {
+        .project(target: "Shelf", path: .relativeToRoot("Feature/Shelf"))
+    }
+    
+    static var edit: TargetDependency {
+        .project(target: "Edit", path: .relativeToRoot("Feature/Edit"))
+    }
+    
+    static var practice: TargetDependency {
+        .project(target: "Practice", path: .relativeToRoot("Feature/Practice"))
+    }
+    
+    static var challenge: TargetDependency {
+        .project(target: "Challenge", path: .relativeToRoot("Feature/Challenge"))
     }
 }
 
