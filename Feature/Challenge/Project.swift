@@ -10,5 +10,7 @@ import ProjectDescriptionHelpers
 
 let project = Project.create(name: "Challenge",
                              products: [.staticFramework, .unitTests, .uiTests],
-                             dependencies: [],
+                             dependencies: [
+                                .ThirdParty.composableArchitecture
+                             ],
                              includeDemoApp: true)
