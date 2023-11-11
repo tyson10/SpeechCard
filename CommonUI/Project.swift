@@ -11,7 +11,7 @@ import ProjectDescriptionHelpers
 let project = Project.create(name: "CommonUI",
                              products: [.staticLibrary],
                              dependencies: [
-                                .Project.Core.model,
+                                .Project.Core.domain,
                                 .ThirdParty.lottie
                              ],
                              includeDemoApp: true)
