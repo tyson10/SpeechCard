@@ -14,6 +14,10 @@ let workspace = Workspace(
         "CommonUI/**",
         "Core/Extensions/**",
         "Core/Domain/**",
-        "Core/Data/**"
+        "Core/Data/**",
+        "Feature/Shelf/**",
+        "Feature/Edit/**",
+        "Feature/Practice/**",
+        "Feature/Challenge/**"
     ]
 )
