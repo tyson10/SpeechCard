@@ -20,7 +20,7 @@ struct ShelfReducer: ReducerProtocol {
     }
     
     enum Action {
-        case loadBooks
+        case loadBooks([BookVO])
         case itemSelected
         case editItemSelected
         case addBookSelected
@@ -29,8 +29,17 @@ struct ShelfReducer: ReducerProtocol {
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .loadBooks:
-            return useCase.loadAllBooks()
+            let allBooks = useCase.loadAllBooks()
+            return .send(.loadBooks(allBooks))
+            
+        case .itemSelected:
+            return .none
+            
+        case .editItemSelected:
+            return .none
+            
+        case .addBookSelected:
+            return .none
         }
-        return .none
     }
 }
