@@ -6,5 +6,5 @@
 //
 
 public protocol ShelfUseCase {
-    
+    func loadAllBooks() -> [BookVO]
 }
