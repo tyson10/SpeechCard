@@ -7,9 +7,9 @@
 
 import Foundation
 
-public typealias WordPairs = [any WordPair]
+public typealias DefaultWordPairs = [DefaultWordPair]
 
-public extension WordPairs {
+public extension DefaultWordPairs {
     var origins: [String] {
         self.map(\.origin)
     }
@@ -18,7 +18,7 @@ public extension WordPairs {
         self.map(\.target)
     }
 
-    mutating func append(pair: some WordPair) throws {
+    mutating func append(pair: DefaultWordPair) throws {
         guard !origins.contains(pair.origin) else {
             throw InternalError.duplicated
         }
@@ -32,7 +32,7 @@ public extension WordPairs {
         }
     }
 
-    mutating func replace(at origin: String, to pair: some WordPair) throws {
+    mutating func replace(at origin: String, to pair: DefaultWordPair) throws {
         guard let offset = self.firstIndex(where: { $0.origin == pair.origin }) else {
             throw InternalError.notFound
         }
