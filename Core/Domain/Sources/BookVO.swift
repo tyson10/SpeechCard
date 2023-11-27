@@ -6,6 +6,7 @@
 //
 
 public struct BookVO: Equatable {
+    var name: String
     var targetLangCode: String
     var originLangCode: String
     var contents: DefaultWordPairs

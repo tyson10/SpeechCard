@@ -7,4 +7,6 @@
 
 public protocol ShelfUseCase {
     func loadAllBooks() -> [BookVO]
+    func addBook(book: BookVO)
+    func deleteBook(name: String)
 }
