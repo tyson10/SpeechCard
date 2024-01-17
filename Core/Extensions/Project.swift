@@ -8,6 +8,10 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.create(name: "Extensions",
-                             products: [.dynamicLibrary],
-                             dependencies: [])
+let project = Project.create(
+    name: "Extensions",
+    products: [
+        .dynamicLibrary
+    ],
+    dependencies: []
+)
