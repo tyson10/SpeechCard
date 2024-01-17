@@ -11,35 +11,46 @@ import Domain
 
 import ComposableArchitecture
 
-struct ShelfReducer: ReducerProtocol {
+@Reducer
+public struct ShelfReducer {
     
     private let useCase: ShelfUseCase
     
-    struct State: Equatable {
+    public init(useCase: ShelfUseCase) {
+        self.useCase = useCase
+    }
+    
+    public struct State: Equatable {
+        public init(books: [BookVO] = [BookVO]()) {
+            self.books = books
+        }
+        
         var books = [BookVO]()
     }
     
-    enum Action {
+    public enum Action {
         case loadBooks([BookVO])
         case itemSelected
         case editItemSelected
         case addBookSelected
     }
     
-    func reduce(into state: inout State, action: Action) -> Effect<Action> {
-        switch action {
-        case .loadBooks:
-            let allBooks = useCase.loadAllBooks()
-            return .send(.loadBooks(allBooks))
-            
-        case .itemSelected:
-            return .none
-            
-        case .editItemSelected:
-            return .none
-            
-        case .addBookSelected:
-            return .none
+    public var body: some Reducer<State, Action> {
+        Reduce { state, action in
+            switch action {
+            case .loadBooks:
+                let allBooks = useCase.loadAllBooks()
+                return .send(.loadBooks(allBooks))
+                
+            case .itemSelected:
+                return .none
+                
+            case .editItemSelected:
+                return .none
+                
+            case .addBookSelected:
+                return .none
+            }
         }
     }
 }

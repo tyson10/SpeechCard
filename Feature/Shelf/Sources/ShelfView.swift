@@ -9,15 +9,21 @@ import SwiftUI
 
 import ComposableArchitecture
 
-struct ShelfView: View {
-    let store: StoreOf<ShelfReducer>
+public struct ShelfView: View {
+    private let store: StoreOf<ShelfReducer>
     
-    var body: some View {
-        List {
-            Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-                .frame(height: 200)
+    public init(store: StoreOf<ShelfReducer>) {
+        self.store = store
+    }
+    
+    public var body: some View {
+        WithViewStore(store, observe: { $0 }) { viewStore in
+            List(viewStore.books) { book in
+                
+                Text(book.name)
+                    .frame(height: 200)
+            }
         }
-        
     }
 }
 

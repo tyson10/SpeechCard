@@ -15,7 +15,7 @@ public class ShelfUseCaseImpl: ShelfUseCase {
     
     private let repository: ShelfRepository
     
-    init(repository: ShelfRepository) {
+    public init(repository: ShelfRepository) {
         self.repository = repository
     }
     

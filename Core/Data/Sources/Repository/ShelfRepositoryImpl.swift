@@ -12,7 +12,7 @@ public final class ShelfRepositoryImpl: ShelfRepository {
     
     private let dataSource: ShelfDataSource
     
-    init(dataSource: ShelfDataSource) {
+    public init(dataSource: ShelfDataSource) {
         self.dataSource = dataSource
     }
     
