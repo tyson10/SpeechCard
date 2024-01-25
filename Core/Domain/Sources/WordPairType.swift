@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol WordPairType: Equatable {
+public protocol WordPairType: Hashable {
     var origin: String { get set }
     var target: String { get set }
     var createdAt: Date { get set }

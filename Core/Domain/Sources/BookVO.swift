@@ -5,7 +5,7 @@
 //  Created by Taeyoung Son on 11/11/23.
 //
 
-public struct BookVO: Equatable, Identifiable {
+public struct BookVO: Hashable, Identifiable {
     
     public var id: String { name }
     
