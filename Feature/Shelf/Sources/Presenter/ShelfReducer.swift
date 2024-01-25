@@ -26,13 +26,16 @@ public struct ShelfReducer {
         }
         
         var books = [BookVO]()
+        var selectedBook: BookVO?
     }
     
     public enum Action {
-        case loadBooks([BookVO])
-        case itemSelected
+        case loadBooks
+        case itemSelected(BookVO?)
         case editItemSelected
         case addBookSelected
+        
+        case setAllBooks([BookVO])
     }
     
     public var body: some Reducer<State, Action> {
@@ -40,17 +43,23 @@ public struct ShelfReducer {
             switch action {
             case .loadBooks:
                 let allBooks = useCase.loadAllBooks()
-                return .send(.loadBooks(allBooks))
+                return .send(.setAllBooks(allBooks))
                 
-            case .itemSelected:
+            case .itemSelected(let book):
+                print("책 선택: \(book?.name)")
+                state.selectedBook = book
                 return .none
                 
             case .editItemSelected:
-                return .none
-                
+                print("책 편집")
             case .addBookSelected:
-                return .none
+                print("책 추가")
+                
+            case .setAllBooks(let books):
+                state.books = books
             }
+            
+            return .none
         }
     }
 }
