@@ -11,7 +11,16 @@ import SwiftUI
 struct ShelfApp: App {
     var body: some Scene {
         WindowGroup {
-            
+            ShelfView(
+                store: .init(
+                    initialState: .init(),
+                    reducer: makeFakeReducer
+                )
+            )
         }
+    }
+    
+    private func makeFakeReducer() -> ShelfReducer {
+        return ShelfReducer(useCase: ShelfIUseCaseStub())
     }
 }
