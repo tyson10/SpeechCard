@@ -46,7 +46,7 @@ public struct ShelfView: View {
     ShelfView(
         store: .init(
             initialState: .init(),
-            reducer: { ShelfReducer(useCase: ShelfIUseCaseStub()) }
+            reducer: { ShelfReducer(useCase: ShelfUseCaseStub()) }
         )
     )
 }

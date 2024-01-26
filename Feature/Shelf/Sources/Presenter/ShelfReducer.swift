@@ -10,9 +10,10 @@ import Combine
 import Domain
 
 import ComposableArchitecture
+import SwiftSyntaxMacros
 
 @Reducer
-public struct ShelfReducer {
+public struct ShelfReducer: Reducer {
     
     private let useCase: ShelfUseCase
     

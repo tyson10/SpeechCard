@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import Domain
+
 @main
 struct ShelfApp: App {
     var body: some Scene {
@@ -21,6 +23,24 @@ struct ShelfApp: App {
     }
     
     private func makeFakeReducer() -> ShelfReducer {
-        return ShelfReducer(useCase: ShelfIUseCaseStub())
+        return ShelfReducer(useCase: ShelfUseCaseStub())
+    }
+}
+
+
+class ShelfUseCaseStub: ShelfUseCase {
+    func loadAllBooks() -> [Domain.BookVO] {
+        return [
+            BookVO(name: "Title1", targetLangCode: "target", originLangCode: "origin", contents: []),
+            BookVO(name: "Title2", targetLangCode: "target", originLangCode: "origin", contents: [])
+        ]
+    }
+    
+    func addBook(book: Domain.BookVO) {
+        
+    }
+    
+    func deleteBook(name: String) {
+        
     }
 }
