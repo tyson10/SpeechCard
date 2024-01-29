@@ -30,14 +30,22 @@ public struct ShelfView: View {
                 ) { book in
                     
                     ShelfItemView(book: book)
-                        .frame(height: 200)
+                        .frame(height: 150)
                         .tag(book)
                 }
                 .navigationTitle("Shelf")
                 .onAppear(perform: {
                     viewStore.send(.loadBooks)
                 })
+                .toolbar(content: {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Add Book", systemImage: "plus.circle") {
+                            // TODO: View에서 바로 EditView를 표시해도 되지만, 의존성이 커짐. 다른 방법이 있는지 확인 필요.
+                        }
+                    }
+                })
             }
+            
         }
     }
 }
