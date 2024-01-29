@@ -10,11 +10,11 @@ import Foundation
 public typealias DefaultWordPairs = [DefaultWordPair]
 
 public extension DefaultWordPairs {
-    var origins: [String] {
+    var origins: [Language] {
         self.map(\.origin)
     }
 
-    var targets: [String] {
+    var targets: [Language] {
         self.map(\.target)
     }
 
@@ -26,7 +26,7 @@ public extension DefaultWordPairs {
         self.append(pair)
     }
 
-    mutating func delete(origin: String) {
+    mutating func delete(origin: Language) {
         self.removeAll { pair in
             pair.origin == origin
         }

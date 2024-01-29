@@ -31,8 +31,8 @@ struct ShelfApp: App {
 class ShelfUseCaseStub: ShelfUseCase {
     func loadAllBooks() -> [Domain.BookVO] {
         return [
-            BookVO(name: "Title1", targetLangCode: "target", originLangCode: "origin", contents: []),
-            BookVO(name: "Title2", targetLangCode: "target", originLangCode: "origin", contents: [])
+            BookVO(name: "Title1", targetLanguage: .english, originLanguage: .korean, contents: []),
+            BookVO(name: "Title2", targetLanguage: .english, originLanguage: .korean, contents: [])
         ]
     }
     
