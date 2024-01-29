@@ -10,8 +10,8 @@ extension Project {
                               products: [Product],
                               dependencies: [TargetDependency],
                               includeDemoApp: Bool = false) -> Project {
-        let platform = Platform.iOS
-        let infoPlist: [String: InfoPlist.Value] = [
+        let destinations = Set([Destination.iPhone])
+        let infoPlist: [String: Plist.Value] = [
             "CFBundleShortVersionString": "1.0",
             "CFBundleVersion": "1",
             "UIMainStoryboardFile": "",
@@ -28,7 +28,7 @@ extension Project {
             case .app:
                 target = Target(
                     name: name,
-                    platform: platform,
+                    destinations: destinations,
                     product: .app,
                     bundleId: "io.tuist.\(name)",
                     infoPlist: .extendingDefault(with: infoPlist),
@@ -40,7 +40,7 @@ extension Project {
             case .unitTests:
                 target = Target(
                     name: "\(name)Tests",
-                    platform: platform,
+                    destinations: destinations,
                     product: .unitTests,
                     bundleId: "io.tuist.\(name)Tests",
                     infoPlist: .default,
@@ -53,7 +53,7 @@ extension Project {
             case .uiTests:
                 target = Target(
                     name: "\(name)UITests",
-                    platform: platform,
+                    destinations: destinations,
                     product: .unitTests,
                     bundleId: "io.tuist.\(name)UITests",
                     infoPlist: .default,
@@ -66,7 +66,7 @@ extension Project {
             case .framework, .staticFramework:
                 target = Target(
                     name: name,
-                    platform: platform,
+                    destinations: destinations,
                     product: $0,
                     bundleId: "io.tuist.\(name)",
                     infoPlist: .extendingDefault(with: infoPlist),
@@ -78,7 +78,7 @@ extension Project {
             case .dynamicLibrary, .staticLibrary:
                 target = Target(
                     name: name,
-                    platform: platform,
+                    destinations: destinations,
                     product: $0,
                     bundleId: "io.tuist.\(name)",
                     infoPlist: .extendingDefault(with: infoPlist),
@@ -95,7 +95,7 @@ extension Project {
         if includeDemoApp {
             let target = Target(
                 name: "\(name)DemoApp",
-                platform: platform,
+                destinations: destinations,
                 product: .app,
                 bundleId: "io.tuist.\(name)DemoApp",
                 infoPlist: .extendingDefault(with: infoPlist),

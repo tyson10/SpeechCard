@@ -10,5 +10,8 @@ import ProjectDescriptionHelpers
 
 let project = Project.create(name: "Shelf",
                              products: [.staticFramework, .unitTests, .uiTests],
-                             dependencies: [],
+                             dependencies: [
+                                .Project.Core.domain,
+                                .ThirdParty.composableArchitecture
+                             ],
                              includeDemoApp: true)

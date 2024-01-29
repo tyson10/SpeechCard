@@ -8,6 +8,10 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project.create(name: "Domain",
-                             products: [.staticLibrary],
-                             dependencies: [])
+let project = Project.create(
+    name: "Domain",
+    products: [
+        .staticLibrary
+    ],
+    dependencies: []
+)
