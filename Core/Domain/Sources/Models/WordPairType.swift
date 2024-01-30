@@ -8,13 +8,13 @@
 import Foundation
 
 public protocol WordPairType: Hashable {
-    var origin: Language { get set }
-    var target: Language { get set }
+    var origin: String { get set }
+    var target: String { get set }
     var createdAt: Date { get set }
 }
 
 public extension WordPairType {
-    mutating func edit(origin: Language? = nil, target: Language? = nil) {
+    mutating func edit(origin: String? = nil, target: String? = nil) {
         if let origin = origin {
             self.origin = origin
         }

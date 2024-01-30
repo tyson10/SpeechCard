@@ -9,13 +9,13 @@ import Foundation
 
 public struct DefaultWordPair: WordPairType {
     
-    public init(origin: Language, target: Language, createdAt: Date) {
+    public init(origin: String, target: String, createdAt: Date) {
         self.origin = origin
         self.target = target
         self.createdAt = createdAt
     }
     
-    public var origin: Language
-    public var target: Language
+    public var origin: String
+    public var target: String
     public var createdAt: Date
 }
