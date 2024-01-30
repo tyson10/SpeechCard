@@ -7,12 +7,11 @@
 
 import Domain
 
-public final class ShelfRepositoryImpl: ShelfRepository {
+public final class BookRepositoryImpl: BookRepository {
     
+    private let dataSource: BookDataSource
     
-    private let dataSource: ShelfDataSource
-    
-    public init(dataSource: ShelfDataSource) {
+    public init(dataSource: BookDataSource) {
         self.dataSource = dataSource
     }
     

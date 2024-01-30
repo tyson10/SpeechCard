@@ -10,9 +10,9 @@ import Domain
 import Shelf
 
 public final class ShelfDIContainer: DIContainer {
-    private let datasource: ShelfDataSource
+    private let datasource: BookDataSource
     
-    init(datasource: ShelfDataSource) {
+    init(datasource: BookDataSource) {
         self.datasource = datasource
     }
     
@@ -33,7 +33,7 @@ public final class ShelfDIContainer: DIContainer {
         return ShelfUseCaseImpl(repository: makeRepository())
     }
     
-    public func makeRepository() -> ShelfRepository {
-        return ShelfRepositoryImpl(dataSource: datasource)
+    public func makeRepository() -> BookRepository {
+        return BookRepositoryImpl(dataSource: datasource)
     }
 }

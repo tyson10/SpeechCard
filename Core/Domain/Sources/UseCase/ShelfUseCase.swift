@@ -13,9 +13,9 @@ public protocol ShelfUseCase {
 
 public class ShelfUseCaseImpl: ShelfUseCase {
     
-    private let repository: ShelfRepository
+    private let repository: BookRepository
     
-    public init(repository: ShelfRepository) {
+    public init(repository: BookRepository) {
         self.repository = repository
     }
     
