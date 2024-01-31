@@ -7,18 +7,26 @@
 
 import ComposableArchitecture
 
+import Domain
+
 //@Reducer
-public struct ShelfReducer: Reducer {
+public struct EditViewReducer: Reducer {
     
     public struct State: Equatable {
-        
+        var book: BookVO
     }
     
     public enum Action {
+        case inputBookName(String)
     }
     
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
+            switch action {
+            case .inputBookName(let name):
+                state.book.name = name
+            }
+            
             return .none
         }
     }
