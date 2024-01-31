@@ -35,5 +35,7 @@
 - Tuist
 - Clean Architecture
 
+## (Trouble Shooting)[Docs/TroubleShooting.md]
+
 ## TODO
 - SwiftData
