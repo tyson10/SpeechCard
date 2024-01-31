@@ -9,8 +9,8 @@ import SwiftUI
 
 import Domain
 
-public struct PairInputView: View {
-    @Binding var wordPair: any WordPairType
+public struct PairInputView<T: WordPairType>: View {
+    @Binding var wordPair: T
     
     public var body: some View {
         VStack(

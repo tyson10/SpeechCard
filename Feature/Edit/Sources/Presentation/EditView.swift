@@ -11,9 +11,9 @@ import ComposableArchitecture
 import Domain
 
 public struct EditView: View {
-    private let store: StoreOf<EditViewReducer>
+    private let store: StoreOf<EditReducer>
     
-    public init(store: StoreOf<EditViewReducer>) {
+    public init(store: StoreOf<EditReducer>) {
         self.store = store
     }
     
@@ -23,18 +23,29 @@ public struct EditView: View {
                 "책 이름",
                 text: viewStore.binding(
                     get: \.book.name,
-                    send: EditViewReducer.Action.inputBookName
+                    send: EditReducer.Action.inputBookName
                 )
             )
             .font(.title)
+            .padding(20)
             
             Button("Add words", systemImage: "plus.circle") {
                 
+            }
+            
+            ForEach(
+                viewStore.binding(
+                    get: \.book.contents,
+                    send: EditReducer.Action.edit
+                ),
+                id: \.self
+            ) { wordPair in
+                PairInputView(wordPair: wordPair)
             }
         }
     }
 }
 
 #Preview {
-    EditView(store: .init(initialState: .init(book: BookVO(name: "", targetLanguage: .korean, originLanguage: .english, contents: [])), reducer: { EditViewReducer(useCase: EditUseCaseStub()) }))
+    EditView(store: .init(initialState: .init(book: BookVO(name: "", targetLanguage: .korean, originLanguage: .english, contents: [])), reducer: { EditReducer(useCase: EditUseCaseStub()) }))
 }

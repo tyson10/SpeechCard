@@ -10,7 +10,7 @@ import ComposableArchitecture
 import Domain
 
 //@Reducer
-public struct EditViewReducer: Reducer {
+public struct EditReducer: Reducer {
     
     private let useCase: EditUseCase
     
@@ -28,6 +28,7 @@ public struct EditViewReducer: Reducer {
     
     public enum Action {
         case inputBookName(String)
+        case edit(any WordPairType)
     }
     
     public var body: some Reducer<State, Action> {
@@ -35,6 +36,9 @@ public struct EditViewReducer: Reducer {
             switch action {
             case .inputBookName(let name):
                 state.book.name = name
+                
+            case .edit(let pair):
+                break
             }
             
             return .none
