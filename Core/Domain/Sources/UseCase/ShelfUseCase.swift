@@ -24,7 +24,7 @@ public class ShelfUseCaseImpl: ShelfUseCase {
     }
     
     public func addBook(book: BookVO) {
-        repository.createBook(book: book)
+        repository.create(book: book)
     }
     
     public func deleteBook(name: String) {

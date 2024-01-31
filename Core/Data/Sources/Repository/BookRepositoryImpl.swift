@@ -21,11 +21,15 @@ public final class BookRepositoryImpl: BookRepository {
             .map(\.domain)
     }
     
-    public func createBook(book: Domain.BookVO) {
+    public func create(book: Domain.BookVO) {
         
     }
     
     public func deleteBook(name: String) {
+        
+    }
+    
+    public func update(book: BookVO) {
         
     }
 }

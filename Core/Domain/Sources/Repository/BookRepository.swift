@@ -7,6 +7,7 @@
 
 public protocol BookRepository {
     func fetchAllBooks() -> [BookVO]
-    func createBook(book: BookVO)
+    func create(book: BookVO)
     func deleteBook(name: String)
+    func update(book: BookVO)
 }
