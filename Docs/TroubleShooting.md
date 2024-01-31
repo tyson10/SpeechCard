@@ -5,13 +5,6 @@
 ![스크린샷 2024-01-31 오후 11.24.59.png](Images/trouble_shooting_1.png)
 
 ```swift
-//
-//  EditView.swift
-//  Edit
-//
-//  Created by Taeyoung Son on 1/30/24.
-//
-
 import SwiftUI
 
 import ComposableArchitecture
@@ -51,10 +44,6 @@ public struct EditView: View {
             }
         }
     }
-}
-
-#Preview {
-    EditView(store: .init(initialState: .init(book: BookVO(name: "", targetLanguage: .korean, originLanguage: .english, contents: [])), reducer: { EditReducer(useCase: EditUseCaseStub()) }))
 }
 ```
 
