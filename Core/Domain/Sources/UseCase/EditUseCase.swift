@@ -10,6 +10,18 @@ public protocol EditUseCase {
     func update(to book: BookVO)
 }
 
-//public class EditUseCaseImpl: EditUseCase {
-//    
-//}
+public class EditUseCaseImpl: EditUseCase {
+    private let repository: BookRepository
+    
+    public init(repository: BookRepository) {
+        self.repository = repository
+    }
+    
+    public func add(book: BookVO) {
+        repository.create(book: book)
+    }
+    
+    public func update(to book: BookVO) {
+        repository.update(book: book)
+    }
+}

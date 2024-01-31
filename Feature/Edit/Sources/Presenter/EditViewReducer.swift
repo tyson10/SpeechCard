@@ -12,8 +12,18 @@ import Domain
 //@Reducer
 public struct EditViewReducer: Reducer {
     
+    private let useCase: EditUseCase
+    
+    public init(useCase: EditUseCase) {
+        self.useCase = useCase
+    }
+    
     public struct State: Equatable {
         var book: BookVO
+        
+        public init(book: BookVO) {
+            self.book = book
+        }
     }
     
     public enum Action {

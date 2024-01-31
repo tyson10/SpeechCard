@@ -19,17 +19,14 @@ public struct EditView: View {
     
     public var body: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
-            VStack(alignment: .leading) {
-                Text("책 이름")
-                    .font(.largeTitle)
-                TextField(
-                    "책 이름",
-                    text: viewStore.binding(
-                        get: \.book.name,
-                        send: EditViewReducer.Action.inputBookName
-                    )
+            TextField(
+                "책 이름",
+                text: viewStore.binding(
+                    get: \.book.name,
+                    send: EditViewReducer.Action.inputBookName
                 )
-            }
+            )
+            .font(.title)
             
             Button("Add words", systemImage: "plus.circle") {
                 
@@ -39,5 +36,5 @@ public struct EditView: View {
 }
 
 #Preview {
-    EditView(store: .init(initialState: .init(book: BookVO(name: "", targetLanguage: .korean, originLanguage: .english, contents: [])), reducer: { EditViewReducer() }))
+    EditView(store: .init(initialState: .init(book: BookVO(name: "", targetLanguage: .korean, originLanguage: .english, contents: [])), reducer: { EditViewReducer(useCase: EditUseCaseStub()) }))
 }
