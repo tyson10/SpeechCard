@@ -24,5 +24,5 @@ public struct PairInputView<T: WordPairType>: View {
 }
 
 #Preview {
-    PairInputView(wordPair: .constant(DefaultWordPair(origin: "", target: "", createdAt: .init())))
+    PairInputView(wordPair: .constant(DefaultWordPair(origin: "", target: "")))
 }
