@@ -33,14 +33,20 @@ public struct EditView: View {
                 
             }
             
-            ForEach(
-                viewStore.binding(
-                    get: \.book.contents,
-                    send: EditReducer.Action.edit
-                ),
-                id: \.self
-            ) { wordPair in
-                PairInputView(wordPair: wordPair)
+            List {
+                ForEach(
+                    viewStore.binding(
+                        get: \.book.contents,
+                        send: EditReducer.Action.setBookContents
+                    )
+                    ,
+                    id: \.self
+                ) { wordPair in
+                    PairInputView(wordPair: wordPair)
+                }
+                .onDelete(perform: { indexSet in
+                    viewStore.send(.delete(at: indexSet))
+                })
             }
         }
     }

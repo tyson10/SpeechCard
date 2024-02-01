@@ -5,6 +5,8 @@
 //  Created by Taeyoung Son on 1/30/24.
 //
 
+import Foundation
+
 import ComposableArchitecture
 
 import Domain
@@ -28,7 +30,8 @@ public struct EditReducer: Reducer {
     
     public enum Action {
         case inputBookName(String)
-        case edit(any WordPairType)
+        case setBookContents(DefaultWordPairs)
+        case delete(at: IndexSet)
     }
     
     public var body: some Reducer<State, Action> {
@@ -37,8 +40,11 @@ public struct EditReducer: Reducer {
             case .inputBookName(let name):
                 state.book.name = name
                 
-            case .edit(let pair):
-                break
+            case .setBookContents(let contents):
+                state.book.contents = contents
+            
+            case .delete(let indexSet):
+                state.book.contents.remove(atOffsets: indexSet)
             }
             
             return .none
