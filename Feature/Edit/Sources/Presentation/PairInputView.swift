@@ -13,13 +13,36 @@ public struct PairInputView<T: WordPairType>: View {
     @Binding var wordPair: T
     
     public var body: some View {
-        VStack(
-            spacing: 20,
-            content: {
-                TextField("Origin", text: $wordPair.origin)
-                TextField("Target", text: $wordPair.target)
-            }
-        )
+        VStack(spacing: 0) {
+            ZStack(content: {
+                Color(.green)
+                
+                VStack(
+                    spacing: 20,
+                    content: {
+                        Text("Origin")
+                            .font(.title)
+                        
+                        TextEditor(text: $wordPair.origin)
+                            .background()
+                    }
+                ).padding(10)
+            })
+            
+            ZStack(content: {
+                Color(.orange)
+                
+                VStack(
+                    spacing: 20,
+                    content: {
+                        Text("Target")
+                            .font(.title)
+                        TextEditor(text: $wordPair.target)
+                    }
+                ).padding(10)
+            })
+        }
+        
     }
 }
 
