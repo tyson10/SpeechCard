@@ -30,7 +30,7 @@ public struct EditView: View {
             .padding(20)
             
             Button("Add words", systemImage: "plus.circle") {
-                
+                viewStore.send(.tapAddWords)
             }
             
             List {

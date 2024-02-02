@@ -30,6 +30,7 @@ public struct EditReducer: Reducer {
     
     public enum Action {
         case inputBookName(String)
+        case tapAddWords
         case setBookContents(DefaultWordPairs)
         case delete(at: IndexSet)
     }
@@ -39,6 +40,9 @@ public struct EditReducer: Reducer {
             switch action {
             case .inputBookName(let name):
                 state.book.name = name
+                
+            case .tapAddWords:
+                break
                 
             case .setBookContents(let contents):
                 state.book.contents = contents
