@@ -22,6 +22,7 @@ public struct EditReducer: Reducer {
     
     public struct State: Equatable {
         var book: BookVO
+        var selectedWordPair: DefaultWordPair?
         
         public init(book: BookVO) {
             self.book = book
@@ -31,17 +32,22 @@ public struct EditReducer: Reducer {
     public enum Action {
         case inputBookName(String)
         case tapAddWords
+        case tapWordPairItem(DefaultWordPair?)
         case setBookContents(DefaultWordPairs)
         case delete(at: IndexSet)
     }
     
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
+            print(action)
             switch action {
             case .inputBookName(let name):
                 state.book.name = name
                 
             case .tapAddWords:
+                break
+                
+            case .tapWordPairItem(let pair):
                 break
                 
             case .setBookContents(let contents):

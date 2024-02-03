@@ -33,25 +33,38 @@ public struct EditView: View {
                 viewStore.send(.tapAddWords)
             }
             
-            List {
+            List(
+                selection: viewStore.binding(
+                    get: \.selectedWordPair,
+                    send: EditReducer.Action.tapWordPairItem
+                )
+            ) {
                 ForEach(
-                    viewStore.binding(
-                        get: \.book.contents,
-                        send: EditReducer.Action.setBookContents
-                    )
-                    ,
-                    id: \.self
-                ) { wordPair in
-                    PairInputView(wordPair: wordPair)
-                }
+                    viewStore.book.contents,
+                    content: listItem(for:)
+                ) 
                 .onDelete(perform: { indexSet in
                     viewStore.send(.delete(at: indexSet))
                 })
             }
         }
     }
+    
+    private func listItem(for pair: DefaultWordPair) -> some View {
+        return VStack(
+            alignment: .leading,
+            content: {
+                Text(pair.origin)
+                    .lineLimit(2)
+                
+                Text(pair.target)
+                    .lineLimit(2)
+            }
+        )
+        .tag(pair)
+    }
 }
 
 #Preview {
-    EditView(store: .init(initialState: .init(book: BookVO(name: "", targetLanguage: .korean, originLanguage: .english, contents: [])), reducer: { EditReducer(useCase: EditUseCaseStub()) }))
+    EditView(store: .init(initialState: .init(book: BookVO(name: "", targetLanguage: .korean, originLanguage: .english, contents: [.init(origin: "origin", target: "target"), .init(origin: "https://chojang2.tistory.com/entry/다이소-스탠드", target: "target")])), reducer: { EditReducer(useCase: EditUseCaseStub()) }))
 }
