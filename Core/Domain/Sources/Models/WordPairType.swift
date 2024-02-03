@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol WordPairType: Hashable {
+public protocol WordPairType: Hashable, Identifiable {
     var origin: String { get set }
     var target: String { get set }
 }

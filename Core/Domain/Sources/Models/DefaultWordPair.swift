@@ -8,6 +8,11 @@
 import Foundation
 
 public struct DefaultWordPair: WordPairType {
+    
+    public var id = UUID()
+    public var origin: String
+    public var target: String
+    
     public init(
         origin: String,
         target: String
@@ -15,7 +20,4 @@ public struct DefaultWordPair: WordPairType {
         self.origin = origin
         self.target = target
     }
-    
-    public var origin: String
-    public var target: String
 }
