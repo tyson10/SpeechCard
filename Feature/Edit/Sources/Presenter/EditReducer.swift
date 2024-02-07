@@ -11,8 +11,8 @@ import ComposableArchitecture
 
 import Domain
 
-//@Reducer
-public struct EditReducer: Reducer {
+@Reducer
+public struct EditReducer {
     
     private let useCase: EditUseCase
     
@@ -22,22 +22,35 @@ public struct EditReducer: Reducer {
     
     public struct State: Equatable {
         var book: BookVO
-        var selectedWordPair: DefaultWordPair?
+        var selectedPairIndex: Int?
+        var newWordPair: DefaultWordPair?
+        var presentingInputView = false
+        
+//        var inputViewState = EditWordPairFeature.State()
         
         public init(book: BookVO) {
             self.book = book
         }
     }
     
-    public enum Action {
+    public typealias Action = ActionCase
+    
+    public enum ActionCase {
         case inputBookName(String)
         case tapAddWords
-        case tapWordPairItem(DefaultWordPair?)
+        case tapWordPairItem(Int?)
+        case append(DefaultWordPair)
+        case setIsPresentedInput(Bool)
         case setBookContents(DefaultWordPairs)
         case delete(at: IndexSet)
+        
+//        case inputViewAction(EditWordPairFeature.Action)
     }
     
     public var body: some Reducer<State, Action> {
+//        Scope(state: \.inputViewState, action: \.inputViewAction) {
+//            EditWordPairFeature()
+//        }
         Reduce { state, action in
             print(action)
             switch action {
@@ -45,10 +58,18 @@ public struct EditReducer: Reducer {
                 state.book.name = name
                 
             case .tapAddWords:
-                break
+                state.newWordPair = DefaultWordPair(origin: "", target: "")
+                return .send(.setIsPresentedInput(true))
                 
             case .tapWordPairItem(let pair):
-                break
+                state.selectedPairIndex = pair
+                return .send(.setIsPresentedInput(true))
+                
+            case .append(let pair):
+                state.book.contents.append(pair)
+                
+            case .setIsPresentedInput(let isPresented):
+                state.presentingInputView = isPresented
                 
             case .setBookContents(let contents):
                 state.book.contents = contents

@@ -32,17 +32,33 @@ public struct EditView: View {
             Button("Add words", systemImage: "plus.circle") {
                 viewStore.send(.tapAddWords)
             }
+            .sheet(
+                isPresented: viewStore.binding(
+                    get: \.presentingInputView,
+                    send: EditReducer.Action.setIsPresentedInput
+                ),
+                content: {
+                    PairInputView(
+                        initialWordPair: viewStore.newWordPair ?? DefaultWordPair(origin: "", target: ""),
+                        presented: viewStore.binding(
+                            get: \.presentingInputView,
+                            send: EditReducer.Action.setIsPresentedInput
+                        )
+                    )
+                }
+            )
             
             List(
                 selection: viewStore.binding(
-                    get: \.selectedWordPair,
+                    get: \.selectedPairIndex,
                     send: EditReducer.Action.tapWordPairItem
                 )
             ) {
                 ForEach(
-                    viewStore.book.contents,
-                    content: listItem(for:)
-                ) 
+                    viewStore.book.contents.indices,
+                    id: \.self,
+                    content: { listItem(for: viewStore.book.contents[$0], at: $0) }
+                )
                 .onDelete(perform: { indexSet in
                     viewStore.send(.delete(at: indexSet))
                 })
@@ -50,7 +66,7 @@ public struct EditView: View {
         }
     }
     
-    private func listItem(for pair: DefaultWordPair) -> some View {
+    private func listItem(for pair: DefaultWordPair, at index: Int) -> some View {
         return VStack(
             alignment: .leading,
             content: {
@@ -61,7 +77,7 @@ public struct EditView: View {
                     .lineLimit(2)
             }
         )
-        .tag(pair)
+        .tag(index)
     }
 }
 

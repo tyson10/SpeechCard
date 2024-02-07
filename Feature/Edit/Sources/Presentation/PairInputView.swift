@@ -10,42 +10,66 @@ import SwiftUI
 import Domain
 
 public struct PairInputView<T: WordPairType>: View {
-    @Binding var wordPair: T
+    private var initialWordPair: T
+    
+    @State private var editing: T
+    
+    @Binding var updatedPair: T
+    @Binding var presented: Bool
+    
+    public init(
+        initialWordPair: T,
+        presented: Binding<Bool>
+    ) {
+        self.initialWordPair = initialWordPair
+        self._presented = presented
+        self._updatedPair = .constant(initialWordPair)
+        self._editing = .init(initialValue: initialWordPair)
+    }
     
     public var body: some View {
-        VStack(spacing: 0) {
-            ZStack(content: {
-                Color(.green)
+        NavigationView(content: {
+            VStack(spacing: 0) {
+                ZStack(content: {
+                    Color(.green)
+                    
+                    VStack(
+                        spacing: 20,
+                        content: {
+                            Text("Origin")
+                                .font(.title)
+                            
+                            TextEditor(text: $editing.origin)
+                                .background()
+                        }
+                    ).padding(10)
+                })
                 
-                VStack(
-                    spacing: 20,
-                    content: {
-                        Text("Origin")
-                            .font(.title)
-                        
-                        TextEditor(text: $wordPair.origin)
-                            .background()
+                ZStack(content: {
+                    Color(.orange)
+                    
+                    VStack(
+                        spacing: 20,
+                        content: {
+                            Text("Target")
+                                .font(.title)
+                            TextEditor(text: $editing.target)
+                        }
+                    ).padding(10)
+                })
+            }
+            .toolbar(content: {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("완료") {
+                        updatedPair = editing
+                        presented = false
                     }
-                ).padding(10)
+                }
             })
-            
-            ZStack(content: {
-                Color(.orange)
-                
-                VStack(
-                    spacing: 20,
-                    content: {
-                        Text("Target")
-                            .font(.title)
-                        TextEditor(text: $wordPair.target)
-                    }
-                ).padding(10)
-            })
-        }
-        
+        })
     }
 }
 
 #Preview {
-    PairInputView(wordPair: .constant(DefaultWordPair(origin: "", target: "")))
+    PairInputView(initialWordPair: DefaultWordPair(origin: "", target: ""), presented: .constant(false))
 }
