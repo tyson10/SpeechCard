@@ -26,7 +26,7 @@ public struct EditReducer {
         var newWordPair: DefaultWordPair?
         var presentingInputView = false
         
-//        var inputViewState = EditWordPairFeature.State()
+        var inputViewState = EditWordPairFeature.State()
         
         public init(book: BookVO) {
             self.book = book
@@ -35,6 +35,7 @@ public struct EditReducer {
     
     public typealias Action = ActionCase
     
+    @CasePathable
     public enum ActionCase {
         case inputBookName(String)
         case tapAddWords
@@ -44,13 +45,13 @@ public struct EditReducer {
         case setBookContents(DefaultWordPairs)
         case delete(at: IndexSet)
         
-//        case inputViewAction(EditWordPairFeature.Action)
+        case inputViewAction(EditWordPairFeature.Action)
     }
     
-    public var body: some Reducer<State, Action> {
-//        Scope(state: \.inputViewState, action: \.inputViewAction) {
-//            EditWordPairFeature()
-//        }
+    public var body: some ReducerOf<Self> {
+        Scope(state: \.inputViewState, action: \.inputViewAction) {
+            EditWordPairFeature()
+        }
         Reduce { state, action in
             print(action)
             switch action {
@@ -76,6 +77,8 @@ public struct EditReducer {
             
             case .delete(let indexSet):
                 state.book.contents.remove(atOffsets: indexSet)
+            default:
+                break
             }
             
             return .none

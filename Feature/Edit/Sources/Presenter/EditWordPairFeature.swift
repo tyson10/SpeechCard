@@ -27,4 +27,10 @@ public struct EditWordPairFeature {
         case cancel
         case complete
     }
+    
+    public var body: some ReducerOf<Self> {
+        Reduce { state, action in
+            return .none
+        }
+    }
 }
