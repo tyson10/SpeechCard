@@ -28,7 +28,7 @@ extension Project {
             var target: Target
             switch $0 {
             case .app:
-                target = Target(
+                target = .target(
                     name: name,
                     destinations: destinations,
                     product: .app,
@@ -40,7 +40,7 @@ extension Project {
                     settings: defaultSettings
                 )
             case .unitTests:
-                target = Target(
+                target = .target(
                     name: "\(name)Tests",
                     destinations: destinations,
                     product: .unitTests,
@@ -53,7 +53,7 @@ extension Project {
                     settings: defaultSettings
                 )
             case .uiTests:
-                target = Target(
+                target = .target(
                     name: "\(name)UITests",
                     destinations: destinations,
                     product: .unitTests,
@@ -66,7 +66,7 @@ extension Project {
                     settings: defaultSettings
                 )
             case .framework, .staticFramework:
-                target = Target(
+                target = .target(
                     name: name,
                     destinations: destinations,
                     product: $0,
@@ -78,7 +78,7 @@ extension Project {
                     settings: defaultSettings
                 )
             case .dynamicLibrary, .staticLibrary:
-                target = Target(
+                target = .target(
                     name: name,
                     destinations: destinations,
                     product: $0,
@@ -95,7 +95,7 @@ extension Project {
         }
         
         if includeDemoApp {
-            let target = Target(
+            let target: Target = .target(
                 name: "\(name)DemoApp",
                 destinations: destinations,
                 product: .app,
@@ -108,9 +108,9 @@ extension Project {
             )
             targets.append(target)
             
-            let scheme = Scheme(
+            let scheme: Scheme = .scheme(
               name: "\(name)DemoApp",
-              buildAction: .init(targets: ["\(name)DemoApp"]),
+              buildAction: .buildAction(targets: ["\(name)DemoApp"]),
               runAction: .runAction(executable: "\(name)DemoApp")
             )
             schemes.append(scheme)
