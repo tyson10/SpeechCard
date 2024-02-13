@@ -18,8 +18,8 @@ extension BookDTO {
     var domain: BookVO {
         return BookVO(
             name: name,
-            targetLangCode: targetLangCode,
-            originLangCode: originLangCode,
+            targetLanguage: Language(rawValue: targetLangCode)!,
+            originLanguage: Language(rawValue: originLangCode)!,
             contents: contents.map(\.domain)
         )
     }

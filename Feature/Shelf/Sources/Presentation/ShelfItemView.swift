@@ -10,7 +10,7 @@ import SwiftUI
 import Domain
 
 struct ShelfItemView: View {
-    @State private var book: BookVO
+    private let book: BookVO
     
     init(book: BookVO) {
         self.book = book

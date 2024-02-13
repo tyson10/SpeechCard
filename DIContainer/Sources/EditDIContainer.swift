@@ -30,8 +30,8 @@ public final class EditDIContainer: DIContainer {
         )
     }
     
-    public func makeReducer() -> EditViewReducer {
-        return EditViewReducer(useCase: makeUseCase())
+    public func makeReducer() -> EditReducer {
+        return EditReducer(useCase: makeUseCase())
     }
     
     public func makeUseCase() -> EditUseCase {
