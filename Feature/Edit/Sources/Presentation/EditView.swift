@@ -11,58 +11,42 @@ import ComposableArchitecture
 import Domain
 
 public struct EditView: View {
-    private let store: StoreOf<EditReducer>
+    @State private var store: StoreOf<EditReducer>
     
     public init(store: StoreOf<EditReducer>) {
         self.store = store
     }
     
     public var body: some View {
-        WithViewStore(store, observe: { $0 }) { viewStore in
-            TextField(
-                "책 이름",
-                text: viewStore.binding(
-                    get: \.book.name,
-                    send: EditReducer.Action.inputBookName
-                )
-            )
-            .font(.title)
-            .padding(20)
-            
-            Button("Add words", systemImage: "plus.circle") {
-                viewStore.send(.tapAddWords)
+        TextField(
+            "책 이름",
+            text: $store.book.name.sending(\.inputBookName)
+        )
+        .font(.title)
+        .padding(20)
+        
+        Button("Add words", systemImage: "plus.circle") {
+            store.send(.tapAddWords)
+        }
+        .sheet(
+            item: $store.scope(
+                state: \.inputViewState,
+                action: \.inputViewAction
+            ),
+            content: {
+                PairInputView<DefaultWordPair>(store: $0)
             }
-            .sheet(
-                isPresented: viewStore.binding(
-                    get: \.presentingInputView,
-                    send: EditReducer.Action.setIsPresentedInput
-                ),
-                content: {
-                    PairInputView(
-                        initialWordPair: viewStore.newWordPair ?? DefaultWordPair(origin: "", target: ""),
-                        presented: viewStore.binding(
-                            get: \.presentingInputView,
-                            send: EditReducer.Action.setIsPresentedInput
-                        )
-                    )
-                }
+        )
+        
+        List(selection: $store.selectedPairIndex.sending(\.tapWordPairItem)) {
+            ForEach(
+                store.book.contents.indices,
+                id: \.self,
+                content: { listItem(for: store.book.contents[$0], at: $0) }
             )
-            
-            List(
-                selection: viewStore.binding(
-                    get: \.selectedPairIndex,
-                    send: EditReducer.Action.tapWordPairItem
-                )
-            ) {
-                ForEach(
-                    viewStore.book.contents.indices,
-                    id: \.self,
-                    content: { listItem(for: viewStore.book.contents[$0], at: $0) }
-                )
-                .onDelete(perform: { indexSet in
-                    viewStore.send(.delete(at: indexSet))
-                })
-            }
+            .onDelete(perform: { indexSet in
+                store.send(.delete(at: indexSet))
+            })
         }
     }
     

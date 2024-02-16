@@ -20,23 +20,20 @@ public struct EditReducer {
         self.useCase = useCase
     }
     
+    @ObservableState
     public struct State: Equatable {
         var book: BookVO
         var selectedPairIndex: Int?
-        var newWordPair: DefaultWordPair?
-        var presentingInputView = false
         
-        var inputViewState = EditWordPairFeature.State()
+        @Presents var inputViewState: EditWordPairFeature<DefaultWordPair>.State?
         
         public init(book: BookVO) {
             self.book = book
         }
     }
     
-    public typealias Action = ActionCase
-    
     @CasePathable
-    public enum ActionCase {
+    public enum Action {
         case inputBookName(String)
         case tapAddWords
         case tapWordPairItem(Int?)
@@ -45,13 +42,10 @@ public struct EditReducer {
         case setBookContents(DefaultWordPairs)
         case delete(at: IndexSet)
         
-        case inputViewAction(EditWordPairFeature.Action)
+        case inputViewAction(PresentationAction<EditWordPairFeature<DefaultWordPair>.Action>)
     }
     
     public var body: some ReducerOf<Self> {
-        Scope(state: \.inputViewState, action: \.inputViewAction) {
-            EditWordPairFeature()
-        }
         Reduce { state, action in
             print(action)
             switch action {
@@ -59,18 +53,14 @@ public struct EditReducer {
                 state.book.name = name
                 
             case .tapAddWords:
-                state.newWordPair = DefaultWordPair(origin: "", target: "")
-                return .send(.setIsPresentedInput(true))
+                state.inputViewState = .init()
                 
-            case .tapWordPairItem(let pair):
-                state.selectedPairIndex = pair
-                return .send(.setIsPresentedInput(true))
+            case .tapWordPairItem(let index):
+                let selected = state.book.contents[index!]
+                state.inputViewState = .init(initialPair: selected)
                 
             case .append(let pair):
                 state.book.contents.append(pair)
-                
-            case .setIsPresentedInput(let isPresented):
-                state.presentingInputView = isPresented
                 
             case .setBookContents(let contents):
                 state.book.contents = contents
@@ -82,6 +72,9 @@ public struct EditReducer {
             }
             
             return .none
+        }
+        .ifLet(\.$inputViewState, action: \.inputViewAction) {
+            EditWordPairFeature()
         }
     }
 }
