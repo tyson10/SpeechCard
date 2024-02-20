@@ -12,7 +12,7 @@ import ComposableArchitecture
 import Domain
 
 @Reducer
-public struct EditReducer {
+public struct EditMainFeature {
     
     private let useCase: EditUseCase
     
@@ -67,6 +67,9 @@ public struct EditReducer {
             
             case .delete(let indexSet):
                 state.book.contents.remove(atOffsets: indexSet)
+            
+            case .inputViewAction(let presentaionAction):
+                handleInputViewAction(presentaionAction,state: &state)
             default:
                 break
             }
@@ -75,6 +78,27 @@ public struct EditReducer {
         }
         .ifLet(\.$inputViewState, action: \.inputViewAction) {
             EditWordPairFeature()
+        }
+    }
+    
+    private func handleInputViewAction(
+        _ action: PresentationAction<EditWordPairFeature<DefaultWordPair>.Action>,
+        state: inout State
+    ) {
+        switch action {
+        case .presented(let editAction):
+            switch editAction {
+            case .save:
+                if let index = state.selectedPairIndex, 
+                    let edited = state.inputViewState?.editingPair {
+                    state.book.contents[index] = edited
+                }
+            default:
+                break
+            }
+            
+        default:
+            break
         }
     }
 }

@@ -30,7 +30,7 @@ public struct EditWordPairFeature<T: WordPairType> {
     
     public enum Action {
         case cancel
-        case complete
+        case save
         case inputOrigin(String)
         case inputTarget(String)
     }
