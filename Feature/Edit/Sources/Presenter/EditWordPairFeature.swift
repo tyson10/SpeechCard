@@ -16,15 +16,12 @@ public struct EditWordPairFeature<T: WordPairType> {
     
     @ObservableState
     public struct State: Equatable {
-        var initialPair: T
-        var editingPair: T
+        var wordPair: T
         
         public init(
-            initialPair: T = DefaultWordPair(origin: "", target: ""),
-            editingPair: T = DefaultWordPair(origin: "", target: "")
+            initialPair: T = DefaultWordPair(origin: "", target: "")
         ) {
-            self.initialPair = initialPair
-            self.editingPair = editingPair
+            self.wordPair = initialPair
         }
     }
     
@@ -38,7 +35,14 @@ public struct EditWordPairFeature<T: WordPairType> {
     @Dependency(\.dismiss) var dismiss
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
-            print(action)
+            switch action {
+            case .inputOrigin(let input):
+                state.wordPair.origin = input
+            case .inputTarget(let input):
+                state.wordPair.target = input
+            default:
+                break
+            }
             return .none
         }
     }

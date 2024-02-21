@@ -38,9 +38,8 @@ public struct EditMainFeature {
         case tapAddWords
         case tapWordPairItem(Int?)
         case append(DefaultWordPair)
-        case setIsPresentedInput(Bool)
-        case setBookContents(DefaultWordPairs)
         case delete(at: IndexSet)
+        case save
         
         case inputViewAction(PresentationAction<EditWordPairFeature<DefaultWordPair>.Action>)
     }
@@ -58,20 +57,20 @@ public struct EditMainFeature {
             case .tapWordPairItem(let index):
                 let selected = state.book.contents[index!]
                 state.inputViewState = .init(initialPair: selected)
+                state.selectedPairIndex = index
                 
             case .append(let pair):
                 state.book.contents.append(pair)
-                
-            case .setBookContents(let contents):
-                state.book.contents = contents
             
             case .delete(let indexSet):
                 state.book.contents.remove(atOffsets: indexSet)
+                
+            case .save:
+                // TODO: 업데이트 or 추가 분기 구현 필요
+                useCase.add(book: state.book)
             
             case .inputViewAction(let presentaionAction):
                 handleInputViewAction(presentaionAction,state: &state)
-            default:
-                break
             }
             
             return .none
@@ -90,15 +89,17 @@ public struct EditMainFeature {
             switch editAction {
             case .save:
                 if let index = state.selectedPairIndex, 
-                    let edited = state.inputViewState?.editingPair {
+                    let edited = state.inputViewState?.wordPair {
                     state.book.contents[index] = edited
                 }
+                state.inputViewState = nil
+                state.selectedPairIndex = nil
             default:
                 break
             }
             
-        default:
-            break
+        case .dismiss:
+            state.selectedPairIndex = nil
         }
     }
 }

@@ -32,7 +32,7 @@ public struct PairInputView<T: WordPairType>: View {
                                 
                                 TextEditor(
                                     text: viewStore.binding(
-                                        get: \.editingPair.origin,
+                                        get: \.wordPair.origin,
                                         send: EditWordPairFeature.Action.inputOrigin
                                     )
                                 )
@@ -51,7 +51,7 @@ public struct PairInputView<T: WordPairType>: View {
                                 
                                 TextEditor(
                                     text: viewStore.binding(
-                                        get: \.editingPair.target,
+                                        get: \.wordPair.target,
                                         send: EditWordPairFeature.Action.inputTarget
                                     )
                                 )
