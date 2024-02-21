@@ -62,7 +62,7 @@ public struct PairInputView<T: WordPairType>: View {
                 .toolbar(content: {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("완료") {
-                            viewStore.send(.complete)
+                            viewStore.send(.save)
                         }
                     }
                 })
