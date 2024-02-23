@@ -18,36 +18,48 @@ public struct EditView: View {
     }
     
     public var body: some View {
-        TextField(
-            "책 이름",
-            text: $store.book.name.sending(\.inputBookName)
-        )
-        .font(.title)
-        .padding(20)
-        
-        Button("Add words", systemImage: "plus.circle") {
-            store.send(.tapAddWords)
-        }
-        .sheet(
-            item: $store.scope(
-                state: \.inputViewState,
-                action: \.inputViewAction
-            ),
+        NavigationView(
             content: {
-                PairInputView<DefaultWordPair>(store: $0)
+                mainView()
+                    .toolbar(content: toolBarContent)
             }
         )
-        
-        List(selection: $store.selectedPairIndex.sending(\.tapWordPairItem)) {
-            ForEach(
-                store.book.contents.indices,
-                id: \.self,
-                content: { listItem(for: store.book.contents[$0], at: $0) }
+    }
+    
+    @MainActor
+    private func mainView() -> some View {
+        return VStack(content: {
+            TextField(
+                "책 이름",
+                text: $store.book.name.sending(\.inputBookName)
             )
-            .onDelete(perform: { indexSet in
-                store.send(.delete(at: indexSet))
-            })
-        }
+            .font(.title)
+            .padding(20)
+            
+            Button("Add words", systemImage: "plus.circle") {
+                store.send(.tapAddWords)
+            }
+            .sheet(
+                item: $store.scope(
+                    state: \.inputViewState,
+                    action: \.inputViewAction
+                ),
+                content: {
+                    PairInputView<DefaultWordPair>(store: $0)
+                }
+            )
+            
+            List(selection: $store.selectedPairIndex.sending(\.tapWordPairItem)) {
+                ForEach(
+                    store.book.contents.indices,
+                    id: \.self,
+                    content: { listItem(for: store.book.contents[$0], at: $0) }
+                )
+                .onDelete(perform: { indexSet in
+                    store.send(.delete(at: indexSet))
+                })
+            }
+        })
     }
     
     private func listItem(for pair: DefaultWordPair, at index: Int) -> some View {
@@ -62,6 +74,14 @@ public struct EditView: View {
             }
         )
         .tag(index)
+    }
+    
+    private func toolBarContent() -> some ToolbarContent {
+        return ToolbarItem(placement: .topBarTrailing) {
+            Button("완료") {
+                store.send(.save)
+            }
+        }
     }
 }
 
