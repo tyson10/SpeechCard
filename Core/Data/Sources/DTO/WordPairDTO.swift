@@ -9,18 +9,16 @@ import Foundation
 
 import Domain
 
-struct WordPairDTO: WordPairType, Codable {
+struct WordPairDTO: Codable {
     public var origin: String
     public var target: String
-    public var createdAt: Date
 }
 
 extension WordPairDTO {
     var domain: DefaultWordPair {
         return DefaultWordPair(
             origin: origin,
-            target: target,
-            createdAt: createdAt
+            target: target
         )
     }
 }

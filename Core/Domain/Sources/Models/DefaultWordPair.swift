@@ -9,13 +9,15 @@ import Foundation
 
 public struct DefaultWordPair: WordPairType {
     
-    public init(origin: Language, target: Language, createdAt: Date) {
+    public var id = UUID()
+    public var origin: String
+    public var target: String
+    
+    public init(
+        origin: String,
+        target: String
+    ) {
         self.origin = origin
         self.target = target
-        self.createdAt = createdAt
     }
-    
-    public var origin: Language
-    public var target: Language
-    public var createdAt: Date
 }

@@ -13,9 +13,9 @@ public protocol ShelfUseCase {
 
 public class ShelfUseCaseImpl: ShelfUseCase {
     
-    private let repository: ShelfRepository
+    private let repository: BookRepository
     
-    public init(repository: ShelfRepository) {
+    public init(repository: BookRepository) {
         self.repository = repository
     }
     
@@ -24,7 +24,7 @@ public class ShelfUseCaseImpl: ShelfUseCase {
     }
     
     public func addBook(book: BookVO) {
-        repository.createBook(book: book)
+        repository.create(book: book)
     }
     
     public func deleteBook(name: String) {

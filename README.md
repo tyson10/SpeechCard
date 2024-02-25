@@ -32,8 +32,10 @@
 - SwiftUI
 - Combine
 - TCA
-- Tuist
+- Tuist(4.0.0)
 - Clean Architecture
+
+## [Trouble Shooting](Docs/TroubleShooting.md)
 
 ## TODO
 - SwiftData
