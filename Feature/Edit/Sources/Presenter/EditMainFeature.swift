@@ -14,10 +14,15 @@ import Domain
 @Reducer
 public struct EditMainFeature {
     
-    private let useCase: EditUseCase
+    private let shelfUseCase: ShelfUseCase
+    private let editUseCase: EditUseCase
     
-    public init(useCase: EditUseCase) {
-        self.useCase = useCase
+    public init(
+        shelfUseCase: ShelfUseCase,
+        editUseCase: EditUseCase
+    ) {
+        self.shelfUseCase = shelfUseCase
+        self.editUseCase = editUseCase
     }
     
     @ObservableState
@@ -78,9 +83,9 @@ public struct EditMainFeature {
                 
             case .tapComplete:
                 if state.mode == .edit {
-                    useCase.update(to: state.book)
+                    editUseCase.update(to: state.book)
                 } else {
-                    return .send(.save(new: state.book))
+                    shelfUseCase.addBook(book: state.book)
                 }
             
             case .inputViewAction(let presentaionAction):
