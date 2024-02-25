@@ -17,17 +17,22 @@ public struct EditWordPairFeature<T: WordPairType> {
     @ObservableState
     public struct State: Equatable {
         var wordPair: T
+        let index: Int?
         
         public init(
-            initialPair: T = DefaultWordPair(origin: "", target: "")
+            initialPair: T = DefaultWordPair(origin: "", target: ""),
+            index: Int? = nil
         ) {
             self.wordPair = initialPair
+            self.index = index
         }
     }
     
     public enum Action {
         case cancel
-        case save
+        case tapComplete
+        case update(index: Int)
+        case add
         case inputOrigin(String)
         case inputTarget(String)
     }
@@ -38,8 +43,17 @@ public struct EditWordPairFeature<T: WordPairType> {
             switch action {
             case .inputOrigin(let input):
                 state.wordPair.origin = input
+                
             case .inputTarget(let input):
                 state.wordPair.target = input
+                
+            case .tapComplete:
+                if let index = state.index {
+                    return .send(.update(index: index))
+                } else {
+                    return .send(.add)
+                }
+                
             default:
                 break
             }

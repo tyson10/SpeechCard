@@ -59,7 +59,7 @@ public struct PairInputView<T: WordPairType>: View {
     private func toolBarContent() -> some ToolbarContent {
         return ToolbarItem(placement: .topBarTrailing) {
             Button("완료") {
-                store.send(.save)
+                store.send(.tapComplete)
             }
         }
     }

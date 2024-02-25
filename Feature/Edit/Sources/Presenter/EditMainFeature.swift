@@ -56,8 +56,7 @@ public struct EditMainFeature {
                 
             case .tapWordPairItem(let index):
                 let selected = state.book.contents[index!]
-                state.inputViewState = .init(initialPair: selected)
-                state.selectedPairIndex = index
+                state.inputViewState = .init(initialPair: selected, index: index)
                 
             case .append(let pair):
                 state.book.contents.append(pair)
@@ -86,20 +85,25 @@ public struct EditMainFeature {
     ) {
         switch action {
         case .presented(let editAction):
+            guard let edited = state.inputViewState?.wordPair else { break }
+            
             switch editAction {
-            case .save:
-                if let index = state.selectedPairIndex, 
-                    let edited = state.inputViewState?.wordPair {
+            case .update:
+                if let index = state.inputViewState?.index {
                     state.book.contents[index] = edited
                 }
                 state.inputViewState = nil
-                state.selectedPairIndex = nil
+                
+            case .add:
+                state.book.contents.append(edited)
+                state.inputViewState = nil
+                
             default:
                 break
             }
             
         case .dismiss:
-            state.selectedPairIndex = nil
+            state.inputViewState = nil
         }
     }
 }
