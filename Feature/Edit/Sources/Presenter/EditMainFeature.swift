@@ -24,11 +24,20 @@ public struct EditMainFeature {
     public struct State: Equatable {
         var book: BookVO
         var selectedPairIndex: Int?
+        let mode: Mode
         
         @Presents var inputViewState: EditWordPairFeature<DefaultWordPair>.State?
         
-        public init(book: BookVO) {
+        public init(
+            book: BookVO,
+            mode: Mode = .edit
+        ) {
             self.book = book
+            self.mode = mode
+        }
+        
+        public enum Mode: Equatable {
+            case add, edit
         }
     }
     
@@ -39,7 +48,10 @@ public struct EditMainFeature {
         case tapWordPairItem(Int?)
         case append(DefaultWordPair)
         case delete(at: IndexSet)
-        case save
+        case tapComplete
+        
+        // TODO: Shelf 에서 저장하도록 전달.
+        case save(new: BookVO)
         
         case inputViewAction(PresentationAction<EditWordPairFeature<DefaultWordPair>.Action>)
     }
@@ -64,12 +76,18 @@ public struct EditMainFeature {
             case .delete(let indexSet):
                 state.book.contents.remove(atOffsets: indexSet)
                 
-            case .save:
-                // TODO: 업데이트 or 추가 분기 구현 필요
-                useCase.add(book: state.book)
+            case .tapComplete:
+                if state.mode == .edit {
+                    useCase.update(to: state.book)
+                } else {
+                    return .send(.save(new: state.book))
+                }
             
             case .inputViewAction(let presentaionAction):
                 handleInputViewAction(presentaionAction,state: &state)
+                
+            default:
+                break
             }
             
             return .none

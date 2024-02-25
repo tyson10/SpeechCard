@@ -6,7 +6,6 @@
 //
 
 public protocol EditUseCase {
-    func add(book: BookVO)
     func update(to book: BookVO)
 }
 
@@ -15,10 +14,6 @@ public class EditUseCaseImpl: EditUseCase {
     
     public init(repository: BookRepository) {
         self.repository = repository
-    }
-    
-    public func add(book: BookVO) {
-        repository.create(book: book)
     }
     
     public func update(to book: BookVO) {
