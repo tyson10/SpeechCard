@@ -7,14 +7,29 @@
 
 import Domain
 
+import SwiftData
+
+@Model
 public struct BookDTO {
-    var name: String
-    var targetLangCode: String
-    var originLangCode: String
-    var contents: WordPairsDTO
+    @Attribute(.unique) var name: String
+    public var targetLangCode: String
+    public var originLangCode: String
+    public var contents: WordPairsDTO
+    
+    public init(
+        name: String,
+        targetLangCode: String,
+        originLangCode: String,
+        contents: WordPairsDTO
+    ) {
+        self.name = name
+        self.targetLangCode = targetLangCode
+        self.originLangCode = originLangCode
+        self.contents = contents
+    }
 }
 
-extension BookDTO {
+public extension BookDTO {
     var domain: BookVO {
         return BookVO(
             name: name,

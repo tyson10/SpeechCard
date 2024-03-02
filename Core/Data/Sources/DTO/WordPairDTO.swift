@@ -9,12 +9,12 @@ import Foundation
 
 import Domain
 
-struct WordPairDTO: Codable {
+public struct WordPairDTO: Codable {
     public var origin: String
     public var target: String
 }
 
-extension WordPairDTO {
+public extension WordPairDTO {
     var domain: DefaultWordPair {
         return DefaultWordPair(
             origin: origin,
@@ -23,4 +23,4 @@ extension WordPairDTO {
     }
 }
 
-typealias WordPairsDTO = [WordPairDTO]
+public typealias WordPairsDTO = [WordPairDTO]
