@@ -86,5 +86,25 @@ public struct EditView: View {
 }
 
 #Preview {
-    EditView(store: .init(initialState: .init(book: BookVO(name: "", targetLanguage: .korean, originLanguage: .english, contents: [.init(origin: "origin", target: "target"), .init(origin: "https://chojang2.tistory.com/entry/다이소-스탠드", target: "target")])), reducer: { EditMainFeature(useCase: EditUseCaseStub()) }))
+    EditView(
+        store: .init(
+            initialState: .init(
+                book: BookVO(
+                    name: "",
+                    targetLanguage: .korean,
+                    originLanguage: .english,
+                    contents: [
+                        .init(origin: "origin", target: "target"),
+                        .init(origin: "https://chojang2.tistory.com/entry/다이소-스탠드", target: "target")
+                    ]
+                )
+            ),
+            reducer: {
+                EditMainFeature(
+                    shelfUseCase: ShelfUseCaseStub(),
+                    editUseCase: EditUseCaseStub()
+                )
+            }
+        )
+    )
 }
