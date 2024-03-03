@@ -6,9 +6,9 @@
 //
 
 public protocol ShelfUseCase {
-    func loadAllBooks() -> [BookVO]
-    func addBook(book: BookVO)
-    func deleteBook(name: String)
+    func loadAllBooks() throws -> [BookVO]
+    func addBook(book: BookVO) throws
+    func deleteBook(book: BookVO) throws
 }
 
 public class ShelfUseCaseImpl: ShelfUseCase {
@@ -19,15 +19,15 @@ public class ShelfUseCaseImpl: ShelfUseCase {
         self.repository = repository
     }
     
-    public func loadAllBooks() -> [BookVO] {
-        return repository.fetchAllBooks()
+    public func loadAllBooks() throws -> [BookVO] {
+        return try repository.fetchAllBooks()
     }
     
-    public func addBook(book: BookVO) {
-        repository.create(book: book)
+    public func addBook(book: BookVO) throws {
+        try repository.create(book: book)
     }
     
-    public func deleteBook(name: String) {
-        repository.deleteBook(name: name)
+    public func deleteBook(book: BookVO) throws {
+        try repository.delete(book: book)
     }
 }

@@ -6,8 +6,8 @@
 //
 
 public protocol BookRepository {
-    func fetchAllBooks() -> [BookVO]
-    func create(book: BookVO)
-    func deleteBook(name: String)
-    func update(book: BookVO)
+    func fetchAllBooks() throws -> [BookVO]
+    func create(book: BookVO) throws
+    func delete(book: BookVO) throws
+    func update(book: BookVO) throws
 }

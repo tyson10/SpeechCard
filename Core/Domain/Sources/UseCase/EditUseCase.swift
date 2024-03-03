@@ -6,7 +6,7 @@
 //
 
 public protocol EditUseCase {
-    func update(to book: BookVO)
+    func update(to book: BookVO) throws
 }
 
 public class EditUseCaseImpl: EditUseCase {
@@ -16,7 +16,7 @@ public class EditUseCaseImpl: EditUseCase {
         self.repository = repository
     }
     
-    public func update(to book: BookVO) {
-        repository.update(book: book)
+    public func update(to book: BookVO) throws {
+        try repository.update(book: book)
     }
 }
