@@ -22,8 +22,8 @@ struct ShelfApp: App {
         }
     }
     
-    private func makeFakeReducer() -> ShelfReducer {
-        return ShelfReducer(useCase: ShelfUseCaseStub())
+    private func makeFakeReducer() -> ShelfFeature {
+        return ShelfFeature(useCase: ShelfUseCaseStub())
     }
 }
 
@@ -31,8 +31,8 @@ struct ShelfApp: App {
 class ShelfUseCaseStub: ShelfUseCase {
     func loadAllBooks() -> [Domain.BookVO] {
         return [
-            BookVO(name: "Title1", targetLanguage: .english, originLanguage: .korean, contents: []),
-            BookVO(name: "Title2", targetLanguage: .english, originLanguage: .korean, contents: [])
+            BookVO(name: "Title1", targetLanguage: .english, originLanguage: .korean, contents: [], createdAt: Date()),
+            BookVO(name: "Title2", targetLanguage: .english, originLanguage: .korean, contents: [], createdAt: Date())
         ]
     }
     
@@ -40,7 +40,7 @@ class ShelfUseCaseStub: ShelfUseCase {
         
     }
     
-    func deleteBook(name: String) {
+    func deleteBook(book: BookVO) {
         
     }
 }

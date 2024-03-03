@@ -12,9 +12,9 @@ import ComposableArchitecture
 import Domain
 
 public struct ShelfView: View {
-    private let store: StoreOf<ShelfReducer>
+    private let store: StoreOf<ShelfFeature>
     
-    public init(store: StoreOf<ShelfReducer>) {
+    public init(store: StoreOf<ShelfFeature>) {
         self.store = store
     }
     
@@ -25,7 +25,7 @@ public struct ShelfView: View {
                     viewStore.books,
                     selection: viewStore.binding(
                         get: \.selectedBook,
-                        send: ShelfReducer.Action.itemSelected
+                        send: ShelfFeature.Action.itemSelected
                     )
                 ) { book in
                     
@@ -54,7 +54,7 @@ public struct ShelfView: View {
     ShelfView(
         store: .init(
             initialState: .init(),
-            reducer: { ShelfReducer(useCase: ShelfUseCaseStub()) }
+            reducer: { ShelfFeature(useCase: ShelfUseCaseStub()) }
         )
     )
 }

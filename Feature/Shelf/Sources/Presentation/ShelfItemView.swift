@@ -46,5 +46,5 @@ struct ShelfItemView: View {
 }
 
 #Preview {
-    ShelfItemView(book: BookVO(name: "Title1", targetLanguage: .english, originLanguage: .korean, contents: []))
+    ShelfItemView(book: BookVO(name: "Title1", targetLanguage: .english, originLanguage: .korean, contents: [], createdAt: Date()))
 }

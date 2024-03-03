@@ -11,8 +11,8 @@ import Domain
 
 import ComposableArchitecture
 
-//@Reducer
-public struct ShelfReducer: Reducer {
+@Reducer
+public struct ShelfFeature {
     
     private let useCase: ShelfUseCase
     
@@ -38,12 +38,16 @@ public struct ShelfReducer: Reducer {
         case setAllBooks([BookVO])
     }
     
-    public var body: some Reducer<State, Action> {
+    public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .loadBooks:
-                let allBooks = useCase.loadAllBooks()
-                return .send(.setAllBooks(allBooks))
+                do {
+                    let allBooks = try useCase.loadAllBooks()
+                    return .send(.setAllBooks(allBooks))
+                } catch {
+                    fatalError(error.localizedDescription)
+                }
                 
             case .itemSelected(let book):
                 print("책 선택: \(book?.name)")
