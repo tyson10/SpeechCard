@@ -15,21 +15,21 @@ public final class BookRepositoryImpl: BookRepository {
         self.dataSource = dataSource
     }
     
-    public func fetchAllBooks() -> [BookVO] {
-        return dataSource
+    public func fetchAllBooks() throws -> [BookVO] {
+        return try dataSource
             .fetchAllBooks()
             .map(\.domain)
     }
     
-    public func create(book: Domain.BookVO) {
-        
+    public func create(book: BookVO) throws {
+        try dataSource.insert(book: book.data)
     }
     
-    public func deleteBook(name: String) {
-        
+    public func delete(book: BookVO) throws {
+        try dataSource.delete(book: book.data)
     }
     
-    public func update(book: BookVO) {
-        
+    public func update(book: BookVO) throws {
+        try dataSource.update(to: book.data)
     }
 }

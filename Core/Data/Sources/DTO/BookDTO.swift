@@ -5,27 +5,31 @@
 //  Created by Taeyoung Son on 1/5/24.
 //
 
-import Domain
+import Foundation
 
+import Domain
 import SwiftData
 
 @Model
-public struct BookDTO {
+public class BookDTO {
     @Attribute(.unique) var name: String
     public var targetLangCode: String
     public var originLangCode: String
     public var contents: WordPairsDTO
+    public var createdAt: Date
     
     public init(
         name: String,
         targetLangCode: String,
         originLangCode: String,
-        contents: WordPairsDTO
+        contents: WordPairsDTO,
+        createdAt: Date = Date()
     ) {
         self.name = name
         self.targetLangCode = targetLangCode
         self.originLangCode = originLangCode
         self.contents = contents
+        self.createdAt = createdAt
     }
 }
 
@@ -35,7 +39,8 @@ public extension BookDTO {
             name: name,
             targetLanguage: Language(rawValue: targetLangCode)!,
             originLanguage: Language(rawValue: originLangCode)!,
-            contents: contents.map(\.domain)
+            contents: contents.map(\.domain), 
+            createdAt: createdAt
         )
     }
 }

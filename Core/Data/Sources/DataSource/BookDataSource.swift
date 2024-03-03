@@ -12,6 +12,7 @@ public protocol BookDataSource {
     func fetchAllBooks() throws -> [BookDTO]
     func insert(book: BookDTO) throws
     func delete(book: BookDTO) throws
+    func update(to book: BookDTO) throws
 }
 
 public class BookLocalDataSource: BookDataSource {
@@ -37,7 +38,8 @@ public class BookLocalDataSource: BookDataSource {
     }
     
     public func update(to book: BookDTO) throws {
-        let predicate = #Predicate<BookDTO> { $0.name == book.name }
+        let bookName = book.name
+        let predicate = #Predicate<BookDTO> { $0.name == bookName }
         let descriptor = FetchDescriptor<BookDTO>(predicate: predicate)
         
         if var old = try modelContext.fetch(descriptor).first {
