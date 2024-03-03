@@ -11,7 +11,7 @@ import SwiftData
 public protocol BookDataSource {
     func fetchAllBooks() throws -> [BookDTO]
     func insert(book: BookDTO) throws
-    func delete(book: BookDTO) throws
+    func deleteBook(name: String) throws
     func update(to book: BookDTO) throws
 }
 
@@ -32,8 +32,12 @@ public class BookLocalDataSource: BookDataSource {
         try modelContext.save()
     }
     
-    public func delete(book: BookDTO) throws {
-        modelContext.delete(book)
+    public func deleteBook(name: String) throws {
+        let predicate = #Predicate<BookDTO> { $0.name == name }
+        try modelContext.delete(
+            model: BookDTO.self,
+            where: predicate
+        )
         try modelContext.save()
     }
     

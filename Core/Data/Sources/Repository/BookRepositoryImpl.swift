@@ -26,7 +26,7 @@ public final class BookRepositoryImpl: BookRepository {
     }
     
     public func delete(book: BookVO) throws {
-        try dataSource.delete(book: book.data)
+        try dataSource.deleteBook(name: book.name)
     }
     
     public func update(book: BookVO) throws {
