@@ -15,17 +15,19 @@ public struct BookVO: Hashable, Identifiable {
     public var targetLanguage: Language
     public var originLanguage: Language
     public var contents: DefaultWordPairs
-    public var createdAt = Date()
+    public var createdAt: Date
     
     public init(
         name: String,
         targetLanguage: Language,
         originLanguage: Language,
-        contents: DefaultWordPairs
+        contents: DefaultWordPairs,
+        createdAt: Date
     ) {
         self.name = name
         self.targetLanguage = targetLanguage
         self.originLanguage = originLanguage
         self.contents = contents
+        self.createdAt = createdAt
     }
 }
