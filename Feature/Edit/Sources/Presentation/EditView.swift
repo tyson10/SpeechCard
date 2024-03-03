@@ -96,7 +96,8 @@ public struct EditView: View {
                     contents: [
                         .init(origin: "origin", target: "target"),
                         .init(origin: "https://chojang2.tistory.com/entry/다이소-스탠드", target: "target")
-                    ]
+                    ], 
+                    createdAt: Date()
                 )
             ),
             reducer: {

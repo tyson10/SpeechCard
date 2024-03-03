@@ -23,7 +23,8 @@ struct EditApp: App {
                             contents: [
                                 .init(origin: "origin", target: "target"),
                                 .init(origin: "https://chojang2.tistory.com/entry/다이소-스탠드", target: "target")
-                            ]
+                            ],
+                            createdAt: Date()
                         )
                     ),
                     reducer: {
@@ -41,16 +42,16 @@ struct EditApp: App {
 class ShelfUseCaseStub: ShelfUseCase {
     func loadAllBooks() -> [Domain.BookVO] {
         return [
-            BookVO(name: "Title1", targetLanguage: .english, originLanguage: .korean, contents: []),
-            BookVO(name: "Title2", targetLanguage: .english, originLanguage: .korean, contents: [])
+            BookVO(name: "Title1", targetLanguage: .english, originLanguage: .korean, contents: [], createdAt: Date()),
+            BookVO(name: "Title2", targetLanguage: .english, originLanguage: .korean, contents: [], createdAt: Date())
         ]
     }
     
-    func addBook(book: Domain.BookVO) {
+    func addBook(book: BookVO) {
         
     }
     
-    func deleteBook(name: String) {
+    func deleteBook(book: BookVO) {
         
     }
 }

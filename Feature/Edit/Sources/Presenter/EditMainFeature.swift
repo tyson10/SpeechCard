@@ -82,10 +82,14 @@ public struct EditMainFeature {
                 state.book.contents.remove(atOffsets: indexSet)
                 
             case .tapComplete:
-                if state.mode == .edit {
-                    editUseCase.update(to: state.book)
-                } else {
-                    shelfUseCase.addBook(book: state.book)
+                do {
+                    if state.mode == .edit {
+                        try editUseCase.update(to: state.book)
+                    } else {
+                        try shelfUseCase.addBook(book: state.book)
+                    }
+                } catch {
+                    fatalError(error.localizedDescription)
                 }
             
             case .inputViewAction(let presentaionAction):
