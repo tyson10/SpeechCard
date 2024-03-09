@@ -20,6 +20,7 @@ public struct ShelfFeature {
         self.useCase = useCase
     }
     
+    @ObservableState
     public struct State: Equatable {
         public init(books: [BookVO] = [BookVO]()) {
             self.books = books
@@ -29,6 +30,7 @@ public struct ShelfFeature {
         var selectedBook: BookVO?
     }
     
+    @CasePathable
     public enum Action {
         case loadBooks
         case itemSelected(BookVO?)
