@@ -5,6 +5,8 @@
 //  Created by Taeyoung Son on 1/17/24.
 //
 
+import ComposableArchitecture
+
 import Data
 import Domain
 import Shelf
@@ -12,21 +14,21 @@ import Shelf
 public final class ShelfDIContainer: DIContainer {
     private let datasource: BookDataSource
     
-    init(datasource: BookDataSource) {
+    public init(datasource: BookDataSource) {
         self.datasource = datasource
     }
     
-    public func makeView() -> ShelfView {
+    public func makeDefaultView() -> ShelfView {
         return ShelfView(
             store: .init(
                 initialState: .init(),
-                reducer: makeReducer
+                reducer: makeFeature
             )
         )
     }
     
-    public func makeReducer() -> ShelfReducer {
-        return ShelfReducer(useCase: makeUseCase())
+    public func makeFeature() -> ShelfFeature {
+        return ShelfFeature(useCase: makeUseCase())
     }
     
     public func makeUseCase() -> ShelfUseCase {

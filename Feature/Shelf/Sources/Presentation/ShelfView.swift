@@ -13,6 +13,7 @@ import Domain
 
 public struct ShelfView: View {
     @State private var store: StoreOf<ShelfFeature>
+    private var addAction: (() -> Void)?
     
     public init(store: StoreOf<ShelfFeature>) {
         self.store = store
@@ -35,12 +36,19 @@ public struct ShelfView: View {
             })
             .toolbar(content: {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Add Book", systemImage: "plus.circle") {
-                        // TODO: View에서 바로 EditView를 표시해도 되지만, 의존성이 커짐. 다른 방법이 있는지 확인 필요.
-                    }
+                    Button(
+                        "Add Book",
+                        systemImage: "plus.circle",
+                        action: { addAction?() }
+                    )
                 }
             })
         }
+    }
+    
+    public mutating func setAdd(action: @escaping () -> Void) -> Self {
+        self.addAction = action
+        return self
     }
 }
 

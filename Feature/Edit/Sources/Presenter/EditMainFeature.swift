@@ -35,15 +35,15 @@ public struct EditMainFeature {
         
         public init(
             book: BookVO,
-            mode: Mode = .edit
+            mode: Mode
         ) {
             self.book = book
             self.mode = mode
         }
-        
-        public enum Mode: Equatable {
-            case add, edit
-        }
+    }
+    
+    public enum Mode: Equatable {
+        case add, edit
     }
     
     @CasePathable

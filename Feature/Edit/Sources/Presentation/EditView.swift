@@ -98,7 +98,8 @@ public struct EditView: View {
                         .init(origin: "https://chojang2.tistory.com/entry/다이소-스탠드", target: "target")
                     ], 
                     createdAt: Date()
-                )
+                ),
+                mode: .edit
             ),
             reducer: {
                 EditMainFeature(
