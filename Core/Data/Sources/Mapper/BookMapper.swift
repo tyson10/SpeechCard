@@ -11,8 +11,8 @@ extension BookVO {
     var data: BookDTO {
         return BookDTO(
             name: name,
-            targetLangCode: targetLanguage.code,
-            originLangCode: originLanguage.code,
+            targetLangCode: targetLanguage.rawValue,
+            originLangCode: originLanguage.rawValue,
             contents: contents.map(\.data)
         )
     }

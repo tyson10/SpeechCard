@@ -19,7 +19,7 @@ public protocol BookDataSource {
 public class BookLocalDataSource: BookDataSource {
     private let modelContext: ModelContext
     
-    init() throws {
+    public init() throws {
         let container = try ModelContainer(for: BookDTO.self)
         modelContext = ModelContext(container)
     }

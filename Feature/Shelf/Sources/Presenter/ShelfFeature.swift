@@ -44,6 +44,7 @@ public struct ShelfFeature {
     
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
+            print(action)
             switch action {
             case .loadBooks:
                 do {
