@@ -43,7 +43,7 @@ public class BookLocalDataSource: BookDataSource {
             throw BookDataSourceError.emptyName
         } else if book.contents.isEmpty {
             throw BookDataSourceError.emptyContents
-        } else if try fetchBook(withName: book.name) == nil {
+        } else if try fetchBook(withName: book.name) != nil {
             throw BookDataSourceError.duplicated
         } else {
             modelContext.insert(book)
