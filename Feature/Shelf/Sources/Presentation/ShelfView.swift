@@ -20,14 +20,19 @@ public struct ShelfView: View {
     
     public var body: some View {
         NavigationView {
-            List(
-                store.books,
-                selection: $store.selectedBook.sending(\.itemSelected)
-            ) { book in
-                
-                ShelfItemView(book: book)
-                    .frame(height: 150)
-                    .tag(book)
+            List(selection: $store.selectedBook.sending(\.itemSelected)) {
+                 ForEach(store.books) { book in
+                    ShelfItemView(book: book)
+                        .frame(height: 150)
+                        .tag(book)
+                        .swipeActions(allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                store.send(.delete(book))
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                }
             }
             .navigationTitle("Shelf")
             .onAppear(perform: {

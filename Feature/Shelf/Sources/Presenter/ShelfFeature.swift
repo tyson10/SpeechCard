@@ -5,6 +5,7 @@
 //  Created by Taeyoung Son on 11/11/23.
 //
 
+import Foundation
 import Combine
 
 import Domain
@@ -36,6 +37,7 @@ public struct ShelfFeature {
         case itemSelected(BookVO?)
         case editItemSelected
         case addBookSelected
+        case delete(BookVO)
         
         case setAllBooks([BookVO])
     }
@@ -60,6 +62,13 @@ public struct ShelfFeature {
                 print("책 편집")
             case .addBookSelected:
                 print("책 추가")
+                
+            case .delete(let book):
+                do {
+                    try useCase.deleteBook(book: book)
+                } catch {
+                    fatalError(error.localizedDescription)
+                }
                 
             case .setAllBooks(let books):
                 state.books = books
