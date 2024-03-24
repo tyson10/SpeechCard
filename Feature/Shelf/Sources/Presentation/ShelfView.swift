@@ -21,33 +21,40 @@ public struct ShelfView: View {
     
     public var body: some View {
         NavigationView {
-            List(selection: $store.selectedBook.sending(\.itemSelected)) {
-                 ForEach(store.books) { book in
-                    ShelfItemView(book: book)
-                        .frame(height: 150)
-                        .tag(book)
-                        .swipeActions(allowsFullSwipe: false) {
-                            Button(role: .destructive) {
-                                store.send(.delete(book))
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                        }
-                }
-            }
+            List(
+                selection: $store.selectedBook.sending(\.itemSelected),
+                content: listContent
+            )
             .navigationTitle("Shelf")
             .onAppear(perform: {
                 store.send(.loadBooks)
             })
-            .toolbar(content: {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(
-                        "Add Book",
-                        systemImage: "plus.circle",
-                        action: { addAction?() }
-                    )
-                }
-            })
+            .toolbar(content: toolbarContent)
+        }
+    }
+    
+    private func listContent() -> some View {
+        return ForEach(store.books) { book in
+           ShelfItemView(book: book)
+               .frame(height: 150)
+               .tag(book)
+               .swipeActions(allowsFullSwipe: false) {
+                   Button(role: .destructive) {
+                       store.send(.delete(book))
+                   } label: {
+                       Label("Delete", systemImage: "trash")
+                   }
+               }
+       }
+    }
+    
+    private func toolbarContent() -> some ToolbarContent {
+        return ToolbarItem(placement: .topBarTrailing) {
+            Button(
+                "Add Book",
+                systemImage: "plus.circle",
+                action: { addAction?() }
+            )
         }
     }
     
