@@ -51,7 +51,7 @@ public struct ShelfFeature {
                     let allBooks = try useCase.loadAllBooks()
                     return .send(.setAllBooks(allBooks))
                 } catch {
-                    fatalError(error.localizedDescription)
+                    print("error: ", error)
                 }
                 
             case .itemSelected(let book):
@@ -68,7 +68,7 @@ public struct ShelfFeature {
                 do {
                     try useCase.deleteBook(book: book)
                 } catch {
-                    fatalError(error.localizedDescription)
+                    print("error: ", error)
                 }
                 
             case .setAllBooks(let books):

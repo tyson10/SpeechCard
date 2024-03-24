@@ -89,7 +89,7 @@ public struct EditMainFeature {
                         try shelfUseCase.addBook(book: state.book)
                     }
                 } catch {
-                    fatalError(error.localizedDescription)
+                    print("error: ", error)
                 }
             
             case .inputViewAction(let presentaionAction):
