@@ -67,6 +67,7 @@ public struct ShelfFeature {
             case .delete(let book):
                 do {
                     try useCase.deleteBook(book: book)
+                    return .send(.loadBooks)
                 } catch {
                     print("error: ", error)
                 }

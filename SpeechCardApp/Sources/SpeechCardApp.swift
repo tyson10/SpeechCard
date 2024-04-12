@@ -11,14 +11,13 @@ import ComposableArchitecture
 
 @main
 struct SpeechCardApp: App {
-    @State private var store: StoreOf<AppFeature>
+    @State private var store: StoreOf<AppFeature> = .init(initialState: .init(), reducer: { AppFeature() })
     
     private var bookDataSource: BookDataSource?
     private var shelfDIContainer: ShelfDIContainer?
     private var editDIContainer: EditDIContainer?
     
     init() {
-        store = .init(initialState: .init(), reducer: { AppFeature() })
         do {
             let dataSource = try BookLocalDataSource()
             bookDataSource = dataSource
@@ -37,7 +36,10 @@ struct SpeechCardApp: App {
                         store.send(.presentEdit(BookVO()))
                     })
                     .sheet(item: $store.editingBook.sending(\.presentEdit)) { book in
-                        editView(with: book)
+                        editView(
+                            with: book,
+                            mode: .add
+                        )
                     }
             }
         }
@@ -47,10 +49,13 @@ struct SpeechCardApp: App {
         return shelfDIContainer?.makeDefaultView()
     }
     
-    func editView(with book: BookVO) -> EditView? {
+    func editView(
+        with book: BookVO,
+        mode: EditMainFeature.Mode
+    ) -> EditView? {
         return editDIContainer?.makeView(
             with: book,
-            mode: .add
+            mode: mode
         )
     }
 }
