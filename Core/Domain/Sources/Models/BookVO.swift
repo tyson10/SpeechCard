@@ -31,3 +31,9 @@ public struct BookVO: Hashable, Identifiable {
         self.createdAt = createdAt
     }
 }
+
+public extension BookVO {
+    var isEmpty: Bool {
+        return name.isEmpty && contents.isEmpty
+    }
+}

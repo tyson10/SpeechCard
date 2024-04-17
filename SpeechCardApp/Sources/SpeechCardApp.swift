@@ -38,7 +38,7 @@ struct SpeechCardApp: App {
                     .sheet(item: $store.editingBook.sending(\.presentEdit)) { book in
                         editView(
                             with: book,
-                            mode: .add
+                            mode: book.isEmpty ? .add : .edit
                         )
                     }
             }
