@@ -44,3 +44,13 @@ class ShelfUseCaseStub: ShelfUseCase {
         
     }
 }
+
+class EditUseCaseStub: EditUseCase {
+    func add(book: Domain.BookVO) {
+        
+    }
+    
+    func update(to book: Domain.BookVO) {
+        
+    }
+}

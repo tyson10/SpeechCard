@@ -61,13 +61,6 @@ public extension TargetDependency.Project.Feature {
         )
     }
     
-    static var edit: TargetDependency {
-        .project(
-            target: "Edit",
-            path: .relativeToRoot("Feature/Edit")
-        )
-    }
-    
     static var practice: TargetDependency {
         .project(
             target: "Practice",

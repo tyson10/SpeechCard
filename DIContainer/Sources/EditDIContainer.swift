@@ -9,7 +9,8 @@ import Foundation
 
 import Data
 import Domain
-import Edit
+
+import Shelf
 
 public final class EditDIContainer: DIContainer {
     private let datasource: BookDataSource
