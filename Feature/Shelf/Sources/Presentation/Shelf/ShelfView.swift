@@ -31,6 +31,15 @@ public struct ShelfView: View {
             })
             .toolbar(content: toolbarContent)
         }
+        .sheet(
+            item: $store.scope(
+                state: \.editState,
+                action: \.editAction
+            ),
+            content: {
+                EditView(store: $0)
+            }
+        )
     }
     
     private func listContent() -> some View {
@@ -53,7 +62,7 @@ public struct ShelfView: View {
             Button(
                 "Add Book",
                 systemImage: "plus.circle",
-                action: { addAction?() }
+                action: { store.send(.addBookBtnTapped) }
             )
         }
     }

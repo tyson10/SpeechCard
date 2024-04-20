@@ -8,6 +8,7 @@
 public protocol ShelfUseCase {
     func loadAllBooks() throws -> [BookVO]
     func addBook(book: BookVO) throws
+    func update(to book: BookVO) throws
     func deleteBook(book: BookVO) throws
 }
 
@@ -25,6 +26,10 @@ public class ShelfUseCaseImpl: ShelfUseCase {
     
     public func addBook(book: BookVO) throws {
         try repository.create(book: book)
+    }
+    
+    public func update(to book: BookVO) throws {
+        try repository.update(book: book)
     }
     
     public func deleteBook(book: BookVO) throws {

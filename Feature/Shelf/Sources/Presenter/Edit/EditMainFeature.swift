@@ -14,17 +14,6 @@ import Domain
 @Reducer
 public struct EditMainFeature {
     
-    private let shelfUseCase: ShelfUseCase
-    private let editUseCase: EditUseCase
-    
-    public init(
-        shelfUseCase: ShelfUseCase,
-        editUseCase: EditUseCase
-    ) {
-        self.shelfUseCase = shelfUseCase
-        self.editUseCase = editUseCase
-    }
-    
     @ObservableState
     public struct State: Equatable {
         var book: BookVO
@@ -53,10 +42,12 @@ public struct EditMainFeature {
         case tapWordPairItem(Int?)
         case append(DefaultWordPair)
         case delete(at: IndexSet)
+        
         case tapComplete
         
         // TODO: Shelf 에서 저장하도록 전달.
         case save(new: BookVO)
+        case update(BookVO)
         
         case inputViewAction(PresentationAction<EditWordPairFeature<DefaultWordPair>.Action>)
     }
@@ -82,15 +73,9 @@ public struct EditMainFeature {
                 state.book.contents.remove(atOffsets: indexSet)
                 
             case .tapComplete:
-                do {
-                    if state.mode == .edit {
-                        try editUseCase.update(to: state.book)
-                    } else {
-                        try shelfUseCase.addBook(book: state.book)
-                    }
-                } catch {
-                    print("error: ", error)
-                }
+                return state.mode == .add ?
+                    .send(.save(new: state.book)) :
+                    .send(.update(state.book))
             
             case .inputViewAction(let presentaionAction):
                 handleInputViewAction(presentaionAction,state: &state)

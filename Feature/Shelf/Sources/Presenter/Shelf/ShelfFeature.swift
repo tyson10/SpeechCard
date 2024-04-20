@@ -23,23 +23,31 @@ public struct ShelfFeature {
     
     @ObservableState
     public struct State: Equatable {
-        public init(books: [BookVO] = [BookVO]()) {
-            self.books = books
-        }
+        @Presents var editState: EditMainFeature.State?
         
         var books = [BookVO]()
         var selectedBook: BookVO?
+        
+        var editPresented: Bool = false
+        
+        public init(books: [BookVO] = [BookVO]()) {
+            self.books = books
+        }
     }
     
     @CasePathable
     public enum Action {
+        case editAction(PresentationAction<EditMainFeature.Action>)
+        
         case loadBooks
         case itemSelected(BookVO?)
         case editItemSelected
-        case addBookSelected
+        case addBookBtnTapped
         case delete(BookVO)
         
         case setAllBooks([BookVO])
+        
+        case setEditPresented(Bool)
     }
     
     public var body: some ReducerOf<Self> {
@@ -61,8 +69,9 @@ public struct ShelfFeature {
                 
             case .editItemSelected:
                 print("책 편집")
-            case .addBookSelected:
-                print("책 추가")
+                
+            case .addBookBtnTapped:
+                state.editState = .init(book: BookVO(), mode: .add)
                 
             case .delete(let book):
                 do {
@@ -74,9 +83,40 @@ public struct ShelfFeature {
                 
             case .setAllBooks(let books):
                 state.books = books
+                
+            case .setEditPresented(let flag):
+                state.editPresented = flag
+                
+            case .editAction(let presentaionAction):
+                switch presentaionAction {
+                case .presented(let editAction):
+                    do {
+                        switch editAction {
+                        case .save(let newBook):
+                            try useCase.addBook(book: newBook)
+                            state.editState = nil
+                            return .send(.loadBooks)
+                            
+                        case .update(let book):
+                            try useCase.update(to: book)
+                            state.editState = nil
+                            return .send(.loadBooks)
+                            
+                        default:
+                            break
+                        }
+                    } catch {
+                        print(error)
+                    }
+                    
+                case .dismiss:
+                    break
+                }
             }
-            
             return .none
+        }
+        .ifLet(\.$editState, action: \.editAction) {
+            EditMainFeature()
         }
     }
 }

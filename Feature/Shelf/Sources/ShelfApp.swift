@@ -29,6 +29,10 @@ struct ShelfApp: App {
 
 
 class ShelfUseCaseStub: ShelfUseCase {
+    func update(to book: Domain.BookVO) throws {
+        
+    }
+    
     func loadAllBooks() -> [Domain.BookVO] {
         return [
             BookVO(name: "Title1", targetLanguage: .english, originLanguage: .korean, contents: [], createdAt: Date()),
@@ -41,16 +45,6 @@ class ShelfUseCaseStub: ShelfUseCase {
     }
     
     func deleteBook(book: BookVO) {
-        
-    }
-}
-
-class EditUseCaseStub: EditUseCase {
-    func add(book: Domain.BookVO) {
-        
-    }
-    
-    func update(to book: Domain.BookVO) {
         
     }
 }
