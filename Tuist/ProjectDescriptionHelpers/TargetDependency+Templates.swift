@@ -95,4 +95,8 @@ public extension TargetDependency.ThirdParty {
     static var lottie: TargetDependency {
         .external(name: "Lottie")
     }
+    
+    static var popUpView: TargetDependency {
+        .external(name: "PopupView")
+    }
 }
