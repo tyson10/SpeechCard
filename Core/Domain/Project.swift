@@ -13,5 +13,7 @@ let project = Project.create(
     products: [
         .staticLibrary
     ],
-    dependencies: []
+    dependencies: [
+        .Project.Utility.utility
+    ]
 )

@@ -13,6 +13,7 @@ extension TargetDependency {
         public struct CommonUI { }
         public struct Feature { }
         public struct DIContainer { }
+        public struct Utility { }
     }
     
     public struct ThirdParty { }
@@ -82,6 +83,16 @@ public extension TargetDependency.Project.DIContainer {
         .project(
             target: "DIContainer",
             path: .relativeToRoot("DIContainer")
+        )
+    }
+}
+
+// MARK: - Utility
+public extension TargetDependency.Project.Utility {
+    static var utility: TargetDependency {
+        .project(
+            target: "Utility",
+            path: .relativeToRoot("Utility")
         )
     }
 }

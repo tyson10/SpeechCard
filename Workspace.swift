@@ -18,6 +18,7 @@ let workspace = Workspace(
         "Feature/Shelf/**",
         "Feature/Practice/**",
         "Feature/Challenge/**",
-        "DIContainer/**"
+        "DIContainer/**",
+        "Utility/**"
     ]
 )
