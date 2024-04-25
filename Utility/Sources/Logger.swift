@@ -7,7 +7,7 @@
 
 import OSLog
 
-extension OSLog {
+public extension OSLog {
     static let subsystem = Bundle.main.bundleIdentifier!
     static let network = OSLog(subsystem: subsystem, category: "Network")
     static let debug = OSLog(subsystem: subsystem, category: "Debug")
@@ -15,7 +15,7 @@ extension OSLog {
     static let error = OSLog(subsystem: subsystem, category: "Error")
 }
 
-struct Log {
+public struct Log {
     static private var currentTimeString: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS XXX"
@@ -102,7 +102,7 @@ struct Log {
     }
 }
 
-extension Log {
+public extension Log {
     static func debug(
         file: String = #file,
         function: String = #function,
