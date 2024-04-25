@@ -9,6 +9,7 @@ import Foundation
 import Combine
 
 import Domain
+import Utility
 
 import ComposableArchitecture
 
@@ -52,23 +53,23 @@ public struct ShelfFeature {
     
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
-            print(action)
+            Log.debug(action)
             switch action {
             case .loadBooks:
                 do {
                     let allBooks = try useCase.loadAllBooks()
                     return .send(.setAllBooks(allBooks))
                 } catch {
-                    print("error: ", error)
+                    Log.error(error)
                 }
                 
             case .itemSelected(let book):
-                print("책 선택: \(book?.name)")
+                Log.debug("책 선택: \(book?.name)")
                 state.selectedBook = book
                 return .none
                 
             case .editItemSelected:
-                print("책 편집")
+                Log.debug("책 편집")
                 
             case .addBookBtnTapped:
                 state.editState = .init(book: BookVO(), mode: .add)
@@ -78,7 +79,7 @@ public struct ShelfFeature {
                     try useCase.deleteBook(book: book)
                     return .send(.loadBooks)
                 } catch {
-                    print("error: ", error)
+                    Log.error(error)
                 }
                 
             case .setAllBooks(let books):
@@ -106,7 +107,7 @@ public struct ShelfFeature {
                             break
                         }
                     } catch {
-                        print(error)
+                        Log.error(error)
                     }
                     
                 case .dismiss:

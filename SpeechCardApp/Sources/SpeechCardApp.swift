@@ -6,6 +6,8 @@ import DIContainer
 
 import Shelf
 
+import Utility
+
 import ComposableArchitecture
 
 @main
@@ -21,7 +23,7 @@ struct SpeechCardApp: App {
             bookDataSource = dataSource
             shelfDIContainer = ShelfDIContainer(datasource: dataSource)
         } catch {
-            print("BookLocalDataSource 생성 실패", error)
+            Log.error("BookLocalDataSource 생성 실패", error)
         }
     }
     

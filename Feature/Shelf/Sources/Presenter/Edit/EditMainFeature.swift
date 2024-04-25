@@ -10,6 +10,7 @@ import Foundation
 import ComposableArchitecture
 
 import Domain
+import Utility
 
 @Reducer
 public struct EditMainFeature {
@@ -54,7 +55,7 @@ public struct EditMainFeature {
     
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
-            print(action)
+            Log.debug(action)
             switch action {
             case .inputBookName(let name):
                 state.book.name = name
