@@ -18,16 +18,22 @@ public struct BookVO: Hashable, Identifiable {
     public var createdAt: Date
     
     public init(
-        name: String,
-        targetLanguage: Language,
-        originLanguage: Language,
-        contents: DefaultWordPairs,
-        createdAt: Date
+        name: String = "",
+        targetLanguage: Language = .english,
+        originLanguage: Language = .korean,
+        contents: DefaultWordPairs = [],
+        createdAt: Date = Date()
     ) {
         self.name = name
         self.targetLanguage = targetLanguage
         self.originLanguage = originLanguage
         self.contents = contents
         self.createdAt = createdAt
+    }
+}
+
+public extension BookVO {
+    var isEmpty: Bool {
+        return name.isEmpty && contents.isEmpty
     }
 }

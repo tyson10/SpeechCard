@@ -16,7 +16,6 @@ let project = Project.create(
     dependencies: [
         .Project.Core.data,
         .Project.Feature.shelf,
-        .Project.Feature.edit,
         .Project.Feature.practice,
         .Project.Feature.challenge
     ]

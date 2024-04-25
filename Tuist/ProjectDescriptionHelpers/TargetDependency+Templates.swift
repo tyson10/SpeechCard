@@ -13,6 +13,7 @@ extension TargetDependency {
         public struct CommonUI { }
         public struct Feature { }
         public struct DIContainer { }
+        public struct Utility { }
     }
     
     public struct ThirdParty { }
@@ -61,13 +62,6 @@ public extension TargetDependency.Project.Feature {
         )
     }
     
-    static var edit: TargetDependency {
-        .project(
-            target: "Edit",
-            path: .relativeToRoot("Feature/Edit")
-        )
-    }
-    
     static var practice: TargetDependency {
         .project(
             target: "Practice",
@@ -93,6 +87,16 @@ public extension TargetDependency.Project.DIContainer {
     }
 }
 
+// MARK: - Utility
+public extension TargetDependency.Project.Utility {
+    static var utility: TargetDependency {
+        .project(
+            target: "Utility",
+            path: .relativeToRoot("Utility")
+        )
+    }
+}
+
 // MARK: - Third Party
 public extension TargetDependency.ThirdParty {
     static var composableArchitecture: TargetDependency {
@@ -101,5 +105,9 @@ public extension TargetDependency.ThirdParty {
     
     static var lottie: TargetDependency {
         .external(name: "Lottie")
+    }
+    
+    static var popUpView: TargetDependency {
+        .external(name: "PopupView")
     }
 }

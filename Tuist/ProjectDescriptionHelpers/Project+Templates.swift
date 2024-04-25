@@ -13,6 +13,7 @@ extension Project {
         includeDemoApp: Bool = false
     ) -> Project {
         let destinations = Set([Destination.iPhone])
+        let deploymentTargets = DeploymentTargets.iOS("17.0")
         let infoPlist: [String: Plist.Value] = [
             "CFBundleShortVersionString": "1.0",
             "CFBundleVersion": "1",
@@ -33,6 +34,7 @@ extension Project {
                     destinations: destinations,
                     product: .app,
                     bundleId: "io.tuist.\(name)",
+                    deploymentTargets: deploymentTargets,
                     infoPlist: .extendingDefault(with: infoPlist),
                     sources: ["Sources/**"],
                     resources: ["Resources/**"],
@@ -45,6 +47,7 @@ extension Project {
                     destinations: destinations,
                     product: .unitTests,
                     bundleId: "io.tuist.\(name)Tests",
+                    deploymentTargets: deploymentTargets,
                     infoPlist: .default,
                     sources: ["Tests/**"],
                     dependencies: [
@@ -58,6 +61,7 @@ extension Project {
                     destinations: destinations,
                     product: .unitTests,
                     bundleId: "io.tuist.\(name)UITests",
+                    deploymentTargets: deploymentTargets,
                     infoPlist: .default,
                     sources: ["UITests/**"],
                     dependencies: [
@@ -71,6 +75,7 @@ extension Project {
                     destinations: destinations,
                     product: $0,
                     bundleId: "io.tuist.\(name)",
+                    deploymentTargets: deploymentTargets,
                     infoPlist: .extendingDefault(with: infoPlist),
                     sources: ["Sources/**"],
                     resources: $0 == .framework ? ["Targets/\(name)/Resources/**"] : nil,
@@ -83,6 +88,7 @@ extension Project {
                     destinations: destinations,
                     product: $0,
                     bundleId: "io.tuist.\(name)",
+                    deploymentTargets: deploymentTargets,
                     infoPlist: .extendingDefault(with: infoPlist),
                     sources: ["Sources/**"],
                     resources: nil,
@@ -100,6 +106,7 @@ extension Project {
                 destinations: destinations,
                 product: .app,
                 bundleId: "io.tuist.\(name)DemoApp",
+                deploymentTargets: deploymentTargets,
                 infoPlist: .extendingDefault(with: infoPlist),
                 sources: ["Sources/**"],
                 resources: ["Resources/**"],

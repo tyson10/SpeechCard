@@ -10,20 +10,10 @@ import Foundation
 import ComposableArchitecture
 
 import Domain
+import Utility
 
 @Reducer
 public struct EditMainFeature {
-    
-    private let shelfUseCase: ShelfUseCase
-    private let editUseCase: EditUseCase
-    
-    public init(
-        shelfUseCase: ShelfUseCase,
-        editUseCase: EditUseCase
-    ) {
-        self.shelfUseCase = shelfUseCase
-        self.editUseCase = editUseCase
-    }
     
     @ObservableState
     public struct State: Equatable {
@@ -35,15 +25,15 @@ public struct EditMainFeature {
         
         public init(
             book: BookVO,
-            mode: Mode = .edit
+            mode: Mode
         ) {
             self.book = book
             self.mode = mode
         }
-        
-        public enum Mode: Equatable {
-            case add, edit
-        }
+    }
+    
+    public enum Mode: Equatable {
+        case add, edit
     }
     
     @CasePathable
@@ -53,17 +43,19 @@ public struct EditMainFeature {
         case tapWordPairItem(Int?)
         case append(DefaultWordPair)
         case delete(at: IndexSet)
+        
         case tapComplete
         
         // TODO: Shelf 에서 저장하도록 전달.
         case save(new: BookVO)
+        case update(BookVO)
         
         case inputViewAction(PresentationAction<EditWordPairFeature<DefaultWordPair>.Action>)
     }
     
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
-            print(action)
+            Log.debug(action)
             switch action {
             case .inputBookName(let name):
                 state.book.name = name
@@ -82,15 +74,9 @@ public struct EditMainFeature {
                 state.book.contents.remove(atOffsets: indexSet)
                 
             case .tapComplete:
-                do {
-                    if state.mode == .edit {
-                        try editUseCase.update(to: state.book)
-                    } else {
-                        try shelfUseCase.addBook(book: state.book)
-                    }
-                } catch {
-                    fatalError(error.localizedDescription)
-                }
+                return state.mode == .add ?
+                    .send(.save(new: state.book)) :
+                    .send(.update(state.book))
             
             case .inputViewAction(let presentaionAction):
                 handleInputViewAction(presentaionAction,state: &state)
