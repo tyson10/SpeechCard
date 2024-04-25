@@ -64,9 +64,10 @@ public struct ShelfFeature {
                 }
                 
             case .itemSelected(let book):
-                Log.debug("책 선택: \(book?.name)")
-                state.selectedBook = book
-                return .none
+                if let book = book {
+                    state.selectedBook = book
+                    state.editState = .init(book: book, mode: .edit)
+                }
                 
             case .editItemSelected:
                 Log.debug("책 편집")
