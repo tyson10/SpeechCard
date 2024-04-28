@@ -27,7 +27,9 @@ public struct ShelfFeature {
         @Presents var editState: EditMainFeature.State?
         
         var books = [BookVO]()
+        
         var selectedBook: BookVO?
+        var editingBook: BookVO?
         
         var editPresented: Bool = false
         
@@ -42,7 +44,7 @@ public struct ShelfFeature {
         
         case loadBooks
         case itemSelected(BookVO?)
-        case editItemSelected
+        case editItemSelected(BookVO?)
         case addBookBtnTapped
         case delete(BookVO)
         
@@ -64,13 +66,14 @@ public struct ShelfFeature {
                 }
                 
             case .itemSelected(let book):
+                state.selectedBook = book
+                Log.debug("책 선택:", book?.name)
+                
+            case .editItemSelected(let book):
+                state.editingBook = book
                 if let book = book {
-                    state.selectedBook = book
                     state.editState = .init(book: book, mode: .edit)
                 }
-                
-            case .editItemSelected:
-                Log.debug("책 편집")
                 
             case .addBookBtnTapped:
                 state.editState = .init(book: BookVO(), mode: .add)

@@ -47,11 +47,17 @@ public struct ShelfView: View {
            ShelfItemView(book: book)
                .frame(height: 150)
                .tag(book)
-               .swipeActions(allowsFullSwipe: false) {
+               .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                    Button(role: .destructive) {
                        store.send(.delete(book))
                    } label: {
                        Label("Delete", systemImage: "trash")
+                   }
+               }.swipeActions(edge: .leading, allowsFullSwipe: false) {
+                   Button(role: .none) {
+                       store.send(.editItemSelected(book))
+                   } label: {
+                       Label("Edit", systemImage: "pencil")
                    }
                }
        }
