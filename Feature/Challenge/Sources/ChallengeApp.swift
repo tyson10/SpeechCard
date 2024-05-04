@@ -13,7 +13,7 @@ import Domain
 struct ShelfApp: App {
     var body: some Scene {
         WindowGroup {
-            ChallengeView()
+            ChallengeView(store: .init(initialState: .init(book: BookVO()), reducer: { ChallengeFeature() }))
         }
     }
 }
