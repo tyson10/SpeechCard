@@ -7,7 +7,7 @@
 
 import OSLog
 
-public extension OSLog {
+extension OSLog: @unchecked Sendable {
     static let subsystem = Bundle.main.bundleIdentifier!
     static let network = OSLog(subsystem: subsystem, category: "Network")
     static let debug = OSLog(subsystem: subsystem, category: "Debug")
