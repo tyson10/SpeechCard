@@ -10,7 +10,7 @@ import SwiftUI
 import Domain
 
 @main
-struct ShelfApp: App {
+struct ChallengeApp: App {
     var body: some Scene {
         WindowGroup {
             ChallengeView(store: .init(initialState: .init(book: BookVO()), reducer: { ChallengeFeature() }))
