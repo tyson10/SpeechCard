@@ -16,7 +16,7 @@ let project = Project.create(
         .uiTests
     ],
     dependencies: [
-        .Project.Core.domain,
+        .Project.CommonUI.ui,
         .ThirdParty.composableArchitecture
     ],
     includeDemoApp: true
