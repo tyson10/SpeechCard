@@ -10,16 +10,19 @@ extension Project {
         name: String,
         products: [Product],
         dependencies: [TargetDependency],
+        additionalInfo: [String: Plist.Value] = [:],
         includeDemoApp: Bool = false
     ) -> Project {
         let destinations = Set([Destination.iPhone])
         let deploymentTargets = DeploymentTargets.iOS("17.0")
-        let infoPlist: [String: Plist.Value] = [
+        let defaultInfoPlist: [String: Plist.Value] = [
             "CFBundleShortVersionString": "1.0",
             "CFBundleVersion": "1",
             "UIMainStoryboardFile": "",
             "UILaunchStoryboardName": "LaunchScreen"
-            ]
+        ]
+        let infoPlist = defaultInfoPlist.merging(additionalInfo) { (_, new) in new }
+        
         var targets = [Target]()
         var schemes = [Scheme]()
         // https://developer.apple.com/documentation/xcode/build-settings-reference 참조
