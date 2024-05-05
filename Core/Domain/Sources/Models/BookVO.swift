@@ -37,3 +37,9 @@ public extension BookVO {
         return name.isEmpty && contents.isEmpty
     }
 }
+
+extension BookVO: Comparable {
+    public static func < (lhs: BookVO, rhs: BookVO) -> Bool {
+        return lhs.createdAt < rhs.createdAt
+    }
+}

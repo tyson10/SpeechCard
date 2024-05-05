@@ -59,7 +59,7 @@ public struct ShelfFeature {
             switch action {
             case .loadBooks:
                 do {
-                    let allBooks = try useCase.loadAllBooks()
+                    let allBooks = try useCase.loadAllBooks().sorted(by: <)
                     return .send(.setAllBooks(allBooks))
                 } catch {
                     Log.error(error)
