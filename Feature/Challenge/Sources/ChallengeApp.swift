@@ -15,7 +15,7 @@ struct ChallengeApp: App {
         WindowGroup {
             ChallengeView(
                 store: .init(
-                    initialState: .init(book: BookVO()),
+                    initialState: .init(book: BookVO(contents: [.init(origin: "origin", target: "target")])),
                     reducer: { ChallengeFeature() }
                 )
             )

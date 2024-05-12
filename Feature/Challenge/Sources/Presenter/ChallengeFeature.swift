@@ -7,6 +7,7 @@
 
 import Domain
 import CommonUI
+import Utility
 
 import ComposableArchitecture
 
@@ -34,6 +35,9 @@ public struct ChallengeFeature<T: CardContent> {
     @CasePathable
     public enum Action {
         case set(card: T?)
+        case startRecord
+        case finishRecord
+        case showResult
     }
     
     public var body: some ReducerOf<Self> {
@@ -41,6 +45,8 @@ public struct ChallengeFeature<T: CardContent> {
             switch action {
             case .set(let content):
                 state.currentCardContent = content
+            default:
+                Log.info("액션 정의")
             }
             return .none
         }
