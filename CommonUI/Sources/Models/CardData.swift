@@ -7,12 +7,14 @@
 
 import SwiftUI
 
-public protocol CardContent: Equatable {
+public protocol CardData: Equatable {
     var word: String { get }
     var color: Color { get }
+    var countDown: Int { get }
 }
 
-public struct DefaultCardContent: CardContent {
+public struct DefaultCardData: CardData {
     public let word: String
     public let color: Color
+    public let countDown: Int
 }

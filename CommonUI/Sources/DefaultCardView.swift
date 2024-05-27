@@ -10,18 +10,18 @@ import SwiftUI
 import Domain
 
 public struct DefaultCardView: View {
-    @State private var content: (any CardContent)?
+    @State private var data: (any CardData)?
     
-    public init(content: some CardContent) {
-        self.content = content
+    public init(data: some CardData) {
+        self.data = data
     }
     
     public var body: some View {
-        if let content = content {
+        if let data = data {
             ZStack {
-                content.color
+                data.color
                 
-                Text(content.word)
+                Text(data.word)
             }
         }
     }

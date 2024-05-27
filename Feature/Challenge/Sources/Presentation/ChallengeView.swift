@@ -12,15 +12,22 @@ import CommonUI
 import ComposableArchitecture
 
 public struct ChallengeView: View {
-    @State private var store: StoreOf<ChallengeFeature<DefaultCardContent>>
+    @State private var store: StoreOf<ChallengeFeature<DefaultCardData>>
     
-    public init(store: StoreOf<ChallengeFeature<DefaultCardContent>>) {
+    public init(store: StoreOf<ChallengeFeature<DefaultCardData>>) {
         self.store = store
     }
     
     public var body: some View {
         if let content = store.currentCardContent {
-            DefaultCardView(content: content)
+            switch content {
+            case .origin(let data), .target(let data):
+                DefaultCardView(data: data)
+            case .custom:
+                // TODO: custom 처리
+                EmptyView()
+            }
+            
         }
     }
 }
