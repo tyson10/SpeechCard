@@ -13,6 +13,7 @@ import ComposableArchitecture
 
 @Reducer
 public struct ChallengeFeature<T: CardData> {
+    @Dependency(\.continuousClock) private var clock
     
     @ObservableState
     public struct State: Equatable {
@@ -39,6 +40,12 @@ public struct ChallengeFeature<T: CardData> {
         
         
         case setCardContent(CardContent<T>)
+        
+        case countDown(Int)
+        case setRemainedSeconds(Int)
+        
+        case timeOver
+        
         case startRecord
         case finishRecord
         case showResult
@@ -46,11 +53,73 @@ public struct ChallengeFeature<T: CardData> {
     
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
+            Log.info(action)
             switch action {
-            default:
-                Log.info("액션 정의")
+            case .entered:
+                return .send(.introduce)
+                
+            case .introduce:
+                return .send(.setCardContent(.introduce))
+                
+            case .setCardContent(let content):
+                state.currentCardContent = content
+                
+                switch content {
+                case .origin(let data):
+                    return .merge(
+                        .send(.startRecord),
+                        .send(.countDown(data.countDown))
+                    )
+                    
+                case .target(let data):
+                    return .merge(
+                        .send(.finishRecord),
+                        .send(.countDown(data.countDown))
+                    )
+                    
+                default:
+                    break
+                }
+                
+            case .countDown(let totalSeconds):
+                return runCountDown(from: totalSeconds)
+                
+            case .setRemainedSeconds(let seconds):
+                state.remainedSeconds = seconds
+                
+            case .timeOver:
+                break
+                
+            case .startRecord:
+                break
+                
+            case .finishRecord:
+                break
+            case .showResult:
+                break
+                
             }
             return .none
+        }
+    }
+    
+    private func runCountDown(from totalSeconds: Int) -> Effect<Action> {
+        return .run { @MainActor [clock] send in
+            send(.setRemainedSeconds(totalSeconds))
+            
+            var seconds = 0
+            for await _ in clock.timer(interval: .seconds(1)) {
+                seconds += 1
+                
+                let remainedSeconds = totalSeconds - seconds
+                
+                if remainedSeconds < 0 {
+                    send(.timeOver)
+                    break
+                } else {
+                    send(.setRemainedSeconds(remainedSeconds))
+                }
+            }
         }
     }
 }
