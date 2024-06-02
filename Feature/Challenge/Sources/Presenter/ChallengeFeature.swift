@@ -51,6 +51,10 @@ public struct ChallengeFeature<T: CardData> {
         case showResult
     }
     
+    public enum ID: String {
+        case cancelCountDown
+    }
+    
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             Log.info(action)
@@ -83,6 +87,7 @@ public struct ChallengeFeature<T: CardData> {
                 
             case .countDown(let totalSeconds):
                 return runCountDown(from: totalSeconds)
+                    .cancellable(id: ID.cancelCountDown)
                 
             case .setRemainedSeconds(let seconds):
                 state.remainedSeconds = seconds
@@ -94,7 +99,8 @@ public struct ChallengeFeature<T: CardData> {
                 break
                 
             case .finishRecord:
-                break
+                return .cancel(id: ID.cancelCountDown)
+                
             case .showResult:
                 break
                 
