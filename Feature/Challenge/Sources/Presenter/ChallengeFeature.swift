@@ -19,6 +19,8 @@ public struct ChallengeFeature<T: CardData> {
     public struct State: Equatable {
         private let book: BookVO
         
+        var bookContents: DefaultWordPairs
+        var currentBookContent: DefaultWordPair?
         var currentCardContent: CardContent<T>?
         var remainedSeconds: Int?
         
@@ -28,6 +30,7 @@ public struct ChallengeFeature<T: CardData> {
             remainedSeconds: Int? = nil
         ) {
             self.book = book
+            self.bookContents = book.contents
             self.currentCardContent = currentCardContent
             self.remainedSeconds = remainedSeconds
         }
@@ -37,7 +40,7 @@ public struct ChallengeFeature<T: CardData> {
     public enum Action {
         case entered
         case introduce
-        
+        case startChallenge
         
         case setCardContent(CardContent<T>)
         
@@ -65,6 +68,19 @@ public struct ChallengeFeature<T: CardData> {
             case .introduce:
                 return .send(.setCardContent(.introduce))
                 
+            case .startChallenge:
+                guard !state.bookContents.isEmpty else { break }
+                
+                let content = state.bookContents.removeFirst()
+                
+                return .send(
+                    .setCardContent(
+                        .origin(
+                            T(word: content.origin, color: .white, countDown: 7)
+                        )
+                    )
+                )
+                
             case .setCardContent(let content):
                 state.currentCardContent = content
                 
@@ -76,10 +92,7 @@ public struct ChallengeFeature<T: CardData> {
                     )
                     
                 case .target(let data):
-                    return .merge(
-                        .send(.finishRecord),
-                        .send(.countDown(data.countDown))
-                    )
+                    return .send(.countDown(data.countDown))
                     
                 default:
                     break
@@ -99,6 +112,7 @@ public struct ChallengeFeature<T: CardData> {
                 break
                 
             case .finishRecord:
+                // TODO: 타이머 태스크 취소, 마이크 off, target show
                 return .cancel(id: ID.cancelCountDown)
                 
             case .showResult:
