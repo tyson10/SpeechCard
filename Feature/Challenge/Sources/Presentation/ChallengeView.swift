@@ -23,8 +23,8 @@ public struct ChallengeView: View {
             switch content {
             case .origin(let data), .target(let data):
                 DefaultCardView(data: data)
-            case .custom:
-                // TODO: custom 처리
+            case .introduce:
+                // TODO: introduce 처리
                 EmptyView()
             }
             

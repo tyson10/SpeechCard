@@ -10,5 +10,5 @@ import SwiftUI
 public enum CardContent<T: CardData>: Equatable {
     case target(T)
     case origin(T)
-    case custom
+    case introduce
 }
