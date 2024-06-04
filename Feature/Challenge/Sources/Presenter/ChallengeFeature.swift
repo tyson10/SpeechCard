@@ -106,14 +106,23 @@ public struct ChallengeFeature<T: CardData> {
                 state.remainedSeconds = seconds
                 
             case .timeOver:
-                break
+                return .send(.finishRecord)
                 
             case .startRecord:
                 break
                 
             case .finishRecord:
-                // TODO: 타이머 태스크 취소, 마이크 off, target show
-                return .cancel(id: ID.cancelCountDown)
+                // TODO: + 마이크 off
+                guard let target = state.currentBookContent?.target else { break }
+                let data = T(
+                    word: target,
+                    color: .yellow,
+                    countDown: 5
+                )
+                return .concatenate(
+                    .cancel(id: ID.cancelCountDown),
+                    .send(.setCardContent(.target(data)))
+                )
                 
             case .showResult:
                 break
@@ -152,3 +161,12 @@ public struct ChallengeFeature<T: CardData> {
 ///  6. Speech가 끝나면 한국어(Origin language)가 나오면서 채점됨.(5초 딜레이, 카운트도 표시)
 ///  7. 4~6 반복
 ///  8. 다 끝나면 리스트로 오답노트 보여줌.
+
+/// 레코딩 시작시 해야할 것
+///
+///
+/// 레코딩 종료시 해야할 것
+/// 1. 레코더 종료
+/// 2. 결과 표시
+/// 3. 카운트 다운 종료 및 재시작
+/// 4.
