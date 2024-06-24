@@ -25,7 +25,7 @@ public struct ChallengeView: View {
                 DefaultCardView(data: data)
             case .introduce:
                 // TODO: introduce 처리
-                EmptyView()
+                IntroduceView()
             }
             
         }
