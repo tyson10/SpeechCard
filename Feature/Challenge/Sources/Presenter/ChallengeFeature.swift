@@ -15,6 +15,12 @@ import ComposableArchitecture
 public struct ChallengeFeature<T: CardData> {
     @Dependency(\.continuousClock) private var clock
     
+    private let speechRecognitionUseCase: SpeechRecognitionUseCase
+    
+    public init(speechRecognitionUseCase: SpeechRecognitionUseCase) {
+        self.speechRecognitionUseCase = speechRecognitionUseCase
+    }
+    
     @ObservableState
     public struct State: Equatable {
         private let book: BookVO
