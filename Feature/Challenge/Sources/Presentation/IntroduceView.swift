@@ -10,7 +10,7 @@ import SwiftUI
 public struct IntroduceView: View {
     
     public var body: some View {
-        EmptyView()
+        Text("Introduce")
     }
 }
 

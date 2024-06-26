@@ -5,7 +5,7 @@ import Domain
 import Extensions
 
 /// A helper for transcribing speech to text using SFSpeechRecognizer and AVAudioEngine.
-class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeService {
+public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeService {
     
     enum RecognizerError: Error {
         case nilRecognizer
@@ -24,7 +24,7 @@ class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeService {
     }
     
     private var transcriptSubject = PassthroughSubject<String, Error>()
-    var transcript: AnyPublisher<String, any Error> {
+    public var transcript: AnyPublisher<String, any Error> {
         return transcriptSubject.eraseToAnyPublisher()
     }
     
@@ -37,7 +37,7 @@ class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeService {
      Initializes a new speech recognizer. If this is the first time you've used the class, it
      requests access to the speech recognizer and the microphone.
      */
-    init() {
+    public init() {
         recognizer = SFSpeechRecognizer()
         guard recognizer != nil else {
             transcribe(RecognizerError.nilRecognizer)
@@ -58,11 +58,11 @@ class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeService {
         }
     }
     
-    func startTranscribe() {
+    public func startTranscribe() {
         transcribe()
     }
     
-    func stopTranscribe() {
+    public func stopTranscribe() {
         reset()
     }
     
