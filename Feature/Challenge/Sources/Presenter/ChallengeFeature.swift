@@ -43,7 +43,7 @@ public struct ChallengeFeature<T: CardData> {
     }
     
     @CasePathable
-    public enum Action {
+    public enum Action : Sendable{
         case entered
         case introduce
         case startChallenge
@@ -100,8 +100,11 @@ public struct ChallengeFeature<T: CardData> {
                 case .target(let data):
                     return .send(.countDown(data.countDown))
                     
-                default:
-                    break
+                case .introduce:
+                    return .run { send in
+                        try await Task.sleep(nanoseconds: 3_000_000_000)
+                        await send(.startChallenge)
+                    }
                 }
                 
             case .countDown(let totalSeconds):

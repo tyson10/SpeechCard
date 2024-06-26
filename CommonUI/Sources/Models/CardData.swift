@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public protocol CardData: Equatable {
+public protocol CardData: Equatable, Sendable {
     var word: String { get }
     var color: Color { get }
     var countDown: Int { get }

@@ -16,7 +16,7 @@ public protocol SpeechRecognitionUseCase {
 public class SpeSpeechRecognitionUseCaseImpl: SpeechRecognitionUseCase {
     private let service: SpeechRecognizeService
     
-    init(service: SpeechRecognizeService) {
+    public init(service: SpeechRecognizeService) {
         self.service = service
     }
     

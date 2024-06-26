@@ -11,10 +11,10 @@ import CommonUI
 
 import ComposableArchitecture
 
-public struct ChallengeView: View {
-    @State private var store: StoreOf<ChallengeFeature<DefaultCardData>>
+public struct ChallengeView<T: CardData>: View {
+    @State private var store: StoreOf<ChallengeFeature<T>>
     
-    public init(store: StoreOf<ChallengeFeature<DefaultCardData>>) {
+    public init(store: StoreOf<ChallengeFeature<T>>) {
         self.store = store
     }
     
@@ -24,7 +24,6 @@ public struct ChallengeView: View {
             case .origin(let data), .target(let data):
                 DefaultCardView(data: data)
             case .introduce:
-                // TODO: introduce 처리
                 IntroduceView()
             }
             
