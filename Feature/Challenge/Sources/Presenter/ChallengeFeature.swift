@@ -5,6 +5,8 @@
 //  Created by Taeyoung Son on 5/4/24.
 //
 
+import Combine
+
 import Domain
 import CommonUI
 import Utility
@@ -13,12 +15,15 @@ import ComposableArchitecture
 
 @Reducer
 public struct ChallengeFeature<T: CardData> {
+    private var bag = Set<AnyCancellable>()
+    
     @Dependency(\.continuousClock) private var clock
     
     private let speechRecognitionUseCase: SpeechRecognitionUseCase
     
     public init(speechRecognitionUseCase: SpeechRecognitionUseCase) {
         self.speechRecognitionUseCase = speechRecognitionUseCase
+        bindSpeechTranscript()
     }
     
     @ObservableState
@@ -52,6 +57,8 @@ public struct ChallengeFeature<T: CardData> {
         
         case countDown(Int)
         case setRemainedSeconds(Int)
+        
+        case receiveTranscript(String)
         
         case timeOver
         
@@ -136,6 +143,9 @@ public struct ChallengeFeature<T: CardData> {
             case .showResult:
                 break
                 
+            case .receiveTranscript(let transcript):
+                break
+                
             }
             return .none
         }
@@ -159,6 +169,21 @@ public struct ChallengeFeature<T: CardData> {
                 }
             }
         }
+    }
+    
+    private mutating func bindSpeechTranscript() {
+        speechRecognitionUseCase.transcript
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    Log.info("음성 인식 완료")
+                case .failure(let error):
+                    Log.error("음성 인식 에러", error)
+                }
+            } receiveValue: { transcript in
+                _ = Effect.send(Action.receiveTranscript(transcript))
+            }
+            .store(in: &bag)
     }
 }
 

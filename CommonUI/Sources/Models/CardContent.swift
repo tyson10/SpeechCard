@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public enum CardContent<T: CardData>: Equatable {
+public enum CardContent<T: CardData>: Equatable, Sendable {
     case target(T)
     case origin(T)
     case introduce
