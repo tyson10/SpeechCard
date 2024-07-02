@@ -13,7 +13,7 @@ public protocol SpeechRecognitionUseCase {
     func stopTranscribe()
 }
 
-public class SpeSpeechRecognitionUseCaseImpl: SpeechRecognitionUseCase {
+public class SpeechRecognitionUseCaseImpl: SpeechRecognitionUseCase {
     private let service: SpeechRecognizeService
     
     public init(service: SpeechRecognizeService) {

@@ -13,9 +13,14 @@ import CommonUI
 
 public final class ChallengeDIContainer<T: CardData>: DIContainer {
     private let book: BookVO
+    private let service: SpeechRecognizeService
     
-    public init(book: BookVO) {
+    public init(
+        book: BookVO,
+        service: SpeechRecognizeService
+    ) {
         self.book = book
+        self.service = service
     }
     
     public func makeDefaultView() -> ChallengeView<T> {
@@ -32,10 +37,10 @@ public final class ChallengeDIContainer<T: CardData>: DIContainer {
     }
     
     public func makeUseCase() -> SpeechRecognitionUseCase {
-        return SpeSpeechRecognitionUseCaseImpl(service: makeRepository())
+        return SpeechRecognitionUseCaseImpl(service: makeRepository())
     }
     
     public func makeRepository() -> SpeechRecognizeService {
-        return SpeechRecognizeServiceImpl()
+        return service
     }
 }
