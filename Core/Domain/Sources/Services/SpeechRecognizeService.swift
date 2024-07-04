@@ -8,7 +8,6 @@
 import Combine
 
 public protocol SpeechRecognizeService {
-    var transcript: AnyPublisher<String, Error> { get }
-    func startTranscribe()
+    func startTranscribe() -> AnyPublisher<String, Error>
     func stopTranscribe()
 }

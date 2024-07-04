@@ -23,7 +23,6 @@ public struct ChallengeFeature<T: CardData> {
     
     public init(speechRecognitionUseCase: SpeechRecognitionUseCase) {
         self.speechRecognitionUseCase = speechRecognitionUseCase
-        bindSpeechTranscript()
     }
     
     @ObservableState
@@ -126,6 +125,10 @@ public struct ChallengeFeature<T: CardData> {
                 
             case .startRecord:
                 break
+                // TODO: eraseToEffect의 대체자 확인 필요.
+//                return speechRecognitionUseCase.startTranscribe()
+//                    .map(Action.receiveTranscript)
+//                    .eraseToEffect()
                 
             case .finishRecord:
                 // TODO: + 마이크 off
@@ -169,21 +172,6 @@ public struct ChallengeFeature<T: CardData> {
                 }
             }
         }
-    }
-    
-    private mutating func bindSpeechTranscript() {
-        speechRecognitionUseCase.transcript
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    Log.info("음성 인식 완료")
-                case .failure(let error):
-                    Log.error("음성 인식 에러", error)
-                }
-            } receiveValue: { transcript in
-                _ = Effect.send(Action.receiveTranscript(transcript))
-            }
-            .store(in: &bag)
     }
 }
 

@@ -34,8 +34,8 @@ struct ChallengeApp: App {
 }
 
 fileprivate class FakeSpeechRecognizeService: SpeechRecognizeService {
-    var transcript: AnyPublisher<String, Error> = PassthroughSubject().eraseToAnyPublisher()
-    
-    func startTranscribe() { }
+    func startTranscribe() -> AnyPublisher<String, Error> {
+        return Empty(completeImmediately: false).eraseToAnyPublisher()
+    }
     func stopTranscribe() { }
 }

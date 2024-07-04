@@ -8,8 +8,7 @@
 import Combine
 
 public protocol SpeechRecognitionUseCase {
-    var transcript: AnyPublisher<String, Error> { get }
-    func startTranscribe()
+    func startTranscribe() -> AnyPublisher<String, Error>
     func stopTranscribe()
 }
 
@@ -20,12 +19,8 @@ public class SpeechRecognitionUseCaseImpl: SpeechRecognitionUseCase {
         self.service = service
     }
     
-    public var transcript: AnyPublisher<String, any Error> {
-        return service.transcript
-    }
-    
-    public func startTranscribe() {
-        service.startTranscribe()
+    public func startTranscribe() -> AnyPublisher<String, Error> {
+        return service.startTranscribe()
     }
     
     public func stopTranscribe() {

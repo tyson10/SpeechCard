@@ -58,8 +58,9 @@ public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeServic
         }
     }
     
-    public func startTranscribe() {
+    public func startTranscribe() -> AnyPublisher<String, any Error> {
         transcribe()
+        return transcript
     }
     
     public func stopTranscribe() {
