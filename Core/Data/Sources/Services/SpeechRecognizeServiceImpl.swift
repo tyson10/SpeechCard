@@ -4,25 +4,42 @@ import Combine
 import Domain
 import Extensions
 
-/// A helper for transcribing speech to text using SFSpeechRecognizer and AVAudioEngine.
-public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeService {
+// TODO: 권한 설정과 음성 인식을 분리. 둘 다 actor로 선언 필요.
+enum RecognizerError: Error {
+    case nilRecognizer
+    case notAuthorizedToRecognize
+    case notPermittedToRecord
+    case recognizerIsUnavailable
     
-    enum RecognizerError: Error {
-        case nilRecognizer
-        case notAuthorizedToRecognize
-        case notPermittedToRecord
-        case recognizerIsUnavailable
-        
-        var message: String {
-            switch self {
-            case .nilRecognizer: return "Can't initialize speech recognizer"
-            case .notAuthorizedToRecognize: return "Not authorized to recognize speech"
-            case .notPermittedToRecord: return "Not permitted to record audio"
-            case .recognizerIsUnavailable: return "Recognizer is unavailable"
-            }
+    var message: String {
+        switch self {
+        case .nilRecognizer: return "Can't initialize speech recognizer"
+        case .notAuthorizedToRecognize: return "Not authorized to recognize speech"
+        case .notPermittedToRecord: return "Not permitted to record audio"
+        case .recognizerIsUnavailable: return "Recognizer is unavailable"
         }
     }
+}
+
+public actor SpeechPermissionRepositoryImpl {
+    private let audioSession: AVAudioSession
     
+    init(audioSession: AVAudioSession = .sharedInstance()) {
+        self.audioSession = audioSession
+    }
+    
+    func check() async throws {
+        guard await SFSpeechRecognizer.hasAuthorizationToRecognize() else {
+            throw RecognizerError.notAuthorizedToRecognize
+        }
+        guard await audioSession.hasPermissionToRecord() else {
+            throw RecognizerError.notPermittedToRecord
+        }
+    }
+}
+
+/// A helper for transcribing speech to text using SFSpeechRecognizer and AVAudioEngine.
+public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeService {
     private var transcriptSubject = PassthroughSubject<String, Error>()
     public var transcript: AnyPublisher<String, any Error> {
         return transcriptSubject.eraseToAnyPublisher()
