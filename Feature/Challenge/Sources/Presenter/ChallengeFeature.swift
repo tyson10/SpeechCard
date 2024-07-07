@@ -58,6 +58,7 @@ public struct ChallengeFeature<T: CardData> {
         case setRemainedSeconds(Int)
         
         case receiveTranscript(String)
+        case recognitionError(Error)
         
         case timeOver
         
@@ -124,11 +125,7 @@ public struct ChallengeFeature<T: CardData> {
                 return .send(.finishRecord)
                 
             case .startRecord:
-                break
-                // TODO: eraseToEffect의 대체자 확인 필요.
-//                return speechRecognitionUseCase.startTranscribe()
-//                    .map(Action.receiveTranscript)
-//                    .eraseToEffect()
+                return .publisher(createTranscriptPublisher)
                 
             case .finishRecord:
                 // TODO: + 마이크 off
@@ -148,6 +145,10 @@ public struct ChallengeFeature<T: CardData> {
                 
             case .receiveTranscript(let transcript):
                 break
+                
+            case .recognitionError(let error):
+                Log.error(error)
+                return .send(.finishRecord)
                 
             }
             return .none
@@ -172,6 +173,17 @@ public struct ChallengeFeature<T: CardData> {
                 }
             }
         }
+    }
+    
+    private func createTranscriptPublisher() -> AnyPublisher<Action, Never> {
+        return speechRecognitionUseCase.startTranscribe()
+            .map({ script in
+                return .receiveTranscript(script)
+            })
+            .catch { error in
+                return Just(Action.recognitionError(error))
+            }
+            .eraseToAnyPublisher()
     }
 }
 
