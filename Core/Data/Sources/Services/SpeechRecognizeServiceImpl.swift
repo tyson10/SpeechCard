@@ -5,38 +5,8 @@ import Domain
 import Extensions
 
 // TODO: 권한 설정과 음성 인식을 분리. 둘 다 actor로 선언 필요.
-enum RecognizerError: Error {
-    case nilRecognizer
-    case notAuthorizedToRecognize
-    case notPermittedToRecord
-    case recognizerIsUnavailable
-    
-    var message: String {
-        switch self {
-        case .nilRecognizer: return "Can't initialize speech recognizer"
-        case .notAuthorizedToRecognize: return "Not authorized to recognize speech"
-        case .notPermittedToRecord: return "Not permitted to record audio"
-        case .recognizerIsUnavailable: return "Recognizer is unavailable"
-        }
-    }
-}
 
-public actor SpeechPermissionRepositoryImpl {
-    private let audioSession: AVAudioSession
-    
-    init(audioSession: AVAudioSession = .sharedInstance()) {
-        self.audioSession = audioSession
-    }
-    
-    func check() async throws {
-        guard await SFSpeechRecognizer.hasAuthorizationToRecognize() else {
-            throw RecognizerError.notAuthorizedToRecognize
-        }
-        guard await audioSession.hasPermissionToRecord() else {
-            throw RecognizerError.notPermittedToRecord
-        }
-    }
-}
+
 
 /// A helper for transcribing speech to text using SFSpeechRecognizer and AVAudioEngine.
 public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeService {
@@ -57,17 +27,17 @@ public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeServic
     public init() {
         recognizer = SFSpeechRecognizer()
         guard recognizer != nil else {
-            transcribe(RecognizerError.nilRecognizer)
+            transcribe(SpeechRecognizerError.nilRecognizer)
             return
         }
         
         Task {
             do {
                 guard await SFSpeechRecognizer.hasAuthorizationToRecognize() else {
-                    throw RecognizerError.notAuthorizedToRecognize
+                    throw SpeechRecognizerError.notAuthorizedToRecognize
                 }
                 guard await AVAudioSession.sharedInstance().hasPermissionToRecord() else {
-                    throw RecognizerError.notPermittedToRecord
+                    throw SpeechRecognizerError.notPermittedToRecord
                 }
             } catch {
                 transcribe(error)
@@ -94,7 +64,7 @@ public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeServic
     
     private func transcribe() {
         guard let recognizer, recognizer.isAvailable else {
-            self.transcribe(RecognizerError.recognizerIsUnavailable)
+            self.transcribe(SpeechRecognizerError.recognizerIsUnavailable)
             return
         }
         
