@@ -2,11 +2,6 @@ import Speech
 import Combine
 
 import Domain
-import Extensions
-
-// TODO: 권한 설정과 음성 인식을 분리. 둘 다 actor로 선언 필요.
-
-
 
 /// A helper for transcribing speech to text using SFSpeechRecognizer and AVAudioEngine.
 public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeService {
@@ -29,19 +24,6 @@ public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeServic
         guard recognizer != nil else {
             transcribe(SpeechRecognizerError.nilRecognizer)
             return
-        }
-        
-        Task {
-            do {
-                guard await SFSpeechRecognizer.hasAuthorizationToRecognize() else {
-                    throw SpeechRecognizerError.notAuthorizedToRecognize
-                }
-                guard await AVAudioSession.sharedInstance().hasPermissionToRecord() else {
-                    throw SpeechRecognizerError.notPermittedToRecord
-                }
-            } catch {
-                transcribe(error)
-            }
         }
     }
     
