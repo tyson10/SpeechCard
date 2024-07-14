@@ -19,10 +19,16 @@ public struct ChallengeFeature<T: CardData> {
     
     @Dependency(\.continuousClock) private var clock
     
+    // TODO: Dependency라는 propertyWrapper에 대해서 공부후 적용해 볼 필요 있음.
     private let speechRecognitionUseCase: SpeechRecognitionUseCase
+    private let speechPermissionUseCase: SpeechRecognitionPermissionUseCase
     
-    public init(speechRecognitionUseCase: SpeechRecognitionUseCase) {
+    public init(
+        speechRecognitionUseCase: SpeechRecognitionUseCase,
+        speechPermissionUseCase: SpeechRecognitionPermissionUseCase
+    ) {
         self.speechRecognitionUseCase = speechRecognitionUseCase
+        self.speechPermissionUseCase = speechPermissionUseCase
     }
     
     @ObservableState
@@ -49,6 +55,10 @@ public struct ChallengeFeature<T: CardData> {
     @CasePathable
     public enum Action : Sendable{
         case entered
+        
+        case checkPermission
+        case requestAuthorization
+        
         case introduce
         case startChallenge
         
@@ -76,7 +86,25 @@ public struct ChallengeFeature<T: CardData> {
             Log.info(action)
             switch action {
             case .entered:
-                return .send(.introduce)
+                return .send(.checkPermission)
+                
+            case .checkPermission:
+                if speechPermissionUseCase.isAuthorized {
+                    return .send(.introduce)
+                } else {
+                    return .send(.requestAuthorization)
+                }
+                
+            case .requestAuthorization:
+                return .run { send in
+                    do {
+                        try await speechPermissionUseCase.request()
+                        await send(.introduce)
+                    } catch {
+                        // TODO: 권한 설정에 에러가 있으므로 챌린지 사용 불가. 화면 탈출.
+                        Log.error(error)
+                    }
+                }
                 
             case .introduce:
                 return .send(.setCardContent(.introduce))
@@ -187,6 +215,7 @@ public struct ChallengeFeature<T: CardData> {
     }
 }
 
+///  0. 권한 확인 및 요청. 권한 설정이 제대로 되지 않으면 탈출
 ///  1. 챌린지 입장
 ///  2. 안내 화면 표시(Start, Cancel 버튼이 있음)
 ///  3, 카운트 다운 3, 2, 1

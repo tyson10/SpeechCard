@@ -9,12 +9,12 @@ import Speech
 
 import Extensions
 
-public protocol SpeechPermissionUseCase {
+public protocol SpeechRecognitionPermissionUseCase {
     var isAuthorized: Bool { get }
     func request() async throws
 }
 
-public class SpeechPermissionUseCaseImpl: SpeechPermissionUseCase {
+public class SpeechRecognitionPermissionUseCaseImpl: SpeechRecognitionPermissionUseCase {
     private let audioApplication: AVAudioApplication
     
     public var isAuthorized: Bool {
