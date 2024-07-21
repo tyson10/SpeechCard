@@ -14,6 +14,7 @@ let project = Project.create(
         .staticLibrary
     ],
     dependencies: [
-        .Project.Utility.utility
+        .Project.Utility.utility,
+        .Project.Core.extensions
     ]
 )
