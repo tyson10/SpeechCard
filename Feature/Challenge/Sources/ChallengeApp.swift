@@ -22,11 +22,11 @@ struct ChallengeApp: App {
                     ),
                     reducer: { 
                         ChallengeFeature(
-                            speechRecognitionUseCase: SpeechRecognitionUseCaseImpl(
-                                service: FakeSpeechRecognizeService()
-                            ),
                             speechPermissionUseCase: SpeechRecognitionPermissionUseCaseImpl()
                         )
+                    },
+                    withDependencies: {
+                        $0.speechRecognition = SpeechRecognitionUseCaseImpl(service: FakeSpeechRecognizeService())
                     }
                 )
             )
@@ -34,7 +34,7 @@ struct ChallengeApp: App {
     }
 }
 
-fileprivate class FakeSpeechRecognizeService: SpeechRecognizeService {
+ class FakeSpeechRecognizeService: SpeechRecognizeService {
     func startTranscribe() -> AnyPublisher<String, Error> {
         return Empty(completeImmediately: false).eraseToAnyPublisher()
     }

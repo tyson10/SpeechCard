@@ -20,14 +20,12 @@ public struct ChallengeFeature<T: CardData> {
     @Dependency(\.continuousClock) private var clock
     
     // TODO: Dependency라는 propertyWrapper에 대해서 공부후 적용해 볼 필요 있음.
-    private let speechRecognitionUseCase: SpeechRecognitionUseCase
+    @Dependency(\.speechRecognition) private var speechRecognitionUseCase: SpeechRecognitionUseCase
     private let speechPermissionUseCase: SpeechRecognitionPermissionUseCase
     
     public init(
-        speechRecognitionUseCase: SpeechRecognitionUseCase,
         speechPermissionUseCase: SpeechRecognitionPermissionUseCase
     ) {
-        self.speechRecognitionUseCase = speechRecognitionUseCase
         self.speechPermissionUseCase = speechPermissionUseCase
     }
     
