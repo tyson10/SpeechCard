@@ -24,7 +24,8 @@ struct ChallengeApp: App {
                         ChallengeFeature(
                             speechRecognitionUseCase: SpeechRecognitionUseCaseImpl(
                                 service: FakeSpeechRecognizeService()
-                            )
+                            ),
+                            speechPermissionUseCase: SpeechRecognitionPermissionUseCaseImpl()
                         )
                     }
                 )
