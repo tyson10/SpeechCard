@@ -95,13 +95,10 @@ public struct ChallengeFeature<T: CardData> {
                 
             case .requestAuthorization:
                 return .run { send in
-                    do {
-                        try await speechPermissionUseCase.request()
-                        await send(.introduce)
-                    } catch {
-                        // TODO: 권한 설정에 에러가 있으므로 챌린지 사용 불가. 화면 탈출.
-                        Log.error(error)
-                    }
+                    try await speechPermissionUseCase.request()
+                    await send(.introduce)
+                } catch: { error, send in
+                    Log.error(error)
                 }
                 
             case .introduce:
