@@ -26,7 +26,7 @@ struct ChallengeApp: App {
                         )
                     },
                     withDependencies: {
-                        $0.speechRecognition = SpeechRecognitionUseCaseImpl(service: FakeSpeechRecognizeService())
+                        $0.speechRecognitionUseCase = SpeechRecognitionUseCaseImpl(service: FakeSpeechRecognizeService())
                     }
                 )
             )
@@ -34,7 +34,7 @@ struct ChallengeApp: App {
     }
 }
 
- class FakeSpeechRecognizeService: SpeechRecognizeService {
+ final class FakeSpeechRecognizeService: SpeechRecognizeService {
     func startTranscribe() -> AnyPublisher<String, Error> {
         return Empty(completeImmediately: false).eraseToAnyPublisher()
     }

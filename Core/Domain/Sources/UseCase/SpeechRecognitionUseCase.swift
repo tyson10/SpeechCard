@@ -7,23 +7,25 @@
 
 import Combine
 
-public protocol SpeechRecognitionUseCase {
-    func startTranscribe() -> AnyPublisher<String, Error>
-    func stopTranscribe()
+public protocol SpeechRecognitionUseCase: Sendable {
+    var startTranscribe: @Sendable () -> AnyPublisher<String, Error> { get set }
+    var stopTranscribe: @Sendable () -> Void { get set }
 }
 
-public class SpeechRecognitionUseCaseImpl: SpeechRecognitionUseCase {
+public struct SpeechRecognitionUseCaseImpl: SpeechRecognitionUseCase {
     private let service: SpeechRecognizeService
+    public var startTranscribe: @Sendable () -> AnyPublisher<String, any Error>
+    public var stopTranscribe: @Sendable () -> Void
     
     public init(service: SpeechRecognizeService) {
         self.service = service
-    }
-    
-    public func startTranscribe() -> AnyPublisher<String, Error> {
-        return service.startTranscribe()
-    }
-    
-    public func stopTranscribe() {
-        service.stopTranscribe()
+        
+        startTranscribe = {
+            return service.startTranscribe()
+        }
+        
+        stopTranscribe = {
+            service.stopTranscribe()
+        }
     }
 }

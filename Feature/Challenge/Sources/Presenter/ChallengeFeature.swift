@@ -10,6 +10,7 @@ import Combine
 import Domain
 import CommonUI
 import Utility
+import AppDependencies
 
 import ComposableArchitecture
 
@@ -18,9 +19,7 @@ public struct ChallengeFeature<T: CardData> {
     private var bag = Set<AnyCancellable>()
     
     @Dependency(\.continuousClock) private var clock
-    
-    // TODO: Dependency라는 propertyWrapper에 대해서 공부후 적용해 볼 필요 있음.
-    @Dependency(\.speechRecognition) private var speechRecognitionUseCase: SpeechRecognitionUseCase
+    @Dependency(\.speechRecognitionUseCase) private var speechRecognitionUseCase: SpeechRecognitionUseCase
     private let speechPermissionUseCase: SpeechRecognitionPermissionUseCase
     
     public init(

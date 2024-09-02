@@ -7,7 +7,7 @@
 
 import Combine
 
-public protocol SpeechRecognizeService {
+public protocol SpeechRecognizeService: Sendable {
     func startTranscribe() -> AnyPublisher<String, Error>
     func stopTranscribe()
 }

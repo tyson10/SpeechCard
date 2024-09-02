@@ -17,7 +17,7 @@ let project = Project.create(
     ],
     dependencies: [
         .Project.CommonUI.ui,
-        .ThirdParty.composableArchitecture
+        .Project.AppDependencies.appDependencies
     ],
     // TODO: 로컬라이징
     additionalInfo: [
