@@ -15,9 +15,7 @@ import AppDependencies
 import ComposableArchitecture
 
 @Reducer
-public struct ChallengeFeature<T: CardData> {
-    private var bag = Set<AnyCancellable>()
-    
+public struct ChallengeFeature<T: CardData>: Sendable {
     @Dependency(\.continuousClock) private var clock
     @Dependency(\.speechRecognitionUseCase) private var speechRecognitionUseCase: SpeechRecognitionUseCase
     @Dependency(\.speechRecognitionPermissionUseCase) private var speechRecognitionPermissionUseCase: SpeechRecognitionPermissionUseCase
