@@ -9,13 +9,15 @@ import Speech
 
 import Extensions
 
-public protocol SpeechRecognitionPermissionUseCase {
+public protocol SpeechRecognitionPermissionUseCase: Sendable {
     var isAuthorized: Bool { get }
-    func request() async throws
+    var request: @Sendable () async throws -> Void { get set }
 }
 
-public class SpeechRecognitionPermissionUseCaseImpl: SpeechRecognitionPermissionUseCase {
+public struct SpeechRecognitionPermissionUseCaseImpl: SpeechRecognitionPermissionUseCase {
+    // TODO: Sendable 준수하는 녀석으로 래핑해서 참조하도록 수정
     private let audioApplication: AVAudioApplication
+    public var request: @Sendable () async throws -> Void
     
     public var isAuthorized: Bool {
         return SFSpeechRecognizer.authorizationStatus() == .authorized &&
@@ -24,14 +26,14 @@ public class SpeechRecognitionPermissionUseCaseImpl: SpeechRecognitionPermission
     
     public init(audioSession: AVAudioApplication = .shared) {
         self.audioApplication = audioSession
-    }
-    
-    public func request() async throws {
-        guard await SFSpeechRecognizer.hasAuthorizationToRecognize() else {
-            throw SpeechRecognizerError.notAuthorizedToRecognize
-        }
-        guard await AVAudioApplication.requestRecordPermission() else {
-            throw SpeechRecognizerError.notPermittedToRecord
+        
+        request = {
+            guard await SFSpeechRecognizer.hasAuthorizationToRecognize() else {
+                throw SpeechRecognizerError.notAuthorizedToRecognize
+            }
+            guard await AVAudioApplication.requestRecordPermission() else {
+                throw SpeechRecognizerError.notPermittedToRecord
+            }
         }
     }
 }

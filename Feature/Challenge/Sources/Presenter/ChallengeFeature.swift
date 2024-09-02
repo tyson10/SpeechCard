@@ -20,13 +20,7 @@ public struct ChallengeFeature<T: CardData> {
     
     @Dependency(\.continuousClock) private var clock
     @Dependency(\.speechRecognitionUseCase) private var speechRecognitionUseCase: SpeechRecognitionUseCase
-    private let speechPermissionUseCase: SpeechRecognitionPermissionUseCase
-    
-    public init(
-        speechPermissionUseCase: SpeechRecognitionPermissionUseCase
-    ) {
-        self.speechPermissionUseCase = speechPermissionUseCase
-    }
+    @Dependency(\.speechRecognitionPermissionUseCase) private var speechRecognitionPermissionUseCase: SpeechRecognitionPermissionUseCase
     
     @ObservableState
     public struct State: Equatable {
@@ -86,7 +80,7 @@ public struct ChallengeFeature<T: CardData> {
                 return .send(.checkPermission)
                 
             case .checkPermission:
-                if speechPermissionUseCase.isAuthorized {
+                if speechRecognitionPermissionUseCase.isAuthorized {
                     return .send(.introduce)
                 } else {
                     return .send(.requestAuthorization)
@@ -94,7 +88,7 @@ public struct ChallengeFeature<T: CardData> {
                 
             case .requestAuthorization:
                 return .run { send in
-                    try await speechPermissionUseCase.request()
+                    try await speechRecognitionPermissionUseCase.request()
                     await send(.introduce)
                 } catch: { error, send in
                     Log.error(error)

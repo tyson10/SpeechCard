@@ -20,13 +20,10 @@ struct ChallengeApp: App {
                     initialState: .init(
                         book: BookVO(contents: [.init(origin: "origin", target: "target")])
                     ),
-                    reducer: { 
-                        ChallengeFeature(
-                            speechPermissionUseCase: SpeechRecognitionPermissionUseCaseImpl()
-                        )
-                    },
+                    reducer: ChallengeFeature.init,
                     withDependencies: {
                         $0.speechRecognitionUseCase = SpeechRecognitionUseCaseImpl(service: FakeSpeechRecognizeService())
+                        $0.speechRecognitionPermissionUseCase = SpeechRecognitionPermissionUseCaseImpl()
                     }
                 )
             )
