@@ -10,7 +10,7 @@ import Data
 
 import Dependencies
 
-struct SpeechRecognitionUseCaseKey: DependencyKey {
+enum SpeechRecognitionUseCaseKey: DependencyKey {
     public static var liveValue: any SpeechRecognitionUseCase {
         SpeechRecognitionUseCaseImpl(service: SpeechRecognizeServiceImpl())
     }
