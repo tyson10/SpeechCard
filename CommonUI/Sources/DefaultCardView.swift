@@ -7,29 +7,22 @@
 
 import SwiftUI
 
-import Model
+import Domain
 
-public struct DefaultCardView: CardViewType {
-    @Binding public var state: CardViewState
+public struct DefaultCardView: View {
+    @State private var data: (any CardData)?
+    
+    public init(data: some CardData) {
+        self.data = data
+    }
     
     public var body: some View {
-        ZStack {
-            switch state.face {
-            case .origin(let color):
-                color
-                Text(state.data.wordPair.origin)
-            case .target(let color):
-                color
-                Text(state.data.wordPair.target)
+        if let data = data {
+            ZStack {
+                data.color
+                
+                Text(data.word)
             }
         }
-    }
-}
-
-struct RepositoriesView_Previews: PreviewProvider {
-    static var previews: some View {
-        DefaultCardView(
-            state: .constant(DummyCardViewState())
-        )
     }
 }

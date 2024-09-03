@@ -14,6 +14,7 @@ extension TargetDependency {
         public struct Feature { }
         public struct DIContainer { }
         public struct Utility { }
+        public struct AppDependencies { }
     }
     
     public struct ThirdParty { }
@@ -93,6 +94,16 @@ public extension TargetDependency.Project.Utility {
         .project(
             target: "Utility",
             path: .relativeToRoot("Utility")
+        )
+    }
+}
+
+// MARK: - AppDependencies
+public extension TargetDependency.Project.AppDependencies {
+    static var appDependencies: TargetDependency {
+        .project(
+            target: "AppDependencies",
+            path: .relativeToRoot("AppDependencies")
         )
     }
 }

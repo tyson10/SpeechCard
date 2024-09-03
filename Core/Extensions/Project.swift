@@ -11,7 +11,7 @@ import ProjectDescriptionHelpers
 let project = Project.create(
     name: "Extensions",
     products: [
-        .dynamicLibrary
+        .staticLibrary
     ],
     dependencies: []
 )

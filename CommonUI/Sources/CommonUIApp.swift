@@ -12,7 +12,12 @@ struct CommonUIApp: App {
     var body: some Scene {
         WindowGroup {
             DefaultCardView(
-                state: .constant(DummyCardViewState())
+                data:
+                    DefaultCardData(
+                        word: "테스트",
+                        color: .white,
+                        countDown: 7
+                    )
             )
         }
     }

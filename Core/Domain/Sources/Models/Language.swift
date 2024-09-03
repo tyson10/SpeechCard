@@ -12,10 +12,10 @@ public enum Language: String {
     case korean
     case english
     
-    public var code: String {
+    public var localeId: String {
         switch self {
         case .korean:
-            return "ko"
+            return "ko_KR"
         case .english:
             return "en"
         }
