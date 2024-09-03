@@ -5,34 +5,38 @@
 //  Created by Taeyoung Son on 11/11/23.
 //
 
-public protocol ShelfUseCase {
-    func loadAllBooks() throws -> [BookVO]
-    func addBook(book: BookVO) throws
-    func update(to book: BookVO) throws
-    func deleteBook(book: BookVO) throws
+public protocol ShelfUseCase: Sendable {
+    var loadAllBooks: @Sendable () async throws -> [BookVO] { get set }
+    var addBook: @Sendable (BookVO) throws -> Void { get set }
+    var update: @Sendable (BookVO) throws -> Void { get set }
+    var deleteBook: @Sendable (BookVO) throws -> Void { get set }
 }
 
-public class ShelfUseCaseImpl: ShelfUseCase {
-    
+public struct ShelfUseCaseImpl: ShelfUseCase {
     private let repository: BookRepository
+    
+    public var loadAllBooks: @Sendable () async throws -> [BookVO]
+    public var addBook: @Sendable (BookVO) throws -> Void
+    public var update: @Sendable (BookVO) throws -> Void
+    public var deleteBook: @Sendable (BookVO) throws -> Void
     
     public init(repository: BookRepository) {
         self.repository = repository
-    }
-    
-    public func loadAllBooks() throws -> [BookVO] {
-        return try repository.fetchAllBooks()
-    }
-    
-    public func addBook(book: BookVO) throws {
-        try repository.create(book: book)
-    }
-    
-    public func update(to book: BookVO) throws {
-        try repository.update(book: book)
-    }
-    
-    public func deleteBook(book: BookVO) throws {
-        try repository.delete(book: book)
+        
+        self.loadAllBooks = {
+            return try repository.fetchAllBooks()
+        }
+        
+        self.addBook = { book in
+            try repository.create(book: book)
+        }
+        
+        self.update = { book in
+            try repository.update(book: book)
+        }
+        
+        self.deleteBook = { book in
+            try repository.delete(book: book)
+        }
     }
 }
