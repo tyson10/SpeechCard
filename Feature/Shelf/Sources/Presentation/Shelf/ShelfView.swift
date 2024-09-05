@@ -78,12 +78,3 @@ public struct ShelfView: View {
         return self
     }
 }
-
-#Preview {
-    ShelfView(
-        store: .init(
-            initialState: .init(),
-            reducer: { ShelfFeature(useCase: ShelfUseCaseStub()) }
-        )
-    )
-}

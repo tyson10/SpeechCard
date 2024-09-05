@@ -6,7 +6,7 @@
 //
 
 public protocol ShelfUseCase: Sendable {
-    var loadAllBooks: @Sendable () async throws -> [BookVO] { get set }
+    var loadAllBooks: @Sendable () throws -> [BookVO] { get set }
     var addBook: @Sendable (BookVO) throws -> Void { get set }
     var update: @Sendable (BookVO) throws -> Void { get set }
     var deleteBook: @Sendable (BookVO) throws -> Void { get set }
@@ -15,7 +15,7 @@ public protocol ShelfUseCase: Sendable {
 public struct ShelfUseCaseImpl: ShelfUseCase {
     private let repository: BookRepository
     
-    public var loadAllBooks: @Sendable () async throws -> [BookVO]
+    public var loadAllBooks: @Sendable () throws -> [BookVO]
     public var addBook: @Sendable (BookVO) throws -> Void
     public var update: @Sendable (BookVO) throws -> Void
     public var deleteBook: @Sendable (BookVO) throws -> Void

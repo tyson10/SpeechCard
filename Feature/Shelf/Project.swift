@@ -17,7 +17,7 @@ let project = Project.create(
     ],
     dependencies: [
         .Project.CommonUI.ui,
-        .ThirdParty.composableArchitecture
+        .Project.AppDependencies.appDependencies
     ],
     includeDemoApp: true
 )

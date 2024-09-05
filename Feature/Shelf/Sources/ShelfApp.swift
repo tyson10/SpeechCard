@@ -8,6 +8,7 @@
 import SwiftUI
 
 import Domain
+import Data
 
 @main
 struct ShelfApp: App {
@@ -16,35 +17,12 @@ struct ShelfApp: App {
             ShelfView(
                 store: .init(
                     initialState: .init(),
-                    reducer: makeFakeReducer
+                    reducer: ShelfFeature.init,
+                    withDependencies: {
+                        $0.shelfUseCase = ShelfUseCaseImpl(repository: BookRepositoryImpl(dataSource: try! BookLocalDataSource()))
+                    }
                 )
             )
         }
-    }
-    
-    private func makeFakeReducer() -> ShelfFeature {
-        return ShelfFeature(useCase: ShelfUseCaseStub())
-    }
-}
-
-
-class ShelfUseCaseStub: ShelfUseCase {
-    func update(to book: Domain.BookVO) throws {
-        
-    }
-    
-    func loadAllBooks() -> [Domain.BookVO] {
-        return [
-            BookVO(name: "Title1", targetLanguage: .english, originLanguage: .korean, contents: [], createdAt: Date()),
-            BookVO(name: "Title2", targetLanguage: .english, originLanguage: .korean, contents: [], createdAt: Date())
-        ]
-    }
-    
-    func addBook(book: Domain.BookVO) {
-        
-    }
-    
-    func deleteBook(book: BookVO) {
-        
     }
 }

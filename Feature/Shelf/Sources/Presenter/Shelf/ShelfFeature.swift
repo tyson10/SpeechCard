@@ -5,22 +5,16 @@
 //  Created by Taeyoung Son on 11/11/23.
 //
 
-import Foundation
-import Combine
-
 import Domain
 import Utility
+import AppDependencies
 
 import ComposableArchitecture
 
 @Reducer
 public struct ShelfFeature {
     
-    private let useCase: ShelfUseCase
-    
-    public init(useCase: ShelfUseCase) {
-        self.useCase = useCase
-    }
+    @Dependency(\.shelfUseCase) private var useCase: ShelfUseCase
     
     @ObservableState
     public struct State: Equatable {
@@ -80,7 +74,7 @@ public struct ShelfFeature {
                 
             case .delete(let book):
                 do {
-                    try useCase.deleteBook(book: book)
+                    try useCase.deleteBook(book)
                     return .send(.loadBooks)
                 } catch {
                     Log.error(error)
@@ -98,12 +92,12 @@ public struct ShelfFeature {
                     do {
                         switch editAction {
                         case .save(let newBook):
-                            try useCase.addBook(book: newBook)
+                            try useCase.addBook(newBook)
                             state.editState = nil
                             return .send(.loadBooks)
                             
                         case .update(let book):
-                            try useCase.update(to: book)
+                            try useCase.update(book)
                             state.editState = nil
                             return .send(.loadBooks)
                             
