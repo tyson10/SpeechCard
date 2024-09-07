@@ -8,11 +8,11 @@
 public protocol DIContainer {
     associatedtype View
     associatedtype Feature
-    associatedtype UseCase
+    associatedtype UseCases
     associatedtype Repository
     
     func makeDefaultView() -> View
     func makeFeature() -> Feature
-    func makeUseCase() -> UseCase
+    func makeUseCases() -> UseCases
     func makeRepository() -> Repository
 }

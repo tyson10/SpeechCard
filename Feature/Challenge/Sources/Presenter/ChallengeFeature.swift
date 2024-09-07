@@ -20,6 +20,8 @@ public struct ChallengeFeature<T: CardData>: Sendable {
     @Dependency(\.speechRecognitionUseCase) private var speechRecognitionUseCase: SpeechRecognitionUseCase
     @Dependency(\.speechRecognitionPermissionUseCase) private var speechRecognitionPermissionUseCase: SpeechRecognitionPermissionUseCase
     
+    public init() { }
+    
     @ObservableState
     public struct State: Equatable {
         private let book: BookVO

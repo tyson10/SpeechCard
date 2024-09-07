@@ -5,11 +5,11 @@
 //  Created by Taeyoung Son on 1/17/24.
 //
 
-import ComposableArchitecture
-
 import Data
 import Domain
 import Shelf
+
+import ComposableArchitecture
 
 public final class ShelfDIContainer: DIContainer {
     private let datasource: BookDataSource
@@ -28,14 +28,26 @@ public final class ShelfDIContainer: DIContainer {
     }
     
     public func makeFeature() -> ShelfFeature {
-        return ShelfFeature(useCase: makeUseCase())
+        return withDependencies {
+            $0.shelfUseCase = makeUseCases().shelfUseCase
+        } operation: {
+            ShelfFeature()
+        }
     }
     
-    public func makeUseCase() -> ShelfUseCase {
-        return ShelfUseCaseImpl(repository: makeRepository())
+    public func makeUseCases() -> UseCases {
+        return UseCases(
+            shelfUseCase: ShelfUseCaseImpl(repository: makeRepository())
+        )
     }
     
     public func makeRepository() -> BookRepository {
         return BookRepositoryImpl(dataSource: datasource)
+    }
+}
+
+public extension ShelfDIContainer {
+    struct UseCases {
+        let shelfUseCase: ShelfUseCase
     }
 }

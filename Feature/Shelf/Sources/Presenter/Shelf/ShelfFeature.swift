@@ -13,8 +13,9 @@ import ComposableArchitecture
 
 @Reducer
 public struct ShelfFeature {
-    
     @Dependency(\.shelfUseCase) private var useCase: ShelfUseCase
+    
+    public init() { }
     
     @ObservableState
     public struct State: Equatable {

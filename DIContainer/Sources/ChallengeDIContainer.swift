@@ -8,8 +8,9 @@
 import Domain
 import Data
 import Challenge
-
 import CommonUI
+
+import ComposableArchitecture
 
 public final class ChallengeDIContainer<T: CardData>: DIContainer {
     private let book: BookVO
@@ -33,14 +34,28 @@ public final class ChallengeDIContainer<T: CardData>: DIContainer {
     }
     
     public func makeFeature() -> ChallengeFeature<T> {
-        return ChallengeFeature<T>(speechRecognitionUseCase: makeUseCase())
+        return withDependencies {
+            $0.speechRecognitionUseCase = makeUseCases().speechRecognitionUseCase
+        } operation: {
+            ChallengeFeature<T>()
+        }
     }
     
-    public func makeUseCase() -> SpeechRecognitionUseCase {
-        return SpeechRecognitionUseCaseImpl(service: makeRepository())
+    public func makeUseCases() -> UseCases {
+        return UseCases(
+            speechRecognitionUseCase: SpeechRecognitionUseCaseImpl(service: makeRepository()),
+            speechRecognitionPermissionUseCase: SpeechRecognitionPermissionUseCaseImpl()
+        )
     }
     
     public func makeRepository() -> SpeechRecognizeService {
         return service
+    }
+}
+
+public extension ChallengeDIContainer {
+    struct UseCases {
+        let speechRecognitionUseCase: SpeechRecognitionUseCase
+        let speechRecognitionPermissionUseCase: SpeechRecognitionPermissionUseCase
     }
 }
