@@ -3,9 +3,8 @@ import Combine
 
 import Domain
 
-/// A helper for transcribing speech to text using SFSpeechRecognizer and AVAudioEngine.
-public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeService {
-    private var transcriptSubject = PassthroughSubject<String, Error>()
+public final class SpeechRecognizeServiceImpl: SpeechRecognizeService {
+    private let transcriptSubject = PassthroughSubject<String, Error>()
     public var transcript: AnyPublisher<String, any Error> {
         return transcriptSubject.eraseToAnyPublisher()
     }
@@ -13,19 +12,9 @@ public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeServic
     private var audioEngine: AVAudioEngine?
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var task: SFSpeechRecognitionTask?
-    private let recognizer: SFSpeechRecognizer?
+    private let recognizer = SFSpeechRecognizer()
     
-    /**
-     Initializes a new speech recognizer. If this is the first time you've used the class, it
-     requests access to the speech recognizer and the microphone.
-     */
-    public init() {
-        recognizer = SFSpeechRecognizer()
-        guard recognizer != nil else {
-            transcribe(SpeechRecognizerError.nilRecognizer)
-            return
-        }
-    }
+    public init() { }
     
     public func startTranscribe() -> AnyPublisher<String, any Error> {
         transcribe()
