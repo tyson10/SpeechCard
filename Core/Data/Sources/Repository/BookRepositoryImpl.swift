@@ -7,7 +7,7 @@
 
 import Domain
 
-public final class BookRepositoryImpl: BookRepository {
+public actor BookRepositoryImpl: BookRepository {
     
     private let dataSource: BookDataSource
     
@@ -15,21 +15,21 @@ public final class BookRepositoryImpl: BookRepository {
         self.dataSource = dataSource
     }
     
-    public func fetchAllBooks() throws -> [BookVO] {
-        return try dataSource
+    public func fetchAllBooks() async throws -> [BookVO] {
+        return try await dataSource
             .fetchAllBooks()
             .map(\.domain)
     }
     
-    public func create(book: BookVO) throws {
-        try dataSource.insert(book: book.data)
+    public func create(book: BookVO) async throws {
+        try await dataSource.insert(book: book.data)
     }
     
-    public func delete(book: BookVO) throws {
-        try dataSource.deleteBook(name: book.name)
+    public func delete(book: BookVO) async throws {
+        try await dataSource.deleteBook(name: book.name)
     }
     
-    public func update(book: BookVO) throws {
-        try dataSource.update(to: book.data)
+    public func update(book: BookVO) async throws {
+        try await dataSource.update(to: book.data)
     }
 }

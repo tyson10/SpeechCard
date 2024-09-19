@@ -11,15 +11,15 @@ import SwiftData
 
 import Domain
 
-public protocol BookDataSource {
-    func fetchAllBooks() throws -> [BookDTO]
-    func fetchBook(withName name: String) throws -> BookDTO?
-    func insert(book: BookDTO) throws
-    func deleteBook(name: String) throws
-    func update(to book: BookDTO) throws
+public protocol BookDataSource: Sendable {
+    func fetchAllBooks() async throws -> [BookDTO]
+    func fetchBook(withName name: String) async throws -> BookDTO?
+    func insert(book: BookDTO) async throws
+    func deleteBook(name: String) async throws
+    func update(to book: BookDTO) async throws
 }
 
-public class BookLocalDataSource: BookDataSource {
+public actor BookLocalDataSource: BookDataSource {
     private let modelContext: ModelContext
     
     public init() throws {
@@ -27,7 +27,7 @@ public class BookLocalDataSource: BookDataSource {
         modelContext = ModelContext(container)
     }
     
-    public func fetchAllBooks() throws -> [BookDTO] {
+    public func fetchAllBooks() async throws -> [BookDTO] {
         return try modelContext.fetch(.init())
     }
     
@@ -38,7 +38,7 @@ public class BookLocalDataSource: BookDataSource {
         return try modelContext.fetch(descriptor).first
     }
     
-    public func insert(book: BookDTO) throws {
+    public func insert(book: BookDTO) async throws {
         if book.name.isEmpty {
             throw BookDataSourceError.emptyName
         } else if book.contents.isEmpty {
@@ -51,7 +51,7 @@ public class BookLocalDataSource: BookDataSource {
         }
     }
     
-    public func deleteBook(name: String) throws {
+    public func deleteBook(name: String) async throws {
         let predicate = #Predicate<BookDTO> { $0.name == name }
         try modelContext.delete(
             model: BookDTO.self,
@@ -60,17 +60,17 @@ public class BookLocalDataSource: BookDataSource {
         try modelContext.save()
     }
     
-    public func update(to book: BookDTO) throws {
+    public func update(to book: BookDTO) async throws {
         let bookName = book.name
         let predicate = #Predicate<BookDTO> { $0.name == bookName }
         let descriptor = FetchDescriptor<BookDTO>(predicate: predicate)
         
         if var old = try modelContext.fetch(descriptor).first {
-            update(book: &old, with: book)
+            await update(book: &old, with: book)
         }
     }
     
-    private func update(book: inout BookDTO, with new: BookDTO) {
+    private func update(book: inout BookDTO, with new: BookDTO) async {
         book.name = new.name
         book.targetLangCode = new.targetLangCode
         book.originLangCode = new.originLangCode
