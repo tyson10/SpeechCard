@@ -12,7 +12,6 @@ let project = Project.create(
     name: "Data",
     products: [.staticLibrary],
     dependencies: [
-        .Project.Core.domain,
-        .Project.Core.extensions
+        .Project.Core.domain
     ]
 )
