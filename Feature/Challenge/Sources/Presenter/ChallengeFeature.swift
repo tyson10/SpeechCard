@@ -43,8 +43,9 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         }
     }
     
+    // TODO: Sendable 빼도 되는지?
     @CasePathable
-    public enum Action : Sendable{
+    public enum Action {
         case entered
         
         case checkPermission
@@ -66,6 +67,8 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         case startRecord
         case finishRecord
         case showResult
+        
+        case setTranscriptPublisher(AnyPublisher<Action, Never>)
     }
     
     public enum ID: String {
@@ -141,7 +144,21 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                 return .send(.finishRecord)
                 
             case .startRecord:
-                return .publisher(createTranscriptPublisher)
+                return .run { @MainActor send in
+                    let publisher = speechRecognitionUseCase.startTranscribe()
+                        .map({ script in
+                            return .receiveTranscript(script)
+                        })
+                        .catch { error in
+                            return Just(Action.recognitionError(error))
+                        }
+                        .eraseToAnyPublisher()
+                    
+                    send(.setTranscriptPublisher(publisher))
+                }
+                
+            case .setTranscriptPublisher(let publisher):
+                return .publisher { publisher }
                 
             case .finishRecord:
                 // TODO: + 마이크 off
@@ -189,17 +206,6 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                 }
             }
         }
-    }
-    
-    private func createTranscriptPublisher() -> AnyPublisher<Action, Never> {
-        return speechRecognitionUseCase.startTranscribe()
-            .map({ script in
-                return .receiveTranscript(script)
-            })
-            .catch { error in
-                return Just(Action.recognitionError(error))
-            }
-            .eraseToAnyPublisher()
     }
 }
 

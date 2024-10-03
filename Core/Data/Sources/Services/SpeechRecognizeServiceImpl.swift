@@ -1,36 +1,39 @@
 import Speech
-import Combine
 
 import Domain
 
-public final class SpeechRecognizeServiceImpl: SpeechRecognizeService {
-    private let transcriptSubject = PassthroughSubject<String, Error>()
-    public var transcript: AnyPublisher<String, any Error> {
-        return transcriptSubject.eraseToAnyPublisher()
-    }
-    
+public actor SpeechRecognizeServiceImpl: SpeechRecognizeService {
     private var audioEngine: AVAudioEngine?
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var task: SFSpeechRecognitionTask?
     private let recognizer = SFSpeechRecognizer()
     
+    @MainActor public weak var delegate: SpeechRecognizeServiceDelegate?
+    
     public init() { }
     
-    public func startTranscribe() -> AnyPublisher<String, any Error> {
-        transcribe()
-        return transcript
+    @MainActor public func startTranscribe() {
+        Task {
+            await transcribe()
+        }
     }
     
-    public func stopTranscribe() {
-        reset()
+    @MainActor public func stopTranscribe() {
+        Task {
+            await reset()
+        }
     }
     
-    private func transcribe(_ message: String) {
-        transcriptSubject.send(message)
+    nonisolated private func transcribe(_ message: String) {
+        Task { @MainActor in
+            delegate?.transcribed(.success(message))
+        }
     }
     
     private func transcribe(_ error: Error) {
-        transcriptSubject.send(completion: .failure(error))
+        Task { @MainActor in
+            delegate?.transcribed(.failure(error))
+        }
     }
     
     private func transcribe() {
@@ -81,7 +84,11 @@ public final class SpeechRecognizeServiceImpl: SpeechRecognizeService {
         return (audioEngine, request)
     }
     
-    nonisolated private func recognitionHandler(audioEngine: AVAudioEngine, result: SFSpeechRecognitionResult?, error: Error?) {
+    nonisolated private func recognitionHandler(
+        audioEngine: AVAudioEngine,
+        result: SFSpeechRecognitionResult?,
+        error: Error?
+    ) {
         let receivedFinalResult = result?.isFinal ?? false
         let receivedError = error != nil
         

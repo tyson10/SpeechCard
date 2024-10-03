@@ -10,6 +10,7 @@ import SwiftUI
 import Domain
 import CommonUI
 import Combine
+import Data
 
 @main
 struct ChallengeApp: App {
@@ -22,7 +23,7 @@ struct ChallengeApp: App {
                     ),
                     reducer: ChallengeFeature.init,
                     withDependencies: {
-                        $0.speechRecognitionUseCase = SpeechRecognitionUseCaseImpl(service: FakeSpeechRecognizeService())
+                        $0.speechRecognitionUseCase = SpeechRecognitionUseCaseImpl(service: SpeechRecognizeServiceImpl())
                         $0.speechRecognitionPermissionUseCase = SpeechRecognitionPermissionUseCaseImpl()
                     }
                 )
@@ -31,9 +32,12 @@ struct ChallengeApp: App {
     }
 }
 
- final class FakeSpeechRecognizeService: SpeechRecognizeService {
-    func startTranscribe() -> AnyPublisher<String, Error> {
-        return Empty(completeImmediately: false).eraseToAnyPublisher()
+final class FakeSpeechRecognizeService: SpeechRecognizeService {
+    func startTranscribe() {
+        
     }
+    
+    var delegate: (any Domain.SpeechRecognizeServiceDelegate)?
+    
     func stopTranscribe() { }
 }
