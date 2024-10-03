@@ -19,14 +19,15 @@ public struct ChallengeView<T: CardData>: View {
     }
     
     public var body: some View {
-        if let content = store.currentCardContent {
-            switch content {
-            case .origin(let data), .target(let data):
-                DefaultCardView(data: data)
-            case .introduce:
-                IntroduceView()
-            }
-            
-        }
+        EmptyView()
+//        if let content = store.currentCardContent {
+//            switch content {
+//            case .origin(let data), .target(let data):
+//                DefaultCardView(data: data)
+//            case .introduce:
+//                IntroduceView()
+//            }
+//            
+//        }
     }
 }
