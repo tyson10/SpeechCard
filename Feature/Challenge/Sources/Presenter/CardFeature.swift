@@ -5,6 +5,8 @@
 //  Created by Taeyoung Son on 10/3/24.
 //
 
+import Foundation
+
 import Combine
 
 import ComposableArchitecture
@@ -16,15 +18,18 @@ import AppDependencies
 // TODO: 음성인식, 채점까지 다 되도록 구현. ChallengeFeature 기능에서 기능을 뺏어와야 함. ChallengeFeature의 Child로 구현.
 @Reducer
 public struct CardFeature<T: CardData>: Sendable {
+    
     @Dependency(\.speechRecognitionUseCase) private var speechRecognitionUseCase: SpeechRecognitionUseCase
     
     @ObservableState
-    public struct State: Equatable {
+    public struct State: Equatable, Identifiable {
+        public var id: UUID { wordPair.id }
+        
         var wordPair: DefaultWordPair
         var content: CardContent<T>
         var transcript: String = ""
         
-        var countDown: CountDownFeature.State?
+        var countDownState: CountDownFeature.State?
         
         init(wordPair: DefaultWordPair) {
             self.wordPair = wordPair
@@ -56,7 +61,7 @@ public struct CardFeature<T: CardData>: Sendable {
         
         case bindTranscript(AnyPublisher<Action, Never>)
         
-        case countDown(CountDownFeature.Action)
+        case countDownAction(CountDownFeature.Action)
     }
     
     public var body: some ReducerOf<Self> {
@@ -97,13 +102,13 @@ public struct CardFeature<T: CardData>: Sendable {
                 state.transcript = script
                 
             case .startCountDown:
-                state.countDown = .init(seconds: 7)
-                return .send(.countDown(.start))
+                state.countDownState = .init(seconds: 7)
+                return .send(.countDownAction(.start))
                 
             case .endCountDown:
-                state.countDown = nil
+                state.countDownState = nil
                 
-            case .countDown(let countDownAction):
+            case .countDownAction(let countDownAction):
                 return handle(countDownAction)
                 
                 
@@ -112,7 +117,7 @@ public struct CardFeature<T: CardData>: Sendable {
             }
             return .none
         }
-        .ifLet(\.countDown, action: \.countDown) {
+        .ifLet(\.countDownState, action: \.countDownAction) {
             CountDownFeature()
         }
     }

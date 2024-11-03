@@ -25,19 +25,14 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         private let book: BookVO
         
         var bookContents: DefaultWordPairs
-        var currentBookContent: DefaultWordPair?
-        var currentCardContent: CardContent<T>?
-        var remainedSeconds: Int?
+        var cards: IdentifiedArrayOf<CardFeature<T>.State> = []
         
-        public init(
-            book: BookVO,
-            currentCardContent: CardContent<T>? = nil,
-            remainedSeconds: Int? = nil
-        ) {
+        public init(book: BookVO) {
             self.book = book
             self.bookContents = book.contents
-            self.currentCardContent = currentCardContent
-            self.remainedSeconds = remainedSeconds
+            
+            let cardStates = book.contents.map { CardFeature<T>.State(wordPair: $0) }
+            self.cards = IdentifiedArrayOf(uniqueElements: cardStates)
         }
     }
     
@@ -53,6 +48,8 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         case startChallenge
         
         case showResult
+        
+        case card(IdentifiedActionOf<CardFeature<T>>)
     }
     
     public enum ID: String, Sendable {
@@ -89,8 +86,14 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                 
             case .showResult:
                 break
+                
+            case .card(let cardAction):
+                break
             }
             return .none
+        }
+        .forEach(\.cards, action: \.card) {
+            CardFeature()
         }
     }
 }

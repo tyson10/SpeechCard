@@ -22,7 +22,7 @@ public struct CardView<T: CardData>: View {
     public var body: some View {
         ZStack {
             VStack {
-                if let countDownState = store.state.countDown {
+                if let countDownState = store.state.countDownState {
                     Text("남은 시간(초): \(countDownState.seconds)")
                 }
                 
