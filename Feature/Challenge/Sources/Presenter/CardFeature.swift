@@ -110,6 +110,14 @@ public struct CardFeature<T: CardData>: Sendable {
             case .countDownAction(let countDownAction):
                 return handle(countDownAction)
                 
+            case .grading:
+                state.content = .target(
+                    T(
+                        word: state.wordPair.target,
+                        // TODO: 맞는지 여부에 따라 색상 변경
+                        color: .white
+                    )
+                )
                 
             default:
                 break
