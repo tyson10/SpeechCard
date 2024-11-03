@@ -31,8 +31,6 @@ public struct CardView<T: CardData>: View {
                     Text("origin: \(data.word)")
                 case .target(let data):
                     Text("target: \(data.word)")
-                default:
-                    Text("Hello")
                 }
                 
                 Button("카운트 시작!") {
