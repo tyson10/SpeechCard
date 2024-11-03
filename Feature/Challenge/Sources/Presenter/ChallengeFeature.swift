@@ -16,8 +16,6 @@ import ComposableArchitecture
 
 @Reducer
 public struct ChallengeFeature<T: CardData>: Sendable {
-    @Dependency(\.continuousClock) private var clock
-    @Dependency(\.speechRecognitionUseCase) private var speechRecognitionUseCase: SpeechRecognitionUseCase
     @Dependency(\.speechRecognitionPermissionUseCase) private var speechRecognitionPermissionUseCase: SpeechRecognitionPermissionUseCase
     
     public init() { }
@@ -54,24 +52,10 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         case introduce
         case startChallenge
         
-        case setCardContent(CardContent<T>)
-        
-        case countDown(Int)
-        case setRemainedSeconds(Int)
-        
-        case receiveTranscript(String)
-        case recognitionError(Error)
-        
-        case timeOver
-        
-        case startRecord
-        case finishRecord
         case showResult
-        
-        case setTranscriptPublisher(AnyPublisher<Action, Never>)
     }
     
-    public enum ID: String {
+    public enum ID: String, Sendable {
         case cancelCountDown
     }
     
@@ -98,113 +82,15 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                 }
                 
             case .introduce:
-                return .send(.setCardContent(.introduce))
+                break
                 
             case .startChallenge:
-                guard !state.bookContents.isEmpty else { break }
-                
-                let content = state.bookContents.removeFirst()
-                
-                return .send(
-                    .setCardContent(
-                        .origin(
-                            T(word: content.origin, color: .white, countDown: 7)
-                        )
-                    )
-                )
-                
-            case .setCardContent(let content):
-                state.currentCardContent = content
-                
-                switch content {
-                case .origin(let data):
-                    return .merge(
-                        .send(.startRecord),
-                        .send(.countDown(data.countDown))
-                    )
-                    
-                case .target(let data):
-                    return .send(.countDown(data.countDown))
-                    
-                case .introduce:
-                    return .run { send in
-                        try await Task.sleep(nanoseconds: 3_000_000_000)
-                        await send(.startChallenge)
-                    }
-                }
-                
-            case .countDown(let totalSeconds):
-                return runCountDown(from: totalSeconds)
-                    .cancellable(id: ID.cancelCountDown)
-                
-            case .setRemainedSeconds(let seconds):
-                state.remainedSeconds = seconds
-                
-            case .timeOver:
-                return .send(.finishRecord)
-                
-            case .startRecord:
-                return .run { @MainActor send in
-                    let publisher = speechRecognitionUseCase.startTranscribe()
-                        .map({ script in
-                            return .receiveTranscript(script)
-                        })
-                        .catch { error in
-                            return Just(Action.recognitionError(error))
-                        }
-                        .eraseToAnyPublisher()
-                    
-                    send(.setTranscriptPublisher(publisher))
-                }
-                
-            case .setTranscriptPublisher(let publisher):
-                return .publisher { publisher }
-                
-            case .finishRecord:
-                // TODO: + 마이크 off
-                guard let target = state.currentBookContent?.target else { break }
-                let data = T(
-                    word: target,
-                    color: .yellow,
-                    countDown: 5
-                )
-                return .concatenate(
-                    .cancel(id: ID.cancelCountDown),
-                    .send(.setCardContent(.target(data)))
-                )
+                break
                 
             case .showResult:
                 break
-                
-            case .receiveTranscript(let transcript):
-                break
-                
-            case .recognitionError(let error):
-                Log.error(error)
-                return .send(.finishRecord)
-                
             }
             return .none
-        }
-    }
-    
-    private func runCountDown(from totalSeconds: Int) -> Effect<Action> {
-        return .run { @MainActor [clock] send in
-            send(.setRemainedSeconds(totalSeconds))
-            
-            var seconds = 0
-            for await _ in clock.timer(interval: .seconds(1)) {
-                seconds += 1
-                
-                let remainedSeconds = totalSeconds - seconds
-                
-                if remainedSeconds < 0 {
-                    send(.timeOver)
-                    break
-                } else {
-                    send(.setRemainedSeconds(remainedSeconds))
-                }
-            }
         }
     }
 }

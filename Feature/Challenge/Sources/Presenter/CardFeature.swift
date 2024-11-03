@@ -5,6 +5,8 @@
 //  Created by Taeyoung Son on 10/3/24.
 //
 
+import Combine
+
 import ComposableArchitecture
 
 import Domain
@@ -13,24 +15,22 @@ import AppDependencies
 
 // TODO: 음성인식, 채점까지 다 되도록 구현. ChallengeFeature 기능에서 기능을 뺏어와야 함. ChallengeFeature의 Child로 구현.
 @Reducer
-struct CardFeature<T: CardData> {
-    @Dependency(\.continuousClock) private var clock
+public struct CardFeature<T: CardData>: Sendable {
     @Dependency(\.speechRecognitionUseCase) private var speechRecognitionUseCase: SpeechRecognitionUseCase
-    @Dependency(\.speechRecognitionPermissionUseCase) private var speechRecognitionPermissionUseCase: SpeechRecognitionPermissionUseCase
     
     @ObservableState
-    struct State: Equatable {
+    public struct State: Equatable {
         var wordPair: DefaultWordPair
-        var remainedSeconds: Int?
         var content: CardContent<T>
-        
         var transcript: String = ""
+        
+        var countDown: CountDownFeature.State?
         
         init(wordPair: DefaultWordPair) {
             self.wordPair = wordPair
-            self.content = .target(
+            self.content = .origin(
                 T(
-                    word: wordPair.target,
+                    word: wordPair.origin,
                     color: .white,
                     countDown: 7
                 )
@@ -39,8 +39,91 @@ struct CardFeature<T: CardData> {
     }
     
     @CasePathable
-    enum Action {
+    public enum Action {
+        case startCard
+        case finishSpeech
         
+        case startCountDown
+        case endCountDown
+        
+        case startSpeech
+        case endSpeech
+        
+        case grading
+        
+        case receiveTranscript(String)
+        case recognitionError(Error)
+        
+        case bindTranscript(AnyPublisher<Action, Never>)
+        
+        case countDown(CountDownFeature.Action)
+    }
+    
+    public var body: some ReducerOf<Self> {
+        Reduce { state, action in
+            switch action {
+            case .startCard:
+                return .merge(
+                    .send(.startCountDown),
+                    .send(.startSpeech)
+                )
+                
+            case .finishSpeech:
+                return .merge(
+                    .send(.endCountDown),
+                    .send(.endSpeech),
+                    .send(.grading)
+                )
+                
+            case .startSpeech:
+                return .run { @MainActor send in
+                    let script = speechRecognitionUseCase.startTranscribe()
+                        .map({ script in
+                            return .receiveTranscript(script)
+                        })
+                        .catch { error in
+                            return Just(Action.recognitionError(error))
+                        }
+                        .eraseToAnyPublisher()
+                    send(.bindTranscript(script))
+                }
+                
+            case .endSpeech:
+                return .run { @MainActor _ in
+                    speechRecognitionUseCase.stopTranscribe()
+                }
+                
+            case .receiveTranscript(let script):
+                state.transcript = script
+                
+            case .startCountDown:
+                state.countDown = .init(seconds: 7)
+                return .send(.countDown(.start))
+                
+            case .endCountDown:
+                state.countDown = nil
+                
+            case .countDown(let countDownAction):
+                return handle(countDownAction)
+                
+                
+            default:
+                break
+            }
+            return .none
+        }
+        .ifLet(\.countDown, action: \.countDown) {
+            CountDownFeature()
+        }
+    }
+    
+    private func handle(_ action: CountDownFeature.Action) -> Effect<Action> {
+        switch action {
+        case .timeOver:
+            return .send(.finishSpeech)
+        default:
+            return .none
+        }
     }
 }
 
@@ -58,4 +141,4 @@ struct CardFeature<T: CardData> {
 /// 1. 단어(target/origin)
 /// 2. 잔여시간
 /// 3. 음성인식 텍스트
-/// 4. 맞았는지 틀렸는지
+/// 4. 맞았는지 틀렸는지(ChallengeFeature로 결과 전달)
