@@ -111,11 +111,12 @@ public struct CardFeature<T: CardData>: Sendable {
                 return handle(countDownAction)
                 
             case .grading:
+                let isCorrectAnswer: Bool = state.wordPair.target.lowercased() == state.transcript.lowercased()
                 state.content = .target(
                     T(
                         word: state.wordPair.target,
                         // TODO: 맞는지 여부에 따라 색상 변경
-                        color: .white
+                        color: isCorrectAnswer ? .green : .red
                     )
                 )
                 
