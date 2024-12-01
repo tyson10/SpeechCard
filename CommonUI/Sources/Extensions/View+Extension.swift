@@ -10,10 +10,10 @@ import SwiftUI
 import PopupView
 
 // MARK: - PopupView
-extension View {
+public extension View {
     func centerPopup<PopupContent: View>(
         isPresented: Binding<Bool>,
-        appearFrom: PopupView.Popup<PopupContent>.AppearAnimation = .bottomSlide,
+        appearFrom: PopupView.Popup<PopupContent>.AppearAnimation = .centerScale,
         @ViewBuilder view: @escaping () -> PopupContent
     ) -> some View {
         popup(

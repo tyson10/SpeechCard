@@ -27,6 +27,8 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         var bookContents: DefaultWordPairs
         var cards: IdentifiedArrayOf<CardFeature<T>.State> = []
         
+        var introPopupShow: Bool = false
+        
         public init(book: BookVO) {
             self.book = book
             self.bookContents = book.contents
@@ -44,7 +46,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         case checkPermission
         case requestAuthorization
         
-        case introduce
+        case showIntro(Bool)
         case startChallenge
         
         case showResult
@@ -65,7 +67,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                 
             case .checkPermission:
                 if speechRecognitionPermissionUseCase.isAuthorized {
-                    return .send(.introduce)
+                    return .send(.showIntro(true))
                 } else {
                     return .send(.requestAuthorization)
                 }
@@ -73,13 +75,13 @@ public struct ChallengeFeature<T: CardData>: Sendable {
             case .requestAuthorization:
                 return .run { send in
                     try await speechRecognitionPermissionUseCase.request()
-                    await send(.introduce)
+                    await send(.showIntro(true))
                 } catch: { error, send in
                     Log.error(error)
                 }
                 
-            case .introduce:
-                break
+            case .showIntro(let flag):
+                state.introPopupShow = flag
                 
             case .startChallenge:
                 break

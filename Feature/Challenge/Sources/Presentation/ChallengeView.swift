@@ -20,6 +20,13 @@ public struct ChallengeView<T: CardData>: View {
     
     public var body: some View {
         EmptyView()
+            .centerPopup(
+                isPresented: $store.introPopupShow.sending(\.showIntro),
+                view: makeIntroContent
+            )
+            .onAppear {
+                store.send(.entered)
+            }
 //        if let content = store.currentCardContent {
 //            switch content {
 //            case .origin(let data), .target(let data):
@@ -29,5 +36,12 @@ public struct ChallengeView<T: CardData>: View {
 //            }
 //            
 //        }
+    }
+    
+    private func makeIntroContent() -> some View {
+        return IntroPopupContent(confirmAction: {
+            store.send(.showIntro(false))
+            store.send(.startChallenge)
+        })
     }
 }
