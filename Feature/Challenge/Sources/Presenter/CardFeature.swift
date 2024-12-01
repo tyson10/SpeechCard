@@ -36,7 +36,7 @@ public struct CardFeature<T: CardData>: Sendable {
             self.content = .origin(
                 T(
                     word: wordPair.origin,
-                    color: .white
+                    color: .clear
                 )
             )
         }
