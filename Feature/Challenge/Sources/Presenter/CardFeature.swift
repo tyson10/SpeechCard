@@ -115,7 +115,6 @@ public struct CardFeature<T: CardData>: Sendable {
                 state.content = .target(
                     T(
                         word: state.wordPair.target,
-                        // TODO: 맞는지 여부에 따라 색상 변경
                         color: isCorrectAnswer ? .green : .red
                     )
                 )
