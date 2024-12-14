@@ -27,6 +27,8 @@ public struct CardFeature<T: CardData>: Sendable {
         
         var wordPair: DefaultWordPair
         var content: CardContent<T>
+        
+        var cancellables = Set<AnyCancellable>()
         var transcript: String = ""
         
         var countDownState: CountDownFeature.State?
@@ -39,6 +41,13 @@ public struct CardFeature<T: CardData>: Sendable {
                     color: .clear
                 )
             )
+        }
+        
+        public static func == (lhs: State, rhs: State) -> Bool {
+            return lhs.wordPair == rhs.wordPair &&
+            lhs.content == rhs.content &&
+            lhs.transcript == rhs.transcript &&
+            lhs.countDownState == rhs.countDownState
         }
     }
     
@@ -80,6 +89,7 @@ public struct CardFeature<T: CardData>: Sendable {
                 )
                 
             case .startSpeech:
+                // https://maramincho.tistory.com/133 참고
                 return .run { @MainActor send in
                     let script = speechRecognitionUseCase.startTranscribe()
                         .map({ script in
@@ -89,8 +99,12 @@ public struct CardFeature<T: CardData>: Sendable {
                             return Just(Action.recognitionError(error))
                         }
                         .eraseToAnyPublisher()
+
                     send(.bindTranscript(script))
                 }
+                
+            case .bindTranscript(let publisher):
+                return .publisher { publisher }
                 
             case .endSpeech:
                 return .run { @MainActor _ in

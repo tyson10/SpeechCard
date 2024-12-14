@@ -19,23 +19,21 @@ public struct ChallengeView<T: CardData>: View {
     }
     
     public var body: some View {
-        EmptyView()
-            .centerPopup(
-                isPresented: $store.introPopupShow.sending(\.showIntro),
-                view: makeIntroContent
-            )
-            .onAppear {
-                store.send(.entered)
+        ZStack(content: {
+            ForEach(
+                store.scope(state: \.cards, action: \.card),
+                id: \.state.id
+            ) { childStore in
+                CardView(store: childStore)
             }
-//        if let content = store.currentCardContent {
-//            switch content {
-//            case .origin(let data), .target(let data):
-//                DefaultCardView(data: data)
-//            case .introduce:
-//                IntroduceView()
-//            }
-//            
-//        }
+        })
+        .centerPopup(
+            isPresented: $store.introPopupShow.sending(\.showIntro),
+            view: makeIntroContent
+        )
+        .onAppear {
+            store.send(.entered)
+        }
     }
     
     private func makeIntroContent() -> some View {

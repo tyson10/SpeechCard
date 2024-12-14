@@ -28,21 +28,32 @@ public struct CardView<T: CardData>: View {
                 
                 switch store.state.content {
                 case .origin(let data):
-                    Text("origin: \(data.word)")
+                    Text("\(data.word)")
+                        .font(.system(size: 30))
                 case .target(let data):
                     Text("target: \(data.word)")
                         .foregroundStyle(data.color)
+                        .font(.system(size: 30))
                 }
                 
                 Button("카운트 시작!") {
-                    store.send(.startCountDown)
+                    store.send(.startCard)
                 }
                 
                 Button("다음 카드로 넘어가기") {
                     
                 }
+                
+                Text(
+                    store.state.transcript.isEmpty ?
+                    "말하세요." : store.state.transcript
+                ).font(.system(size: 30))
+            }
+            .background {
+                Color.cyan
             }
         }
+        .background(.blue)
     }
 }
 

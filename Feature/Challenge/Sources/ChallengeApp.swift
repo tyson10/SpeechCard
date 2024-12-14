@@ -32,6 +32,21 @@ struct ChallengeApp: App {
     }
 }
 
+#Preview(body: {
+    ChallengeView<DefaultCardData>(
+        store: .init(
+            initialState: .init(
+                book: BookVO(contents: [.init(origin: "안녕하세요.", target: "Hello.")])
+            ),
+            reducer: ChallengeFeature.init,
+            withDependencies: {
+                $0.speechRecognitionUseCase = SpeechRecognitionUseCaseImpl(service: SpeechRecognizeServiceImpl())
+                $0.speechRecognitionPermissionUseCase = SpeechRecognitionPermissionUseCaseImpl()
+            }
+        )
+    )
+})
+
 final class FakeSpeechRecognizeService: SpeechRecognizeService {
     func startTranscribe() {
         

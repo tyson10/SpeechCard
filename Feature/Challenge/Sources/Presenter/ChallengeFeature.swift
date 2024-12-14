@@ -32,9 +32,6 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         public init(book: BookVO) {
             self.book = book
             self.bookContents = book.contents
-            
-            let cardStates = book.contents.map { CardFeature<T>.State(wordPair: $0) }
-            self.cards = IdentifiedArrayOf(uniqueElements: cardStates)
         }
     }
     
@@ -48,6 +45,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         
         case showIntro(Bool)
         case startChallenge
+        case setCardFeatures
         
         case showResult
         
@@ -82,9 +80,18 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                 
             case .showIntro(let flag):
                 state.introPopupShow = flag
+                if !flag, state.cards.isEmpty {
+                    return .send(.setCardFeatures)
+                }
                 
             case .startChallenge:
-                break
+                return .send(.setCardFeatures)
+                
+            case .setCardFeatures:
+                let cardStates = state.bookContents.map {
+                    CardFeature<T>.State(wordPair: $0)
+                }
+                state.cards = IdentifiedArrayOf(uniqueElements: cardStates)
                 
             case .showResult:
                 break
