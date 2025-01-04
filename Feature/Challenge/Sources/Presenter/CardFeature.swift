@@ -59,8 +59,8 @@ public struct CardFeature<T: CardData>: Sendable {
         case startCountDown
         case endCountDown
         
-        case startSpeech
-        case endSpeech
+        case startTranscribe
+        case stopTranscribe
         
         case grading
         
@@ -78,17 +78,17 @@ public struct CardFeature<T: CardData>: Sendable {
             case .startCard:
                 return .merge(
                     .send(.startCountDown),
-                    .send(.startSpeech)
+                    .send(.startTranscribe)
                 )
                 
             case .finishSpeech:
                 return .merge(
                     .send(.endCountDown),
-                    .send(.endSpeech),
+                    .send(.stopTranscribe),
                     .send(.grading)
                 )
                 
-            case .startSpeech:
+            case .startTranscribe:
                 // https://maramincho.tistory.com/133 참고
                 return .run { @MainActor send in
                     let script = speechRecognitionUseCase.startTranscribe()
@@ -106,7 +106,7 @@ public struct CardFeature<T: CardData>: Sendable {
             case .bindTranscript(let publisher):
                 return .publisher { publisher }
                 
-            case .endSpeech:
+            case .stopTranscribe:
                 return .run { @MainActor _ in
                     speechRecognitionUseCase.stopTranscribe()
                 }
@@ -125,7 +125,7 @@ public struct CardFeature<T: CardData>: Sendable {
                 return handle(countDownAction)
                 
             case .grading:
-                let isCorrectAnswer: Bool = state.wordPair.target.lowercased() == state.transcript.lowercased()
+                let isCorrectAnswer = state.wordPair.target.lowercased() == state.transcript.lowercased()
                 state.content = .target(
                     T(
                         word: state.wordPair.target,
