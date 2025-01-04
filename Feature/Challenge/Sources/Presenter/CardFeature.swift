@@ -80,6 +80,7 @@ public struct CardFeature<T: CardData>: Sendable {
         Reduce { state, action in
             switch action {
             case .startCard:
+                guard state.countDownState == nil else { break }
                 return .merge(
                     .send(.startCountDown),
                     .send(.startTranscribe)
