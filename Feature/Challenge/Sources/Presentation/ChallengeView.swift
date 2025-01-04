@@ -31,8 +31,19 @@ public struct ChallengeView<T: CardData>: View {
     
     private func makeMainView() -> some View {
         if let cardStore = store.scope(state: \.card, action: \.card) {
-            return AnyView(CardView(store: cardStore))
+            return AnyView(
+                CardView(store: cardStore)
+                    .padding(
+                        EdgeInsets(
+                            top: 100,
+                            leading: 30,
+                            bottom: 100,
+                            trailing: 30
+                        )
+                    )
+            )
         } else {
+            // TODO: 챌린지 결과 화면
             return AnyView(Text("끝!"))
         }
     }

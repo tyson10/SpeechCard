@@ -10,6 +10,7 @@ import SwiftUI
 import ComposableArchitecture
 
 import CommonUI
+import Extensions
 
 public struct CardView<T: CardData>: View {
     
@@ -20,41 +21,52 @@ public struct CardView<T: CardData>: View {
     }
     
     public var body: some View {
-        ZStack {
-            VStack {
-                if let countDownState = store.state.countDownState {
-                    Text("남은 시간(초): \(countDownState.seconds)")
-                }
+        VStack {
+            Spacer()
+            
+            Text("남은 시간(초): \(store.state.countDownState?.seconds ?? 0)")
+                .isHidden(store.state.countDownState == nil)
+            
+            Spacer()
+            
+            switch store.state.content {
+            case .origin(let data):
+                Text("\(data.word)")
+                    .font(.system(size: 30))
                 
-                switch store.state.content {
-                case .origin(let data):
-                    Text("\(data.word)")
-                        .font(.system(size: 30))
-                case .target(let data):
-                    Text("target: \(data.word)")
-                        .foregroundStyle(data.color)
-                        .font(.system(size: 30))
-                }
-                
-                Button("카운트 시작!") {
-                    store.send(.startCard)
-                }
-                
-                Button("다음 카드로 넘어가기") {
-                    store.send(.toNextCard)
-                }
-                
-                Text(
-                    store.state.transcript.isEmpty ?
-                    "말하세요." : store.state.transcript
-                ).font(.system(size: 30))
+            case .target(let data):
+                Text("target: \(data.word)")
+                    .foregroundStyle(data.color)
+                    .font(.system(size: 30))
             }
-            .background {
-                Color.cyan
+            
+            Button("카운트 시작!") {
+                store.send(.startCard)
             }
+            
+            Button("다음 카드로 넘어가기") {
+                store.send(.toNextCard)
+            }
+            
+            Spacer()
+            
+            Text(
+                store.state.transcript.isEmpty ?
+                "말하세요." : store.state.transcript
+            )
+            .font(.system(size: 30))
+            
+            Spacer()
+            
         }
-        .background(.blue)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background {
+            Color.black
+                .opacity(0.15)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 30))
     }
+    
 }
 
 #Preview {

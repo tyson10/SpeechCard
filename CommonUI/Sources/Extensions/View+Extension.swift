@@ -65,3 +65,10 @@ public extension View {
         )
     }
 }
+
+// MARK: - Set Hidden
+public extension View {
+    func isHidden(_ hidden: Bool) -> some View {
+        return opacity(hidden ? 0 : 1)
+    }
+}
