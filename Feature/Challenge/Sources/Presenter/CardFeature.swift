@@ -15,6 +15,8 @@ import Domain
 import CommonUI
 import AppDependencies
 
+import Utility
+
 // TODO: 음성인식, 채점까지 다 되도록 구현. ChallengeFeature 기능에서 기능을 뺏어와야 함. ChallengeFeature의 Child로 구현.
 @Reducer
 public struct CardFeature<T: CardData>: Sendable {
@@ -70,6 +72,8 @@ public struct CardFeature<T: CardData>: Sendable {
         case bindTranscript(AnyPublisher<Action, Never>)
         
         case countDownAction(CountDownFeature.Action)
+        
+        case toNextCard
     }
     
     public var body: some ReducerOf<Self> {
@@ -133,8 +137,11 @@ public struct CardFeature<T: CardData>: Sendable {
                     )
                 )
                 
-            default:
+            case .toNextCard:
                 break
+                
+            case .recognitionError(let error):
+                Log.error("음성인식 실패 ->", error)
             }
             return .none
         }

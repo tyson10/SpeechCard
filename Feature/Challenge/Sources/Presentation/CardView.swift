@@ -41,7 +41,7 @@ public struct CardView<T: CardData>: View {
                 }
                 
                 Button("다음 카드로 넘어가기") {
-                    
+                    store.send(.toNextCard)
                 }
                 
                 Text(

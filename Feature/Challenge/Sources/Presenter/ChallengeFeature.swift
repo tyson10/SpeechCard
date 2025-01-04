@@ -11,6 +11,7 @@ import Domain
 import CommonUI
 import Utility
 import AppDependencies
+import Extensions
 
 import ComposableArchitecture
 
@@ -25,7 +26,9 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         private let book: BookVO
         
         var bookContents: DefaultWordPairs
-        var cards: IdentifiedArrayOf<CardFeature<T>.State> = []
+        
+        var currentCardIndex = 0
+        var card: CardFeature<T>.State?
         
         var introPopupShow: Bool = false
         
@@ -49,7 +52,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         
         case showResult
         
-        case card(IdentifiedActionOf<CardFeature<T>>)
+        case card(CardFeature<T>.Action)
     }
     
     public enum ID: String, Sendable {
@@ -80,30 +83,49 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                 
             case .showIntro(let flag):
                 state.introPopupShow = flag
-                if !flag, state.cards.isEmpty {
-                    return .send(.setCardFeatures)
-                }
                 
             case .startChallenge:
                 return .send(.setCardFeatures)
                 
             case .setCardFeatures:
-                let cardStates = state.bookContents.map {
-                    CardFeature<T>.State(wordPair: $0)
+                guard let wordPair = state.bookContents[safe: state.currentCardIndex] else {
+                    state.card = nil
+                    return .send(.showResult)
                 }
-                state.cards = IdentifiedArrayOf(uniqueElements: cardStates)
+                
+                state.card = .init(wordPair: wordPair)
                 
             case .showResult:
                 break
                 
             case .card(let cardAction):
-                break
+                return reduceCardFeature(&state, cardAction)
             }
             return .none
         }
-        .forEach(\.cards, action: \.card) {
+        .ifLet(\.card, action: \.card) {
             CardFeature()
         }
+    }
+}
+
+private extension ChallengeFeature {
+    func reduceCardFeature(
+        _ state: inout State,
+        _ action: CardFeature<T>.Action
+    ) -> Effect<Action> {
+        var newEffect = Effect<ChallengeFeature.Action>.none
+        
+        switch action {
+        case .toNextCard:
+            state.currentCardIndex += 1
+            newEffect = .send(.setCardFeatures)
+            
+        default:
+            break
+        }
+        
+        return newEffect
     }
 }
 

@@ -19,20 +19,21 @@ public struct ChallengeView<T: CardData>: View {
     }
     
     public var body: some View {
-        ZStack(content: {
-            ForEach(
-                store.scope(state: \.cards, action: \.card),
-                id: \.state.id
-            ) { childStore in
-                CardView(store: childStore)
+        makeMainView()
+            .centerPopup(
+                isPresented: $store.introPopupShow.sending(\.showIntro),
+                view: makeIntroContent
+            )
+            .onAppear {
+                store.send(.entered)
             }
-        })
-        .centerPopup(
-            isPresented: $store.introPopupShow.sending(\.showIntro),
-            view: makeIntroContent
-        )
-        .onAppear {
-            store.send(.entered)
+    }
+    
+    private func makeMainView() -> some View {
+        if let cardStore = store.scope(state: \.card, action: \.card) {
+            return AnyView(CardView(store: cardStore))
+        } else {
+            return AnyView(Text("끝!"))
         }
     }
     

@@ -19,7 +19,12 @@ struct ChallengeApp: App {
             ChallengeView<DefaultCardData>(
                 store: .init(
                     initialState: .init(
-                        book: BookVO(contents: [.init(origin: "origin", target: "target")])
+                        book: BookVO(
+                            contents: [
+                                .init(origin: "origin", target: "target"),
+                                .init(origin: "origin2", target: "target2")
+                            ]
+                        )
                     ),
                     reducer: ChallengeFeature.init,
                     withDependencies: {
