@@ -33,19 +33,15 @@ public struct CardView<T: CardData>: View {
             case .origin(let data):
                 Text("\(data.word)")
                     .font(.system(size: 30))
+                    .onAppear {
+                        store.send(.startCard)
+                    }
                 
             case .target(let data):
-                Text("target: \(data.word)")
+                Text("정답\n\(data.word)")
                     .foregroundStyle(data.color)
                     .font(.system(size: 30))
-            }
-            
-            Button("카운트 시작!") {
-                store.send(.startCard)
-            }
-            
-            Button("다음 카드로 넘어가기") {
-                store.send(.toNextCard)
+                    .multilineTextAlignment(.center)
             }
             
             Spacer()
@@ -57,6 +53,11 @@ public struct CardView<T: CardData>: View {
             .font(.system(size: 30))
             
             Spacer()
+            
+            Button("다음 카드로 넘어가기") {
+                store.send(.toNextCard)
+            }
+            .isHidden(store.state.countDownState != nil)
             
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

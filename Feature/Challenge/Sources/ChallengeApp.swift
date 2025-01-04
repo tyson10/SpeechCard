@@ -21,8 +21,8 @@ struct ChallengeApp: App {
                     initialState: .init(
                         book: BookVO(
                             contents: [
-                                .init(origin: "origin", target: "target"),
-                                .init(origin: "origin2", target: "target2")
+                                .init(origin: "안녕하세요.", target: "Hello."),
+                                .init(origin: "만나서 반갑습니다.", target: "Nice to meet you.")
                             ]
                         )
                     ),
