@@ -5,37 +5,51 @@
 //  Created by Taeyoung Son on 1/17/24.
 //
 
-import ComposableArchitecture
-
 import Data
 import Domain
 import Shelf
 
-public final class ShelfDIContainer: DIContainer {
+import ComposableArchitecture
+
+public actor ShelfDIContainer: DIContainer {
     private let datasource: BookDataSource
     
     public init(datasource: BookDataSource) {
         self.datasource = datasource
     }
     
-    public func makeDefaultView() -> ShelfView {
-        return ShelfView(
+    public func makeDefaultView() async -> ShelfView {
+        let reducer = await makeFeature()
+        
+        return await ShelfView(
             store: .init(
                 initialState: .init(),
-                reducer: makeFeature
+                reducer: { reducer }
             )
         )
     }
     
-    public func makeFeature() -> ShelfFeature {
-        return ShelfFeature(useCase: makeUseCase())
+    public func makeFeature() async -> ShelfFeature {
+        return await withDependencies {
+            $0.shelfUseCase = await makeUseCases().shelfUseCase
+        } operation: {
+            ShelfFeature()
+        }
     }
     
-    public func makeUseCase() -> ShelfUseCase {
-        return ShelfUseCaseImpl(repository: makeRepository())
+    public func makeUseCases() async -> UseCases {
+        return await UseCases(
+            shelfUseCase: ShelfUseCaseImpl(repository: makeRepository())
+        )
     }
     
-    public func makeRepository() -> BookRepository {
+    public func makeRepository() async -> BookRepository {
         return BookRepositoryImpl(dataSource: datasource)
+    }
+}
+
+public extension ShelfDIContainer {
+    struct UseCases: Sendable {
+        let shelfUseCase: ShelfUseCase
     }
 }

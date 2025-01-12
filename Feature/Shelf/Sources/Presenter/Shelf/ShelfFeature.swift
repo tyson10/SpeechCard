@@ -12,9 +12,10 @@ import AppDependencies
 import ComposableArchitecture
 
 @Reducer
-public struct ShelfFeature {
-    
+public struct ShelfFeature: Sendable {
     @Dependency(\.shelfUseCase) private var useCase: ShelfUseCase
+    
+    public init() { }
     
     @ObservableState
     public struct State: Equatable {
@@ -44,7 +45,7 @@ public struct ShelfFeature {
         
         case setAllBooks([BookVO])
         
-        case setEditPresented(Bool)
+        case setEditSrate(EditMainFeature.State?)
     }
     
     public var body: some ReducerOf<Self> {
@@ -52,10 +53,10 @@ public struct ShelfFeature {
             Log.debug(action)
             switch action {
             case .loadBooks:
-                do {
-                    let allBooks = try useCase.loadAllBooks().sorted(by: <)
-                    return .send(.setAllBooks(allBooks))
-                } catch {
+                return .run { send in
+                    let allBooks = try await useCase.loadAllBooks().sorted(by: <)
+                    await send(.setAllBooks(allBooks))
+                } catch: { error, _ in
                     Log.error(error)
                 }
                 
@@ -66,56 +67,81 @@ public struct ShelfFeature {
             case .editItemSelected(let book):
                 state.editingBook = book
                 if let book = book {
-                    state.editState = .init(book: book, mode: .edit)
+                    return .send(.setEditSrate(.init(book: book, mode: .edit)))
                 }
                 
             case .addBookBtnTapped:
-                state.editState = .init(book: BookVO(), mode: .add)
+                return .send(.setEditSrate(.init(book: BookVO(), mode: .add)))
                 
             case .delete(let book):
-                do {
-                    try useCase.deleteBook(book)
-                    return .send(.loadBooks)
-                } catch {
+                return .run { send in
+                    try await useCase.deleteBook(book)
+                    await send(.loadBooks)
+                } catch: { error, _ in
                     Log.error(error)
                 }
                 
             case .setAllBooks(let books):
                 state.books = books
                 
-            case .setEditPresented(let flag):
-                state.editPresented = flag
+            case .setEditSrate(let newState):
+                state.editState = newState
                 
             case .editAction(let presentaionAction):
-                switch presentaionAction {
-                case .presented(let editAction):
-                    do {
-                        switch editAction {
-                        case .save(let newBook):
-                            try useCase.addBook(newBook)
-                            state.editState = nil
-                            return .send(.loadBooks)
-                            
-                        case .update(let book):
-                            try useCase.update(book)
-                            state.editState = nil
-                            return .send(.loadBooks)
-                            
-                        default:
-                            break
-                        }
-                    } catch {
-                        Log.error(error)
-                    }
-                    
-                case .dismiss:
-                    break
-                }
+                return makeEffect(for: presentaionAction)
             }
             return .none
         }
         .ifLet(\.$editState, action: \.editAction) {
             EditMainFeature()
         }
+    }
+}
+
+// MARK: - Handle Edit Action
+private extension ShelfFeature {
+    func makeEffect(for action: PresentationAction<EditMainFeature.Action>) -> Effect<Action> {
+        switch action {
+        case .presented(let editAction):
+            switch editAction {
+            case .save(let newBook):
+                return .run { send in
+                    try await useCase.addBook(newBook)
+                    await withTaskGroup(of: Void.self) { group in
+                        group.addTask {
+                            await send(.loadBooks)
+                        }
+                        group.addTask {
+                            await send(.setEditSrate(nil))
+                        }
+                    }
+                } catch: { error, send in
+                    Log.error(error)
+                }
+                
+            case .update(let book):
+                return .run { send in
+                    try await useCase.update(book)
+                    await withTaskGroup(of: Void.self) { group in
+                        group.addTask {
+                            await send(.loadBooks)
+                        }
+                        group.addTask {
+                            await send(.setEditSrate(nil))
+                        }
+                    }
+                } catch: { error, send in
+                    Log.error(error)
+                }
+                
+            default:
+                break
+            }
+            
+        case .dismiss:
+            break
+        }
+        
+        return .none
     }
 }

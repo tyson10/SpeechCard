@@ -10,23 +10,19 @@ import SwiftUI
 public protocol CardData: Equatable, Sendable {
     var word: String { get }
     var color: Color { get }
-    var countDown: Int { get }
     
-    init(word: String, color: Color, countDown: Int)
+    init(word: String, color: Color)
 }
 
 public struct DefaultCardData: CardData {
     public let word: String
     public let color: Color
-    public let countDown: Int
     
     public init(
         word: String,
-        color: Color,
-        countDown: Int
+        color: Color
     ) {
         self.word = word
         self.color = color
-        self.countDown = countDown
     }
 }

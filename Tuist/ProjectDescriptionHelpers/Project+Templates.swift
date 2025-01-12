@@ -126,6 +126,14 @@ extension Project {
             schemes.append(scheme)
         }
         
-        return Project(name: name, targets: targets, schemes: schemes)
+        return Project(
+            name: name,
+            options: .options(
+                defaultKnownRegions: ["ko", "en"],
+                developmentRegion: "ko"
+            ),
+            targets: targets,
+            schemes: schemes
+        )
     }
 }

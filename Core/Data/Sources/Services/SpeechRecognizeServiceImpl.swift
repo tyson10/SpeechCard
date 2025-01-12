@@ -1,47 +1,39 @@
 import Speech
-import Combine
 
 import Domain
 
-/// A helper for transcribing speech to text using SFSpeechRecognizer and AVAudioEngine.
-public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeService {
-    private var transcriptSubject = PassthroughSubject<String, Error>()
-    public var transcript: AnyPublisher<String, any Error> {
-        return transcriptSubject.eraseToAnyPublisher()
-    }
-    
+public actor SpeechRecognizeServiceImpl: SpeechRecognizeService {
     private var audioEngine: AVAudioEngine?
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var task: SFSpeechRecognitionTask?
-    private let recognizer: SFSpeechRecognizer?
+    private let recognizer = SFSpeechRecognizer()
     
-    /**
-     Initializes a new speech recognizer. If this is the first time you've used the class, it
-     requests access to the speech recognizer and the microphone.
-     */
-    public init() {
-        recognizer = SFSpeechRecognizer()
-        guard recognizer != nil else {
-            transcribe(SpeechRecognizerError.nilRecognizer)
-            return
+    @MainActor public weak var delegate: SpeechRecognizeServiceDelegate?
+    
+    public init() { }
+    
+    @MainActor public func startTranscribe() {
+        Task {
+            await transcribe()
         }
     }
     
-    public func startTranscribe() -> AnyPublisher<String, any Error> {
-        transcribe()
-        return transcript
+    @MainActor public func stopTranscribe() {
+        Task {
+            await reset()
+        }
     }
     
-    public func stopTranscribe() {
-        reset()
-    }
-    
-    private func transcribe(_ message: String) {
-        transcriptSubject.send(message)
+    nonisolated private func transcribe(_ message: String) {
+        Task { @MainActor in
+            delegate?.transcribed(.success(message))
+        }
     }
     
     private func transcribe(_ error: Error) {
-        transcriptSubject.send(completion: .failure(error))
+        Task { @MainActor in
+            delegate?.transcribed(.failure(error))
+        }
     }
     
     private func transcribe() {
@@ -92,7 +84,11 @@ public class SpeechRecognizeServiceImpl: ObservableObject, SpeechRecognizeServic
         return (audioEngine, request)
     }
     
-    nonisolated private func recognitionHandler(audioEngine: AVAudioEngine, result: SFSpeechRecognitionResult?, error: Error?) {
+    nonisolated private func recognitionHandler(
+        audioEngine: AVAudioEngine,
+        result: SFSpeechRecognitionResult?,
+        error: Error?
+    ) {
         let receivedFinalResult = result?.isFinal ?? false
         let receivedError = error != nil
         

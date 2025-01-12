@@ -10,4 +10,5 @@ import Foundation
 public enum InternalError: Error {
     case duplicated
     case notFound
+    case unexpectedNilSelf
 }

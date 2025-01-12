@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct DefaultWordPair: WordPairType {
+public struct DefaultWordPair: WordPairType, Sendable {
     
     public var id = UUID()
     public var origin: String

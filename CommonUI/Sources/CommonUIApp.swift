@@ -15,8 +15,7 @@ struct CommonUIApp: App {
                 data:
                     DefaultCardData(
                         word: "테스트",
-                        color: .white,
-                        countDown: 7
+                        color: .white
                     )
             )
         }

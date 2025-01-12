@@ -11,62 +11,51 @@ import Domain
 import CommonUI
 import Utility
 import AppDependencies
+import Extensions
 
 import ComposableArchitecture
 
 @Reducer
 public struct ChallengeFeature<T: CardData>: Sendable {
-    @Dependency(\.continuousClock) private var clock
-    @Dependency(\.speechRecognitionUseCase) private var speechRecognitionUseCase: SpeechRecognitionUseCase
     @Dependency(\.speechRecognitionPermissionUseCase) private var speechRecognitionPermissionUseCase: SpeechRecognitionPermissionUseCase
+    
+    public init() { }
     
     @ObservableState
     public struct State: Equatable {
         private let book: BookVO
         
         var bookContents: DefaultWordPairs
-        var currentBookContent: DefaultWordPair?
-        var currentCardContent: CardContent<T>?
-        var remainedSeconds: Int?
         
-        public init(
-            book: BookVO,
-            currentCardContent: CardContent<T>? = nil,
-            remainedSeconds: Int? = nil
-        ) {
+        var currentCardIndex = 0
+        var card: CardFeature<T>.State?
+        
+        var introPopupShow: Bool = false
+        
+        public init(book: BookVO) {
             self.book = book
             self.bookContents = book.contents
-            self.currentCardContent = currentCardContent
-            self.remainedSeconds = remainedSeconds
         }
     }
     
+    // TODO: Sendable 빼도 되는지?
     @CasePathable
-    public enum Action : Sendable{
+    public enum Action {
         case entered
         
         case checkPermission
         case requestAuthorization
         
-        case introduce
+        case showIntro(Bool)
         case startChallenge
+        case setCardFeatures
         
-        case setCardContent(CardContent<T>)
-        
-        case countDown(Int)
-        case setRemainedSeconds(Int)
-        
-        case receiveTranscript(String)
-        case recognitionError(Error)
-        
-        case timeOver
-        
-        case startRecord
-        case finishRecord
         case showResult
+        
+        case card(CardFeature<T>.Action)
     }
     
-    public enum ID: String {
+    public enum ID: String, Sendable {
         case cancelCountDown
     }
     
@@ -79,7 +68,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                 
             case .checkPermission:
                 if speechRecognitionPermissionUseCase.isAuthorized {
-                    return .send(.introduce)
+                    return .send(.showIntro(true))
                 } else {
                     return .send(.requestAuthorization)
                 }
@@ -87,117 +76,56 @@ public struct ChallengeFeature<T: CardData>: Sendable {
             case .requestAuthorization:
                 return .run { send in
                     try await speechRecognitionPermissionUseCase.request()
-                    await send(.introduce)
+                    await send(.showIntro(true))
                 } catch: { error, send in
                     Log.error(error)
                 }
                 
-            case .introduce:
-                return .send(.setCardContent(.introduce))
+            case .showIntro(let flag):
+                state.introPopupShow = flag
                 
             case .startChallenge:
-                guard !state.bookContents.isEmpty else { break }
+                return .send(.setCardFeatures)
                 
-                let content = state.bookContents.removeFirst()
-                
-                return .send(
-                    .setCardContent(
-                        .origin(
-                            T(word: content.origin, color: .white, countDown: 7)
-                        )
-                    )
-                )
-                
-            case .setCardContent(let content):
-                state.currentCardContent = content
-                
-                switch content {
-                case .origin(let data):
-                    return .merge(
-                        .send(.startRecord),
-                        .send(.countDown(data.countDown))
-                    )
-                    
-                case .target(let data):
-                    return .send(.countDown(data.countDown))
-                    
-                case .introduce:
-                    return .run { send in
-                        try await Task.sleep(nanoseconds: 3_000_000_000)
-                        await send(.startChallenge)
-                    }
+            case .setCardFeatures:
+                guard let wordPair = state.bookContents[safe: state.currentCardIndex] else {
+                    state.card = nil
+                    return .send(.showResult)
                 }
                 
-            case .countDown(let totalSeconds):
-                return runCountDown(from: totalSeconds)
-                    .cancellable(id: ID.cancelCountDown)
-                
-            case .setRemainedSeconds(let seconds):
-                state.remainedSeconds = seconds
-                
-            case .timeOver:
-                return .send(.finishRecord)
-                
-            case .startRecord:
-                return .publisher(createTranscriptPublisher)
-                
-            case .finishRecord:
-                // TODO: + 마이크 off
-                guard let target = state.currentBookContent?.target else { break }
-                let data = T(
-                    word: target,
-                    color: .yellow,
-                    countDown: 5
-                )
-                return .concatenate(
-                    .cancel(id: ID.cancelCountDown),
-                    .send(.setCardContent(.target(data)))
-                )
+                state.card = .init(wordPair: wordPair)
                 
             case .showResult:
                 break
                 
-            case .receiveTranscript(let transcript):
-                break
-                
-            case .recognitionError(let error):
-                Log.error(error)
-                return .send(.finishRecord)
-                
+            case .card(let cardAction):
+                return reduceCardFeature(&state, cardAction)
             }
             return .none
         }
-    }
-    
-    private func runCountDown(from totalSeconds: Int) -> Effect<Action> {
-        return .run { @MainActor [clock] send in
-            send(.setRemainedSeconds(totalSeconds))
-            
-            var seconds = 0
-            for await _ in clock.timer(interval: .seconds(1)) {
-                seconds += 1
-                
-                let remainedSeconds = totalSeconds - seconds
-                
-                if remainedSeconds < 0 {
-                    send(.timeOver)
-                    break
-                } else {
-                    send(.setRemainedSeconds(remainedSeconds))
-                }
-            }
+        .ifLet(\.card, action: \.card) {
+            CardFeature()
         }
     }
-    
-    private func createTranscriptPublisher() -> AnyPublisher<Action, Never> {
-        return speechRecognitionUseCase.startTranscribe()
-            .map({ script in
-                return .receiveTranscript(script)
-            })
-            .catch { error in
-                return Just(Action.recognitionError(error))
-            }
-            .eraseToAnyPublisher()
+}
+
+private extension ChallengeFeature {
+    func reduceCardFeature(
+        _ state: inout State,
+        _ action: CardFeature<T>.Action
+    ) -> Effect<Action> {
+        var newEffect = Effect<ChallengeFeature.Action>.none
+        
+        switch action {
+        case .toNextCard:
+            state.currentCardIndex += 1
+            newEffect = .send(.setCardFeatures)
+            
+        default:
+            break
+        }
+        
+        return newEffect
     }
 }
 

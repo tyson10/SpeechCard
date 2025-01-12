@@ -14,7 +14,6 @@ let project = Project.create(
         .staticLibrary
     ],
     dependencies: [
-        .Project.Core.data,
         .Project.Feature.shelf,
         .Project.Feature.practice,
         .Project.Feature.challenge

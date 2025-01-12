@@ -15,7 +15,7 @@ public protocol SpeechRecognitionPermissionUseCase: Sendable {
 }
 
 public struct SpeechRecognitionPermissionUseCaseImpl: SpeechRecognitionPermissionUseCase {
-    // TODO: Sendable 준수하는 녀석으로 래핑해서 참조하도록 수정
+    // TODO: AVAudioApplication, SFSpeechRecognizer을 Data Layer에서 접근하도록 수정. 해당 Data Layer의 객체는 Sendable을 준수해야 함.
     private let audioApplication: AVAudioApplication
     public var request: @Sendable () async throws -> Void
     

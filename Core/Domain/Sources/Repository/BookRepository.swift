@@ -6,8 +6,8 @@
 //
 
 public protocol BookRepository: Sendable {
-    func fetchAllBooks() throws -> [BookVO]
-    func create(book: BookVO) throws
-    func delete(book: BookVO) throws
-    func update(book: BookVO) throws
+    func fetchAllBooks() async throws -> [BookVO]
+    func create(book: BookVO) async throws
+    func delete(book: BookVO) async throws
+    func update(book: BookVO) async throws
 }

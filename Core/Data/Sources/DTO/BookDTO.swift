@@ -11,7 +11,7 @@ import Domain
 import SwiftData
 
 @Model
-public class BookDTO {
+public final class BookDTO: Sendable {
     @Attribute(.unique) var name: String
     public var targetLangCode: String
     public var originLangCode: String

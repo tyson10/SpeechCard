@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct BookVO: Hashable, Identifiable {
+public struct BookVO: Hashable, Identifiable, Sendable {
     
     public var id: String { name }
     

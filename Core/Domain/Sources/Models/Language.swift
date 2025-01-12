@@ -8,7 +8,7 @@
 // TODO: 추후 다른 언어도 지원
 //
 
-public enum Language: String {
+public enum Language: String, Sendable {
     case korean
     case english
     

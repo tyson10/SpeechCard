@@ -5,9 +5,12 @@
 //  Created by Taeyoung Son on 6/10/24.
 //
 
-import Combine
+public protocol SpeechRecognizeService: AnyObject, Sendable {
+    @MainActor func startTranscribe()
+    @MainActor func stopTranscribe()
+    @MainActor var delegate: SpeechRecognizeServiceDelegate? { get set }
+}
 
-public protocol SpeechRecognizeService: Sendable {
-    func startTranscribe() -> AnyPublisher<String, Error>
-    func stopTranscribe()
+public protocol SpeechRecognizeServiceDelegate: Sendable, AnyObject {
+    @MainActor var transcribed: (Result<String, Error>) -> Void { get set }
 }
