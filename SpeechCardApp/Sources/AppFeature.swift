@@ -75,6 +75,10 @@ extension AppFeature {
             Scope(state: \.shelf, action: \.shelf) {
                 ShelfFeature()
             }
+            
+            Scope(state: \.challenge, action: \.challenge) {
+                ChallengeFeature<CardDataType>()
+            }
         }
     }
 }
