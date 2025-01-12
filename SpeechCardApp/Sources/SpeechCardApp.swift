@@ -2,9 +2,12 @@ import SwiftUI
 
 import Domain
 import Data
-import DIContainer
+
+// TODO: DIContainer가 필요 없을까?
+//import DIContainer
 
 import Shelf
+import Challenge
 
 import Utility
 
@@ -12,30 +15,38 @@ import ComposableArchitecture
 
 @main
 struct SpeechCardApp: App {
-    @State private var store: StoreOf<AppFeature> = .init(initialState: .init(), reducer: { AppFeature() })
-    
-    private var bookDataSource: BookDataSource?
-    private var shelfDIContainer: ShelfDIContainer?
+    @State private var store: StoreOf<AppFeature>
     
     init() {
-        do {
-            let dataSource = try BookLocalDataSource()
-            bookDataSource = dataSource
-            shelfDIContainer = ShelfDIContainer(datasource: dataSource)
-        } catch {
-            Log.error("BookLocalDataSource 생성 실패", error)
-        }
+        store = StoreOf<AppFeature>(
+            initialState: .init(),
+            reducer: { AppFeature() }
+        )
+    }
+    
+    init(store: StoreOf<AppFeature>) {
+        self.store = store
     }
     
     var body: some Scene {
         WindowGroup {
-            if var shelfView = shelfView() {
-                shelfView     
+            NavigationStackStore(store.scope(state: \.path, action: \.path)) {
+                Button("Shelf로 이동") {
+                    store.send(.shelfButtonTapped)
+                }
+            } destination: { store in
+                switch store.state {
+                case .shelf:
+                    if let store = store.scope(state: \.shelf, action: \.shelf) {
+                        ShelfView(store: store)
+                    }
+                    
+                case .challenge:
+                    if let store = store.scope(state: \.challenge, action: \.challenge) {
+                        ChallengeView(store: store)
+                    }
+                }
             }
         }
-    }
-    
-    func shelfView() -> ShelfView? {
-        return shelfDIContainer?.makeDefaultView()
     }
 }
