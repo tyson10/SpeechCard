@@ -25,10 +25,11 @@ public struct ReportCard: Equatable {
 }
 
 public extension ReportCard {
-    struct Session: Equatable {
-        let question: String
-        let correctAnswer: String
-        let userAnswer: String
+    struct Session: Equatable, Identifiable {
+        public let id = UUID()
+        public let question: String
+        public let correctAnswer: String
+        public let userAnswer: String
     }
 }
 

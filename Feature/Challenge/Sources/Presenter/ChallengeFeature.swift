@@ -98,7 +98,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                 state.card = .init(wordPair: wordPair)
                 
             case .showResult:
-                // TODO: ReportView 작업(state.reportCard 표시)
+                // TODO: ReportCardView 로 Navigate
                 break
                 
             case .card(let cardAction):
