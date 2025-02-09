@@ -64,7 +64,10 @@ public struct CardFeature<T: CardData>: Sendable {
         case startTranscribe
         case stopTranscribe
         
+        case setContent(CardContent<T>)
+        
         case grading
+        case recordSession(ReportCard.Session)
         
         case receiveTranscript(String)
         case recognitionError(Error)
@@ -129,16 +132,30 @@ public struct CardFeature<T: CardData>: Sendable {
             case .countDownAction(let countDownAction):
                 return handle(countDownAction)
                 
+            case .setContent(let newContent):
+                state.content = newContent
+                
             case .grading:
-                let isCorrectAnswer = state.wordPair.target.lowercased() == state.transcript.lowercased()
-                state.content = .target(
+                let session = ReportCard.Session(
+                    question: state.wordPair.target,
+                    correctAnswer: state.wordPair.origin,
+                    userAnswer: state.transcript
+                )
+                
+                let newContent = CardContent<T>.target(
                     T(
                         word: state.wordPair.target,
-                        color: isCorrectAnswer ? .green : .red
+                        color: session.isCorrectAnswer ? .green : .red
                     )
                 )
                 
-            case .toNextCard:
+                return .merge(
+                    .send(.recordSession(session)),
+                    .send(.setContent(newContent))
+                )
+                
+            case .toNextCard, .recordSession:
+                // 상위 Store에서 처리
                 break
                 
             case .recognitionError(let error):

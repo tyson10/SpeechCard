@@ -30,6 +30,8 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         var currentCardIndex = 0
         var card: CardFeature<T>.State?
         
+        var reportCard = ReportCard()
+        
         var introPopupShow: Bool = false
         
         public init(book: BookVO) {
@@ -96,6 +98,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                 state.card = .init(wordPair: wordPair)
                 
             case .showResult:
+                // TODO: ReportView 작업(state.reportCard 표시)
                 break
                 
             case .card(let cardAction):
@@ -120,6 +123,9 @@ private extension ChallengeFeature {
         case .toNextCard:
             state.currentCardIndex += 1
             newEffect = .send(.setCardFeatures)
+            
+        case .recordSession(let session):
+            state.reportCard.append(new: session)
             
         default:
             break
