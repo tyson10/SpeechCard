@@ -42,6 +42,10 @@ public actor SpeechRecognizeServiceImpl: SpeechRecognizeService {
             return
         }
         
+        // TODO: recognizer의 locale 설정.
+        // https://developer.apple.com/documentation/naturallanguage/
+        // 입력된 텍스트 기반으로 언어 추정
+        
         do {
             let (audioEngine, request) = try Self.prepareEngine()
             self.audioEngine = audioEngine

@@ -34,6 +34,8 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         
         var introPopupShow: Bool = false
         
+        var path = StackState<Path.State>()
+        
         public init(book: BookVO) {
             self.book = book
             self.bookContents = book.contents
@@ -55,6 +57,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         case showResult
         
         case card(CardFeature<T>.Action)
+        case path(StackAction<Path.State, Path.Action>)
     }
     
     public enum ID: String, Sendable {
@@ -92,17 +95,20 @@ public struct ChallengeFeature<T: CardData>: Sendable {
             case .setCardFeatures:
                 guard let wordPair = state.bookContents[safe: state.currentCardIndex] else {
                     state.card = nil
-                    return .send(.showResult)
+                    break
                 }
                 
                 state.card = .init(wordPair: wordPair)
                 
             case .showResult:
-                // TODO: ReportCardView 로 Navigate
-                break
+                let reportCardState = ReportCardFeature.State(reportCard: state.reportCard)
+                state.path.append(.reportCard(reportCardState))
                 
             case .card(let cardAction):
                 return reduceCardFeature(&state, cardAction)
+                
+            case .path(let pathAction):
+                return reducePathFeature(&state, pathAction)
             }
             return .none
         }
@@ -132,6 +138,46 @@ private extension ChallengeFeature {
         }
         
         return newEffect
+    }
+    
+    func reducePathFeature(
+        _ state: inout State,
+        _ action: StackAction<Path.State, Path.Action>
+    ) -> Effect<Action> {
+        switch action {
+        case .element(_, let pathAction):
+            switch pathAction {
+            case .reportCard(let reportCardAction):
+                break
+            }
+        case .popFrom(let id):
+            break
+        case .push(let id, let pathAction):
+            break
+        }
+        
+        return .none
+    }
+}
+
+extension ChallengeFeature {
+    @Reducer
+    public struct Path {
+        @ObservableState
+        public enum State: Equatable {
+            case reportCard(ReportCardFeature.State)
+        }
+        
+        @CasePathable
+        public enum Action {
+            case reportCard(ReportCardFeature.Action)
+        }
+        
+        public var body: some ReducerOf<Self> {
+            Scope(state: \.reportCard, action: \.reportCard) {
+                ReportCardFeature()
+            }
+        }
     }
 }
 
