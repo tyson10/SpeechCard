@@ -8,6 +8,8 @@
 // TODO: 추후 다른 언어도 지원
 //
 
+import Foundation
+
 public enum Language: String, Sendable {
     case arabicSaudiArabia
     case chineseSimplified
@@ -38,38 +40,42 @@ public enum Language: String, Sendable {
     case swedishSweden
     case thaiThailand
     case turkishTurkey
-    
-    public var localeId: String {
+}
+
+public extension Language {
+    var locale: Locale {
+        let identifier: String
         switch self {
-        case .arabicSaudiArabia: return "ar-SA"
-        case .chineseSimplified: return "zh-CN"
-        case .chineseTraditionalHongKong: return "zh-HK"
-        case .chineseTraditionalTaiwan: return "zh-TW"
-        case .danishDenmark: return "da-DK"
-        case .dutchNetherlands: return "nl-NL"
-        case .englishAustralia: return "en-AU"
-        case .englishCanada: return "en-CA"
-        case .englishIndia: return "en-IN"
-        case .englishUK: return "en-GB"
-        case .englishUS: return "en-US"
-        case .finnishFinland: return "fi-FI"
-        case .frenchCanada: return "fr-CA"
-        case .frenchFrance: return "fr-FR"
-        case .germanGermany: return "de-DE"
-        case .hebrewIsrael: return "he-IL"
-        case .hindiIndia: return "hi-IN"
-        case .italianItaly: return "it-IT"
-        case .japaneseJapan: return "ja-JP"
-        case .koreanSouthKorea: return "ko-KR"
-        case .norwegianNorway: return "nb-NO"
-        case .polishPoland: return "pl-PL"
-        case .portugueseBrazil: return "pt-BR"
-        case .russianRussia: return "ru-RU"
-        case .spanishMexico: return "es-MX"
-        case .spanishSpain: return "es-ES"
-        case .swedishSweden: return "sv-SE"
-        case .thaiThailand: return "th-TH"
-        case .turkishTurkey: return "tr-TR"
+        case .arabicSaudiArabia: identifier = "ar-SA"
+        case .chineseSimplified: identifier = "zh-CN"
+        case .chineseTraditionalHongKong: identifier = "zh-HK"
+        case .chineseTraditionalTaiwan: identifier = "zh-TW"
+        case .danishDenmark: identifier = "da-DK"
+        case .dutchNetherlands: identifier = "nl-NL"
+        case .englishAustralia: identifier = "en-AU"
+        case .englishCanada: identifier = "en-CA"
+        case .englishIndia: identifier = "en-IN"
+        case .englishUK: identifier = "en-GB"
+        case .englishUS: identifier = "en-US"
+        case .finnishFinland: identifier = "fi-FI"
+        case .frenchCanada: identifier = "fr-CA"
+        case .frenchFrance: identifier = "fr-FR"
+        case .germanGermany: identifier = "de-DE"
+        case .hebrewIsrael: identifier = "he-IL"
+        case .hindiIndia: identifier = "hi-IN"
+        case .italianItaly: identifier = "it-IT"
+        case .japaneseJapan: identifier = "ja-JP"
+        case .koreanSouthKorea: identifier = "ko-KR"
+        case .norwegianNorway: identifier = "nb-NO"
+        case .polishPoland: identifier = "pl-PL"
+        case .portugueseBrazil: identifier = "pt-BR"
+        case .russianRussia: identifier = "ru-RU"
+        case .spanishMexico: identifier = "es-MX"
+        case .spanishSpain: identifier = "es-ES"
+        case .swedishSweden: identifier = "sv-SE"
+        case .thaiThailand: identifier = "th-TH"
+        case .turkishTurkey: identifier = "tr-TR"
         }
+        return Locale(identifier: identifier)
     }
 }

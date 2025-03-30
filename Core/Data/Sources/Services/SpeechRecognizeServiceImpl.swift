@@ -14,7 +14,7 @@ public actor SpeechRecognizeServiceImpl: SpeechRecognizeService {
     
     @MainActor public func startTranscribing(with language: Language) {
         Task {
-            await transcribe(with: Locale(identifier: language.localeId))
+            await transcribe(with: language.locale)
         }
     }
     
