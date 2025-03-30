@@ -8,15 +8,15 @@
 import Combine
 
 public protocol SpeechRecognitionUseCase: Sendable {
-    @MainActor var startTranscribe: () -> AnyPublisher<String, Error> { get set }
-    @MainActor var stopTranscribe: () -> Void { get set }
+    @MainActor var startTranscribing: (Language) -> AnyPublisher<String, Error> { get set }
+    @MainActor var stopTranscribing: () -> Void { get set }
 }
 
 public actor SpeechRecognitionUseCaseImpl: SpeechRecognitionUseCase, SpeechRecognizeServiceDelegate {
     private let service: SpeechRecognizeService
     
-    @MainActor public var startTranscribe: () -> AnyPublisher<String, Error> = { return Empty().eraseToAnyPublisher() }
-    @MainActor public var stopTranscribe: () -> Void = { }
+    @MainActor public var startTranscribing: (Language) -> AnyPublisher<String, Error> = { _ in return Empty().eraseToAnyPublisher() }
+    @MainActor public var stopTranscribing: () -> Void = { }
     @MainActor public var transcribed: (Result<String, Error>) -> Void = { _ in }
     
     @MainActor private var transcript = PassthroughSubject<String, Error>()
@@ -25,12 +25,12 @@ public actor SpeechRecognitionUseCaseImpl: SpeechRecognitionUseCase, SpeechRecog
         self.service = service
         
         Task { @MainActor in
-            self.startTranscribe = { @MainActor [weak self] in
+            self.startTranscribing = { @MainActor [weak self] language in
                 guard let self = self else {
                     return Fail(error: InternalError.unexpectedNilSelf)
                         .eraseToAnyPublisher()
                 }
-                service.startTranscribe()
+                service.startTranscribing(with: language)
                 return self.transcript.eraseToAnyPublisher()
             }
             
@@ -43,7 +43,7 @@ public actor SpeechRecognitionUseCaseImpl: SpeechRecognitionUseCase, SpeechRecog
                 }
             }
             
-            self.stopTranscribe = service.stopTranscribe
+            self.stopTranscribing = service.stopTranscribing
             self.service.delegate = self
         }
     }

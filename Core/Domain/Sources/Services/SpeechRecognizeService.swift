@@ -5,9 +5,11 @@
 //  Created by Taeyoung Son on 6/10/24.
 //
 
+import Foundation
+
 public protocol SpeechRecognizeService: AnyObject, Sendable {
-    @MainActor func startTranscribe()
-    @MainActor func stopTranscribe()
+    @MainActor func startTranscribing(with language: Language)
+    @MainActor func stopTranscribing()
     @MainActor var delegate: SpeechRecognizeServiceDelegate? { get set }
 }
 

@@ -26,6 +26,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         private let book: BookVO
         
         var bookContents: DefaultWordPairs
+        var targetLanguage: Language
         
         var currentCardIndex = 0
         var card: CardFeature<T>.State?
@@ -39,6 +40,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         public init(book: BookVO) {
             self.book = book
             self.bookContents = book.contents
+            self.targetLanguage = book.targetLanguage
         }
     }
     
@@ -98,7 +100,10 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                     break
                 }
                 
-                state.card = .init(wordPair: wordPair)
+                state.card = .init(
+                    wordPair: wordPair,
+                    targetLanguage: state.targetLanguage
+                )
                 
             case .showResult:
                 let reportCardState = ReportCardFeature.State(reportCard: state.reportCard)

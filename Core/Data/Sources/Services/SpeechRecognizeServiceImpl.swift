@@ -6,19 +6,19 @@ public actor SpeechRecognizeServiceImpl: SpeechRecognizeService {
     private var audioEngine: AVAudioEngine?
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var task: SFSpeechRecognitionTask?
-    private let recognizer = SFSpeechRecognizer()
+    private var recognizer: SFSpeechRecognizer?
     
     @MainActor public weak var delegate: SpeechRecognizeServiceDelegate?
     
     public init() { }
     
-    @MainActor public func startTranscribe() {
+    @MainActor public func startTranscribing(with language: Language) {
         Task {
-            await transcribe()
+            await transcribe(with: Locale(identifier: language.localeId))
         }
     }
     
-    @MainActor public func stopTranscribe() {
+    @MainActor public func stopTranscribing() {
         Task {
             await reset()
         }
@@ -36,13 +36,16 @@ public actor SpeechRecognizeServiceImpl: SpeechRecognizeService {
         }
     }
     
-    private func transcribe() {
+    private func transcribe(with locale: Locale) {
+        if recognizer == nil || recognizer!.locale.identifier != locale.identifier {
+            recognizer = SFSpeechRecognizer(locale: locale)
+        }
+        
         guard let recognizer, recognizer.isAvailable else {
             self.transcribe(SpeechRecognizerError.recognizerIsUnavailable)
             return
         }
         
-        // TODO: recognizer의 locale 설정.
         // https://developer.apple.com/documentation/naturallanguage/
         // 입력된 텍스트 기반으로 언어 추정
         

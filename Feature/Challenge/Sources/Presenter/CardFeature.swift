@@ -28,6 +28,7 @@ public struct CardFeature<T: CardData>: Sendable {
         public var id: UUID { wordPair.id }
         
         var wordPair: DefaultWordPair
+        let targetLanguage: Language
         var content: CardContent<T>
         
         var cancellables = Set<AnyCancellable>()
@@ -35,8 +36,12 @@ public struct CardFeature<T: CardData>: Sendable {
         
         var countDownState: CountDownFeature.State?
         
-        init(wordPair: DefaultWordPair) {
+        init(
+            wordPair: DefaultWordPair,
+            targetLanguage: Language
+        ) {
             self.wordPair = wordPair
+            self.targetLanguage = targetLanguage
             self.content = .origin(
                 T(
                     word: wordPair.origin,
@@ -98,8 +103,9 @@ public struct CardFeature<T: CardData>: Sendable {
                 
             case .startTranscribe:
                 // https://maramincho.tistory.com/133 참고
+                let targetLanguage = state.targetLanguage
                 return .run { @MainActor send in
-                    let script = speechRecognitionUseCase.startTranscribe()
+                    let script = speechRecognitionUseCase.startTranscribing(targetLanguage)
                         .map({ script in
                             return .receiveTranscript(script)
                         })
@@ -116,7 +122,7 @@ public struct CardFeature<T: CardData>: Sendable {
                 
             case .stopTranscribe:
                 return .run { @MainActor _ in
-                    speechRecognitionUseCase.stopTranscribe()
+                    speechRecognitionUseCase.stopTranscribing()
                 }
                 
             case .receiveTranscript(let script):

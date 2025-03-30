@@ -59,11 +59,15 @@ struct ChallengeApp: App {
 })
 
 final class FakeSpeechRecognizeService: SpeechRecognizeService {
-    func startTranscribe() {
+    func startTranscribing(with language: Domain.Language) {
+        
+    }
+    
+    func startTranscribing() {
         
     }
     
     var delegate: (any Domain.SpeechRecognizeServiceDelegate)?
     
-    func stopTranscribe() { }
+    func stopTranscribing() { }
 }
