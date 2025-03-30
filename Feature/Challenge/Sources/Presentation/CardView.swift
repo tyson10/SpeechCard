@@ -71,7 +71,7 @@ public struct CardView<T: CardData>: View {
 }
 
 #Preview {
-    CardView<DefaultCardData>(store: .init(initialState: .init(wordPair: .init(origin: "고맙습니다!", target: "Thank you!")), reducer: {
+    CardView<DefaultCardData>(store: .init(initialState: .init(wordPair: .init(origin: "고맙습니다!", target: "Thank you!"), targetLanguage: .englishUS), reducer: {
         CardFeature()
     }))
 }
