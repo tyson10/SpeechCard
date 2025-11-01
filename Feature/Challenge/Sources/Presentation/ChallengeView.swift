@@ -19,6 +19,7 @@ public struct ChallengeView<T: CardData>: View {
     }
     
     public var body: some View {
+        // FIXME: 최상위 NavigationStack 1개만 사용하도록 수정
         NavigationStack(path: $store.scope(
             state: \.path,
             action: \.path)
