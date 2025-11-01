@@ -16,7 +16,12 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/exyte/PopupView.git",
-            .upToNextMajor(from: "2.9.1")
+            .upToNextMajor(from: "4.1.15")
+        ),
+        // PopupView의 의존성이나 버전 선택이 잘못되어 강제로 지정
+        .package(
+            url: "https://github.com/siteline/swiftui-introspect",
+            from: "26.0.0"
         )
     ],
     targets: [
