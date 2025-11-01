@@ -19,8 +19,8 @@ public struct BookVO: Hashable, Identifiable, Sendable {
     
     public init(
         name: String = "",
-        targetLanguage: Language,
-        originLanguage: Language,
+        targetLanguage: Language = .englishUS,
+        originLanguage: Language = .koreanSouthKorea,
         contents: DefaultWordPairs = [],
         createdAt: Date = Date()
     ) {

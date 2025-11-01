@@ -30,7 +30,9 @@ struct SpeechCardApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStackStore(store.scope(state: \.path, action: \.path)) {
+            NavigationStack(
+                path: $store.scope(state: \.path, action: \.path)
+            ) {
                 Button("Shelf로 이동") {
                     store.send(.shelfButtonTapped)
                 }
