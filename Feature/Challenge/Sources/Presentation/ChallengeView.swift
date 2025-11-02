@@ -19,28 +19,11 @@ public struct ChallengeView<T: CardData>: View {
     }
     
     public var body: some View {
-        // FIXME: 최상위 NavigationStack 1개만 사용하도록 수정
-//        NavigationStack(path: $store.scope(
-//            state: \.path,
-//            action: \.path)
-//        ) {
-//            
-//        } destination: { store in
-//            switch store.state {
-//            case .reportCard:
-//                if let store = store.scope(state: \.reportCard, action: \.reportCard) {
-//                    ReportCardView(store: store)
-//                }
-//            }
-//        }
         makeMainView()
             .centerPopup(
                 isPresented: $store.introPopupShow.sending(\.showIntro),
                 view: makeIntroContent
             )
-            .onAppear {
-                store.send(.entered)
-            }
     }
     
     private func makeMainView() -> some View {
@@ -68,7 +51,7 @@ public struct ChallengeView<T: CardData>: View {
     private func makeIntroContent() -> some View {
         return IntroPopupContent(confirmAction: {
             store.send(.showIntro(false))
-            store.send(.startChallenge)
+            store.send(.checkPermission)
         })
     }
 }

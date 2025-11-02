@@ -33,7 +33,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         
         var reportCard = ReportCard()
         
-        var introPopupShow: Bool = false
+        var introPopupShow: Bool = true
         
         public init(book: BookVO) {
             self.book = book
@@ -45,8 +45,6 @@ public struct ChallengeFeature<T: CardData>: Sendable {
     // TODO: Sendable 빼도 되는지?
     @CasePathable
     public enum Action {
-        case entered
-        
         case checkPermission
         case requestAuthorization
         
@@ -68,12 +66,9 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         Reduce { state, action in
             Log.info(action)
             switch action {
-            case .entered:
-                return .send(.checkPermission)
-                
             case .checkPermission:
                 if speechRecognitionPermissionUseCase.isAuthorized {
-                    return .send(.showIntro(true))
+                    return .send(.startChallenge)
                 } else {
                     return .send(.requestAuthorization)
                 }
@@ -81,7 +76,7 @@ public struct ChallengeFeature<T: CardData>: Sendable {
             case .requestAuthorization:
                 return .run { send in
                     try await speechRecognitionPermissionUseCase.request()
-                    await send(.showIntro(true))
+                    await send(.startChallenge)
                 } catch: { error, send in
                     Log.error(error)
                 }
