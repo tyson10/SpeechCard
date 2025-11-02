@@ -62,13 +62,17 @@ extension AppFeature {
         @ObservableState
         enum State: Equatable {
             case shelf(ShelfFeature.State)
+            
             case challenge(ChallengeFeature<CardDataType>.State)
+            case reportCard(ReportCardFeature.State)
         }
         
         @CasePathable
         enum Action {
             case shelf(ShelfFeature.Action)
+            
             case challenge(ChallengeFeature<CardDataType>.Action)
+            case reportCard(ReportCardFeature.Action)
         }
         
         var body: some ReducerOf<Self> {
@@ -78,6 +82,10 @@ extension AppFeature {
             
             Scope(state: \.challenge, action: \.challenge) {
                 ChallengeFeature<CardDataType>()
+            }
+            
+            Scope(state: \.reportCard, action: \.reportCard) {
+                ReportCardFeature()
             }
         }
     }
@@ -93,6 +101,8 @@ private extension AppFeature {
             return reduceShelfFeature(&state, shelfAction)
         case .challenge(let challengeAction):
             return reduceChallengeFeature(&state, challengeAction)
+        case .reportCard(let reportCardAction):
+            return reduceReportCardFeature(&state, reportCardAction)
         }
     }
     
@@ -115,6 +125,24 @@ private extension AppFeature {
     func reduceChallengeFeature(
         _ state: inout State,
         _ action: ChallengeFeature<CardDataType>.Action
+    ) -> Effect<Action> {
+        switch action {
+        case .showReportCard(let reportCard):
+            state.path.append(
+                .reportCard(
+                    .init(reportCard: reportCard)
+                )
+            )
+        default:
+            break
+        }
+        
+        return .none
+    }
+    
+    func reduceReportCardFeature(
+        _ state: inout State,
+        _ action: ReportCardFeature.Action
     ) -> Effect<Action> {
         switch action {
         default:

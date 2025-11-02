@@ -47,6 +47,11 @@ struct SpeechCardApp: App {
                     if let store = store.scope(state: \.challenge, action: \.challenge) {
                         ChallengeView(store: store)
                     }
+                    
+                case .reportCard:
+                    if let store = store.scope(state: \.reportCard, action: \.reportCard) {
+                        ReportCardView(store: store)
+                    }
                 }
             }
         }
