@@ -10,6 +10,6 @@ import ProjectDescriptionHelpers
 
 let project = Project.create(
     name: "Utility",
-    products: [.staticLibrary],
+    products: [.staticFramework],
     dependencies: []
 )

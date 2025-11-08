@@ -11,11 +11,12 @@ import ProjectDescriptionHelpers
 let project = Project.create(
     name: "AppDependencies",
     products: [
-        .staticLibrary
+        .framework
     ],
     dependencies: [
         .Project.Core.data,
-        .Project.Core.domain,
+        .Project.Utility.utility,
+        .Project.CommonUI.ui,
         .ThirdParty.composableArchitecture
     ]
 )

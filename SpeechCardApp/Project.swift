@@ -9,7 +9,9 @@ let project = Project.create(
         .uiTests
     ],
     dependencies: [
-        .Project.DIContainer.container
+        .Project.Feature.shelf,
+        .Project.Feature.practice,
+        .Project.Feature.challenge
     ],
     additionalInfo: [
         "NSMicrophoneUsageDescription": "우리 앱에서 음성 인식을 위해 마이크에 접근해야 합니다.",

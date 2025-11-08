@@ -81,7 +81,7 @@ extension Project {
                     deploymentTargets: deploymentTargets,
                     infoPlist: .extendingDefault(with: infoPlist),
                     sources: ["Sources/**"],
-                    resources: $0 == .framework ? ["Targets/\(name)/Resources/**"] : nil,
+                    resources: ["Resources/**"],
                     dependencies: dependencies,
                     settings: defaultSettings
                 )

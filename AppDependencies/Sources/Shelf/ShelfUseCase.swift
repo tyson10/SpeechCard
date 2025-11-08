@@ -14,7 +14,11 @@ import Dependencies
 enum ShelfUseCaseKey: DependencyKey {
     public static var liveValue: any ShelfUseCase {
         do {
-            return try ShelfUseCaseImpl(repository: BookRepositoryImpl(dataSource: BookLocalDataSource()))
+            return try ShelfUseCaseImpl(
+                repository: BookRepositoryImpl(
+                    dataSource: BookLocalDataSource()
+                )
+            )
         } catch {
             fatalError(error.localizedDescription)
         }

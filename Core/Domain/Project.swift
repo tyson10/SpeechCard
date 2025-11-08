@@ -11,10 +11,9 @@ import ProjectDescriptionHelpers
 let project = Project.create(
     name: "Domain",
     products: [
-        .staticLibrary
+        .staticFramework
     ],
     dependencies: [
-        .Project.Utility.utility,
         .Project.Core.extensions
     ]
 )

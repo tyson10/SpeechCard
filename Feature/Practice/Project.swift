@@ -11,12 +11,11 @@ import ProjectDescriptionHelpers
 let project = Project.create(
     name: "Practice",
     products: [
-        .staticFramework,
+        .framework,
         .unitTests,
         .uiTests
     ],
     dependencies: [
-        .Project.CommonUI.ui,
         .Project.AppDependencies.appDependencies
     ],
     includeDemoApp: true

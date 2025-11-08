@@ -10,11 +10,9 @@ import ProjectDescriptionHelpers
 
 let project = Project.create(
     name: "CommonUI",
-    products: [.staticLibrary],
+    products: [.staticFramework],
     dependencies: [
-        .Project.Core.domain,
         .ThirdParty.lottie,
         .ThirdParty.popUpView
-    ],
-    includeDemoApp: true
+    ]
 )

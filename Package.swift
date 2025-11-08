@@ -3,6 +3,22 @@
 
 import PackageDescription
 
+// 빌드 세팅 커스텀(https://docs.tuist.dev/ko/guides/develop/projects/dependencies#external-dependencies)
+#if TUIST
+    import ProjectDescription
+    import ProjectDescriptionHelpers
+
+    let packageSettings = PackageSettings(
+        productTypes: [
+            "ComposableArchitecture": .framework, // default is .staticFramework
+            "PopupView": .framework,
+            "Lottie": .framework,
+            "SwiftUIIntrospect": .framework
+        ]
+    )
+
+#endif
+
 let package = Package(
     name: "SpeechCard",
     dependencies: [

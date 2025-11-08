@@ -11,12 +11,11 @@ import ProjectDescriptionHelpers
 let project = Project.create(
     name: "Challenge",
     products: [
-        .staticFramework,
+        .framework,
         .unitTests,
         .uiTests
     ],
     dependencies: [
-        .Project.CommonUI.ui,
         .Project.AppDependencies.appDependencies
     ],
     // TODO: 로컬라이징

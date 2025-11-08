@@ -10,7 +10,7 @@ import ProjectDescriptionHelpers
 
 let project = Project.create(
     name: "Data",
-    products: [.staticLibrary],
+    products: [.staticFramework],
     dependencies: [
         .Project.Core.domain
     ]
