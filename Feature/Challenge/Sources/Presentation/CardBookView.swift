@@ -59,7 +59,7 @@ public struct CardBookView<T: CardData>: View {
                 Spacer()
                 
                 Button("다음 카드로 넘어가기") {
-                    store.send(.startNextCard)
+                    store.send(.card(.startNext))
                 }
             }
         }
