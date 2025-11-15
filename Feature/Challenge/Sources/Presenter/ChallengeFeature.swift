@@ -23,26 +23,18 @@ public struct ChallengeFeature<T: CardData>: Sendable {
     
     @ObservableState
     public struct State: Equatable {
-        private let book: BookVO
+        let book: BookVO
         
-        var bookContents: DefaultWordPairs
-        var targetLanguage: Language
-        
-        var currentCardIndex = 0
-        var card: CardFeature<T>.State?
-        
-        var reportCard = ReportCard()
+        var card: CardBookFeature<T>.State?
+        var reportCard: ReportCard?
         
         var introPopupShow: Bool = true
         
         public init(book: BookVO) {
             self.book = book
-            self.bookContents = book.contents
-            self.targetLanguage = book.targetLanguage
         }
     }
     
-    // TODO: Sendable 빼도 되는지?
     @CasePathable
     public enum Action {
         case checkPermission
@@ -50,12 +42,12 @@ public struct ChallengeFeature<T: CardData>: Sendable {
         
         case showIntro(Bool)
         case startChallenge
-        case setCardFeatures
         
+        case setReportCard(ReportCard)
         case showResultButtonTapped
         case showReportCard(ReportCard)
         
-        case card(CardFeature<T>.Action)
+        case card(CardBookFeature<T>.Action)
     }
     
     public enum ID: String, Sendable {
@@ -85,32 +77,32 @@ public struct ChallengeFeature<T: CardData>: Sendable {
                 state.introPopupShow = flag
                 
             case .startChallenge:
-                return .send(.setCardFeatures)
+                state.card = .init(book: state.book)
                 
-            case .setCardFeatures:
-                guard let wordPair = state.bookContents[safe: state.currentCardIndex] else {
-                    state.card = nil
-                    break
-                }
-                
-                state.card = .init(
-                    wordPair: wordPair,
-                    targetLanguage: state.targetLanguage
-                )
+            case .setReportCard(let reportCard):
+                state.reportCard = reportCard
                 
             case .showResultButtonTapped:
-                return .send(.showReportCard(state.reportCard))
+                guard let reportCard = state.reportCard else {
+                    Log.error("리포트카드 데이터 없음")
+                    break
+                }
+                return .send(.showReportCard(reportCard))
                 
             case .card(let cardAction):
-                return reduceCardFeature(&state, cardAction)
+                return reduceCardFeature(
+                    &state,
+                    cardAction
+                )
                 
-            default:
+            case .showReportCard:
+                // 상위뷰에서 처리
                 break
             }
             return .none
         }
         .ifLet(\.card, action: \.card) {
-            CardFeature()
+            CardBookFeature()
         }
     }
 }
@@ -118,18 +110,14 @@ public struct ChallengeFeature<T: CardData>: Sendable {
 private extension ChallengeFeature {
     func reduceCardFeature(
         _ state: inout State,
-        _ action: CardFeature<T>.Action
+        _ action: CardBookFeature<T>.Action
     ) -> Effect<Action> {
         var newEffect = Effect<ChallengeFeature.Action>.none
         
         switch action {
-        case .toNextCard:
-            state.currentCardIndex += 1
-            newEffect = .send(.setCardFeatures)
-            
-        case .recordSession(let session):
-            state.reportCard.append(new: session)
-            
+        case .finishCardBook(let reportCard):
+            state.card = nil
+            newEffect = .send(.setReportCard(reportCard))
         default:
             break
         }
@@ -137,22 +125,3 @@ private extension ChallengeFeature {
         return newEffect
     }
 }
-
-///  0. 권한 확인 및 요청. 권한 설정이 제대로 되지 않으면 탈출
-///  1. 챌린지 입장
-///  2. 안내 화면 표시(Start, Cancel 버튼이 있음)
-///  3, 카운트 다운 3, 2, 1
-///  4. 영어(Target language)가 나옴. 동시에 카운트 다운 되고 있음.
-///  5. STT 활성화 됨.
-///  6. Speech가 끝나면 한국어(Origin language)가 나오면서 채점됨.(5초 딜레이, 카운트도 표시)
-///  7. 4~6 반복
-///  8. 다 끝나면 리스트로 오답노트 보여줌.
-
-/// 레코딩 시작시 해야할 것
-///
-///
-/// 레코딩 종료시 해야할 것
-/// 1. 레코더 종료
-/// 2. 결과 표시
-/// 3. 카운트 다운 종료 및 재시작
-/// 4.

@@ -29,7 +29,7 @@ public struct ChallengeView<T: CardData>: View {
     private func makeMainView() -> some View {
         if let cardStore = store.scope(state: \.card, action: \.card) {
             return AnyView(
-                CardView(store: cardStore)
+                CardBookView(store: cardStore)
                     .padding(
                         EdgeInsets(
                             top: 100,

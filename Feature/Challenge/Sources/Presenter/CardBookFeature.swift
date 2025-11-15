@@ -1,5 +1,5 @@
 //
-//  CardFeature.swift
+//  CardBookFeature.swift
 //  Challenge
 //
 //  Created by Taeyoung Son on 10/3/24.
@@ -19,49 +19,45 @@ import Utility
 
 // TODO: 음성인식, 채점까지 다 되도록 구현. ChallengeFeature 기능에서 기능을 뺏어와야 함. ChallengeFeature의 Child로 구현.
 @Reducer
-public struct CardFeature<T: CardData>: Sendable {
+public struct CardBookFeature<T: CardData>: Sendable {
     
     @Dependency(\.speechRecognitionUseCase) private var speechRecognitionUseCase: SpeechRecognitionUseCase
     
     @ObservableState
-    public struct State: Equatable, Identifiable {
-        public var id: UUID { wordPair.id }
+    public struct State: Equatable {
+        private let book: BookVO
         
-        var wordPair: DefaultWordPair
+        var wordPairs: DefaultWordPairs
+        var currentWordPair: DefaultWordPair?
         let targetLanguage: Language
         var content: CardContent<T>
         
-        var cancellables = Set<AnyCancellable>()
         var transcript: String = ""
         
         var countDownState: CountDownFeature.State?
         
-        init(
-            wordPair: DefaultWordPair,
-            targetLanguage: Language
-        ) {
-            self.wordPair = wordPair
-            self.targetLanguage = targetLanguage
-            self.content = .origin(
+        var reportCard = ReportCard()
+        
+        init(book: BookVO) {
+            self.book = book
+            self.wordPairs = book.contents
+            self.targetLanguage = book.targetLanguage
+            self.content = .cover(
                 T(
-                    word: wordPair.origin,
-                    color: .clear
+                    word: book.name,
+                    color: .yellow
                 )
             )
-        }
-        
-        public static func == (lhs: State, rhs: State) -> Bool {
-            return lhs.wordPair == rhs.wordPair &&
-            lhs.content == rhs.content &&
-            lhs.transcript == rhs.transcript &&
-            lhs.countDownState == rhs.countDownState
         }
     }
     
     @CasePathable
     public enum Action {
-        case startCard
-        case finishSpeech
+        case startCardBook
+        case finishCardBook(ReportCard)
+        
+        case startNextCard
+        case finishCard
         
         case startCountDown
         case endCountDown
@@ -80,21 +76,36 @@ public struct CardFeature<T: CardData>: Sendable {
         case bindTranscript(AnyPublisher<Action, Never>)
         
         case countDownAction(CountDownFeature.Action)
-        
-        case toNextCard
     }
     
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .startCard:
-                guard state.countDownState == nil else { break }
+            case .startCardBook:
+                return .send(.startNextCard)
+            case .finishCardBook:
+                break
+                
+            case .startNextCard:
+                guard !state.wordPairs.isEmpty else {
+                    return .send(.finishCardBook(state.reportCard))
+                }
+                
+                let wordPair = state.wordPairs.removeFirst()
+                state.currentWordPair = wordPair
+                let content = CardContent.origin(
+                    T(
+                        word: wordPair.origin,
+                        color: .clear
+                    )
+                )
                 return .merge(
+                    .send(.setContent(content)),
                     .send(.startCountDown),
                     .send(.startTranscribe)
                 )
                 
-            case .finishSpeech:
+            case .finishCard:
                 return .merge(
                     .send(.endCountDown),
                     .send(.stopTranscribe),
@@ -142,15 +153,20 @@ public struct CardFeature<T: CardData>: Sendable {
                 state.content = newContent
                 
             case .grading:
+                guard let wordPair = state.currentWordPair else {
+                    Log.error("채점할 대상 없음")
+                    break
+                }
+                
                 let session = ReportCard.Session(
-                    question: state.wordPair.target,
-                    correctAnswer: state.wordPair.origin,
+                    question: wordPair.target,
+                    correctAnswer: wordPair.origin,
                     userAnswer: state.transcript
                 )
                 
                 let newContent = CardContent<T>.target(
                     T(
-                        word: state.wordPair.target,
+                        word: wordPair.target,
                         color: session.isCorrectAnswer ? .green : .red
                     )
                 )
@@ -160,9 +176,8 @@ public struct CardFeature<T: CardData>: Sendable {
                     .send(.setContent(newContent))
                 )
                 
-            case .toNextCard, .recordSession:
-                // 상위 Store에서 처리
-                break
+            case .recordSession(let session):
+                state.reportCard.append(new: session)
                 
             case .recognitionError(let error):
                 Log.error("음성인식 실패 ->", error)
@@ -177,25 +192,9 @@ public struct CardFeature<T: CardData>: Sendable {
     private func handle(_ action: CountDownFeature.Action) -> Effect<Action> {
         switch action {
         case .timeOver:
-            return .send(.finishSpeech)
+            return .send(.finishCard)
         default:
             return .none
         }
     }
 }
-
-/// 문제 풀 떄 카드에 보여져야 할 항목
-/// 1. 단어(target)
-/// 2. 잔여 시간
-/// 3. 음성 인식으로 인식된 텍스트(실시간으로 업데이트)
-///
-/// 문제 푼 후 카드에 보여져야 할 항목
-/// 1. 단어(origin)
-/// 2. 음성인식 텍스트
-/// 2. 맞았는지 틀렸는지
-///
-/// 결국 뭐가 필요하냐
-/// 1. 단어(target/origin)
-/// 2. 잔여시간
-/// 3. 음성인식 텍스트
-/// 4. 맞았는지 틀렸는지(ChallengeFeature로 결과 전달)

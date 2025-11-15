@@ -8,6 +8,7 @@
 import SwiftUI
 
 public enum CardContent<T: CardData>: Equatable, Sendable {
+    case cover(T)
     case target(T)
     case origin(T)
 }
