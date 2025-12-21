@@ -30,6 +30,16 @@ public extension ReportCard {
         public let question: String
         public let correctAnswer: String
         public let userAnswer: String
+        
+        public init(
+            question: String,
+            correctAnswer: String,
+            userAnswer: String
+        ) {
+            self.question = question
+            self.correctAnswer = correctAnswer
+            self.userAnswer = userAnswer
+        }
     }
 }
 
