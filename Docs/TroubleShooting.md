@@ -52,7 +52,7 @@ public struct EditView: View {
 
 ### 원인 및 해결
 
-![스크린샷 2024-02-01 오후 5.15.49.png](Images/trouble_shooting_1-2)
+![스크린샷 2024-02-01 오후 5.15.49.png](Images/trouble_shooting_1-2.png)
 
 - 제너릭 함수인 `viewStore.binding<Value>`는 `get`, `send` 파라미터로 타입 추론을 하는데 두 파라미터의 타입이 서로 불일치 하므로 에러 발생
     - `get`은 `Value`가 `DefaultWordPairs`
