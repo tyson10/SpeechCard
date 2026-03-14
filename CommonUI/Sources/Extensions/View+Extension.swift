@@ -72,3 +72,14 @@ public extension View {
         return opacity(hidden ? 0 : 1)
     }
 }
+
+// MARK: - Glass effect
+public extension View {
+    func glassEffectIfNeeded() -> some View {
+        if #available(iOS 26.0, *) {
+            return glassEffect()
+        } else {
+            return self
+        }
+    }
+}
